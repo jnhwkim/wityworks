@@ -3,7 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Jin-Hwa Kim — homepage renewal draft</title>
+<title>Jin-Hwa Kim</title>
+<link rel="icon" href="static/img/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="static/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="16x16" href="static/img/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="static/img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="static/img/favicon-192x192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="static/img/apple-touch-icon.png">
+<link rel="manifest" href="static/img/site.webmanifest">
 <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
@@ -58,7 +65,7 @@
 
   <section class="profile" id="home">
     <div class="profile-grid">
-      <div>
+      <div class="profile-left">
         <div class="avatar"><img src="static/img/kim2023square_small.jpg" alt="Jin-Hwa Kim"></div>
         <h1 class="profile-name">Jin-Hwa Kim, Ph.D.</h1>
         <p class="profile-title">Leader, NAVER AI Lab</p>
@@ -129,566 +136,780 @@
       </div>
     </div>
 
-    <ul class="topic-filter">
-      <li><a href="#" class="active" data-topic="all">All</a></li>
-      <li><a href="#" data-topic="neural-3d">Neural 3D</a></li>
-      <li><a href="#" data-topic="world-models">World Models</a></li>
-      <li><a href="#" data-topic="multimodal-generation">Multimodal Generation</a></li>
-      <li><a href="#" data-topic="vision-language">Vision &amp; Language</a></li>
-      <li><a href="#" data-topic="diffusion-safety">Diffusion &amp; Safety</a></li>
-      <li><a href="#" data-topic="ml-theory">ML Theory</a></li>
-    </ul>
+    <div class="pub-filters">
+      <ul class="topic-filter">
+        <li><a href="#" class="active" data-topic="featured"><span class="filter-label">★</span></a></li>
+        <li><a href="#" data-topic="all"><span class="filter-label">All</span><span class="filter-count"></span></a></li>
+        <li><a href="#" data-topic="neural-3d"><span class="filter-label">Neural 3D</span><span class="filter-count"></span></a></li>
+        <li><a href="#" data-topic="world-models"><span class="filter-label">World Models</span><span class="filter-count"></span></a></li>
+        <li><a href="#" data-topic="multimodal-generation"><span class="filter-label">Generation</span><span class="filter-count"></span></a></li>
+        <li><a href="#" data-topic="vision-language"><span class="filter-label">Vision &amp; Language</span><span class="filter-count"></span></a></li>
+        <li><a href="#" data-topic="diffusion-safety"><span class="filter-label">Safety</span><span class="filter-count"></span></a></li>
+        <li><a href="#" data-topic="ml-theory"><span class="filter-label">Theory</span><span class="filter-count"></span></a></li>
+        <li><button type="button" class="filter-expand" id="filter-expand-toggle" aria-expanded="false" aria-controls="filter-accordion" title="More filters">+</button></li>
+      </ul>
+
+      <div class="filter-accordion" id="filter-accordion" hidden>
+        <div class="filter-accordion-group">
+          <label class="filter-accordion-label" for="filter-year-select">Year</label>
+          <select class="filter-select" id="filter-year-select">
+            <option value="">Select year…</option>
+            <option value="year:2026">2026 (10)</option>
+            <option value="year:2025">2025 (4)</option>
+            <option value="year:2024">2024 (13)</option>
+            <option value="year:2023">2023 (8)</option>
+            <option value="year:2022">2022 (8)</option>
+            <option value="year:2021">2021 (2)</option>
+            <option value="year:2020">2020 (1)</option>
+            <option value="year:2019">2019 (3)</option>
+            <option value="year:2018">2018 (2)</option>
+            <option value="year:2017">2017 (4)</option>
+            <option value="year:2016">2016 (4)</option>
+            <option value="year:2015">2015 (1)</option>
+          </select>
+        </div>
+        <div class="filter-accordion-group">
+          <label class="filter-accordion-label" for="filter-venue-select">Venue</label>
+          <select class="filter-select" id="filter-venue-select">
+            <option value="">Select venue…</option>
+            <option value="venue:NeurIPS">NeurIPS (11)</option>
+            <option value="venue:ECCV">ECCV (4)</option>
+            <option value="venue:EMNLP">EMNLP (4)</option>
+            <option value="venue:ICCV">ICCV (4)</option>
+            <option value="venue:ICLR">ICLR (4)</option>
+            <option value="venue:ICML">ICML (4)</option>
+            <option value="venue:ACL">ACL (3)</option>
+            <option value="venue:CVPR">CVPR (2)</option>
+            <option value="venue:IJCAI">IJCAI (1)</option>
+            <option value="venue:WACV">WACV (1)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <p class="pub-legend">* Equal contribution &nbsp;&nbsp; <sup>†</sup> Co-corresponding author</p>
 
     <ul class="pub-list" id="pub-list">
-      <li class="pub-item" data-topics="world-models neural-3d">
-        <span class="pub-year">2026</span>
+      <li class="pub-item" data-topics="world-models neural-3d" data-featured="true" data-year="2026" data-venue="ECCV">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2603.15583" target="_blank">Seoul World Model: Grounding World Simulation Models in a Real-World Metropolis</a></p>
-          <p class="pub-meta">Junyoung Seo, Hyunwook Choi, Minkyung Kwon, Jinhyeok Choi, Siyoon Jin, Gayoung Lee, Junho Kim, JoungBin Lee, Geonmo Gu, Dongyoon Han, Sangdoo Yun, Seungryong Kim, <strong>Jin-Hwa Kim</strong> — ECCV 2026</p>
-          <div class="pub-topics"><span class="pub-topic">World Models</span><span class="pub-topic">Neural 3D</span></div>
+          <p class="pub-title">Seoul World Model: Grounding World Simulation Models in a Real-World Metropolis</p>
+          <p class="pub-meta">Junyoung Seo*, Hyunwook Choi*, Minkyung Kwon, Jinhyeok Choi, Siyoon Jin, Gayoung Lee, Junho Kim, JoungBin Lee, Geonmo Gu, Dongyoon Han, Sangdoo Yun, Seungryong Kim<sup>†</sup>, <strong>Jin-Hwa Kim</strong><sup>†</sup></p>
+          <p class="pub-venue">ECCV 2026 <span class="pub-honor">Spotlight</span></p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2603.15583" target="_blank">arXiv</a><a class="pub-btn" href="https://seoul-world-model.github.io/" target="_blank">Project</a><a class="pub-btn" href="https://huggingface.co/papers/2603.15583" target="_blank">HuggingFace</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="world-models">World Models</button><button type="button" class="pub-topic" data-topic="neural-3d">Neural 3D</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="neural-3d">
-        <span class="pub-year">2026</span>
+      <li class="pub-item" data-topics="neural-3d ml-theory" data-featured="true" data-year="2026" data-venue="ECCV">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://leejunoh.com/R3G/" target="_blank">Relaxed Rigidity for 4DGS</a></p>
-          <p class="pub-meta">Junoh Lee, Junmyeong Lee, Yeon-Ji Song, Inhwan Bae, Jisu Shin, Hae-Gon Jeon, <strong>Jin-Hwa Kim</strong> — ECCV 2026</p>
-          <div class="pub-topics"><span class="pub-topic">Neural 3D</span></div>
+          <p class="pub-title">TetraSDF: Precise Mesh Extraction with Multi-resolution Tetrahedral Grid</p>
+          <p class="pub-meta">Seonghun Oh, Youngjung Uh, <strong>Jin-Hwa Kim</strong></p>
+          <p class="pub-venue">ECCV 2026 <span class="pub-honor">Spotlight</span></p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2511.16273" target="_blank">arXiv</a><a class="pub-btn" href="https://seonghunn.github.io/tetrasdf/" target="_blank">Project</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="neural-3d">Neural 3D</button><button type="button" class="pub-topic" data-topic="ml-theory">Theory</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="neural-3d ml-theory">
-        <span class="pub-year">2026</span>
+      <li class="pub-item" data-topics="neural-3d" data-year="2026" data-venue="ECCV">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://seonghunn.github.io/tetrasdf/" target="_blank">TetraSDF: Precise Mesh Extraction with Multi-resolution Tetrahedral Grid</a></p>
-          <p class="pub-meta">Seonghun Oh, Youngjung Uh, <strong>Jin-Hwa Kim</strong> — ECCV 2026</p>
-          <div class="pub-topics"><span class="pub-topic">Neural 3D</span><span class="pub-topic">ML Theory</span></div>
+          <p class="pub-title">Relaxed Rigidity with Ray-based Grouping for Dynamic Gaussian Splatting</p>
+          <p class="pub-meta">Junoh Lee, Junmyeong Lee, Yeon-Ji Song, Inhwan Bae, Jisu Shin, Hae-Gon Jeon<sup>†</sup>, <strong>Jin-Hwa Kim</strong><sup>†</sup></p>
+          <p class="pub-venue">ECCV 2026</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2603.24994" target="_blank">arXiv</a><a class="pub-btn" href="https://leejunoh.com/R3G/" target="_blank">Project</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="neural-3d">Neural 3D</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="neural-3d world-models">
-        <span class="pub-year">2026</span>
+      <li class="pub-item" data-topics="neural-3d world-models" data-year="2026" data-venue="ICML">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2605.08635" target="_blank">Kinematics-Driven Gaussian Shape Deformation for Blurry Monocular Dynamic Scenes</a></p>
-          <p class="pub-meta">Yeon-Ji Song, Kiyoung Kwon, Junoh Lee, <strong>Jin-Hwa Kim</strong>, Byoung-Tak Zhang — ICML 2026</p>
-          <div class="pub-topics"><span class="pub-topic">Neural 3D</span><span class="pub-topic">World Models</span></div>
+          <p class="pub-title">Kinematics-Driven Gaussian Shape Deformation for Blurry Monocular Dynamic Scenes</p>
+          <p class="pub-meta">Yeon-Ji Song, Kiyoung Kwon, Junoh Lee, <strong>Jin-Hwa Kim</strong><sup>†</sup>, Byoung-Tak Zhang<sup>†</sup></p>
+          <p class="pub-venue">ICML 2026</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2605.08635" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="neural-3d">Neural 3D</button><button type="button" class="pub-topic" data-topic="world-models">World Models</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="multimodal-generation neural-3d">
-        <span class="pub-year">2026</span>
+      <li class="pub-item" data-topics="multimodal-generation neural-3d" data-year="2026" data-venue="CVPR">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2512.03045" target="_blank">CAMEO: Correspondence-Attention Alignment for Multi-View Diffusion Models</a></p>
-          <p class="pub-meta">Minkyung Kwon, Jinhyeok Choi, Jiho Park, Seonghu Jeon, Jinhyuk Jang, Junyoung Seo, Minseop Kwak, <strong>Jin-Hwa Kim</strong>, Seungryong Kim — CVPR 2026</p>
-          <div class="pub-topics"><span class="pub-topic">Multimodal Generation</span><span class="pub-topic">Neural 3D</span></div>
+          <p class="pub-title">CAMEO: Correspondence-Attention Alignment for Multi-View Diffusion Models</p>
+          <p class="pub-meta">Minkyung Kwon, Jinhyeok Choi, Jiho Park, Seonghu Jeon, Jinhyuk Jang, Junyoung Seo, Minseop Kwak, <strong>Jin-Hwa Kim</strong><sup>†</sup>, Seungryong Kim<sup>†</sup></p>
+          <p class="pub-venue">CVPR 2026</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2512.03045" target="_blank">arXiv</a><a class="pub-btn" href="https://cvlab-kaist.github.io/CAMEO/" target="_blank">Project</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="multimodal-generation">Generation</button><button type="button" class="pub-topic" data-topic="neural-3d">Neural 3D</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="multimodal-generation">
-        <span class="pub-year">2026</span>
+      <li class="pub-item" data-topics="multimodal-generation" data-year="2026" data-venue="ICLR">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2510.13702" target="_blank">MVCustom: Multi-View Customized Diffusion via Geometric Latent Rendering and Completion</a></p>
-          <p class="pub-meta">Minjung Shin, Hyunin Cho, Sooyeon Go, <strong>Jin-Hwa Kim</strong>, Youngjung Uh — ICLR 2026</p>
-          <div class="pub-topics"><span class="pub-topic">Multimodal Generation</span></div>
+          <p class="pub-title">MVCustom: Multi-View Customized Diffusion via Geometric Latent Rendering and Completion</p>
+          <p class="pub-meta">Minjung Shin, Hyunin Cho, Sooyeon Go, <strong>Jin-Hwa Kim</strong>, Youngjung Uh</p>
+          <p class="pub-venue">ICLR 2026</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2510.13702" target="_blank">arXiv</a><a class="pub-btn" href="https://minjung-s.github.io/mvcustom" target="_blank">Project</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="multimodal-generation">Generation</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="multimodal-generation neural-3d">
-        <span class="pub-year">2026</span>
+      <li class="pub-item" data-topics="multimodal-generation neural-3d" data-year="2026" data-venue="ICLR">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2506.11924" target="_blank">MoAI: Aligned Novel View Image and Geometry Synthesis via Cross-modal Attention Instillation</a></p>
-          <p class="pub-meta">Min-Seop Kwak, Junho Kim, Sangdoo Yun, Dongyoon Han, Taekyung Kim, Seungryong Kim, <strong>Jin-Hwa Kim</strong> — ICLR 2026</p>
-          <div class="pub-topics"><span class="pub-topic">Multimodal Generation</span><span class="pub-topic">Neural 3D</span></div>
+          <p class="pub-title">MoAI: Aligned Novel View Image and Geometry Synthesis via Cross-modal Attention Instillation</p>
+          <p class="pub-meta">Min-Seop Kwak, Junho Kim, Sangdoo Yun, Dongyoon Han, Taekyung Kim, Seungryong Kim<sup>†</sup>, <strong>Jin-Hwa Kim</strong><sup>†</sup></p>
+          <p class="pub-venue">ICLR 2026</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2506.11924" target="_blank">arXiv</a><a class="pub-btn" href="https://cvlab-kaist.github.io/MoAI/" target="_blank">Project</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="multimodal-generation">Generation</button><button type="button" class="pub-topic" data-topic="neural-3d">Neural 3D</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="vision-language">
-        <span class="pub-year">2026</span>
+      <li class="pub-item" data-topics="vision-language" data-year="2026">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2601.01792" target="_blank">HyperCLOVA X 8B Omni</a></p>
-          <p class="pub-meta">NAVER Cloud HyperCLOVA X Team — arXiv preprint</p>
-          <div class="pub-topics"><span class="pub-topic">Vision & Language</span></div>
+          <p class="pub-title">HyperCLOVA X 8B Omni</p>
+          <p class="pub-meta">NAVER Cloud HyperCLOVA X Team</p>
+          <p class="pub-venue">arXiv preprint, 2026</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2601.01792" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Preprint</span>
       </li>
-      <li class="pub-item" data-topics="vision-language">
-        <span class="pub-year">2026</span>
+      <li class="pub-item" data-topics="vision-language" data-year="2026">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2601.03286" target="_blank">HyperCLOVA X 32B Think</a></p>
-          <p class="pub-meta">NAVER Cloud HyperCLOVA X Team — arXiv preprint</p>
-          <div class="pub-topics"><span class="pub-topic">Vision & Language</span></div>
+          <p class="pub-title">HyperCLOVA X 32B Think</p>
+          <p class="pub-meta">NAVER Cloud HyperCLOVA X Team</p>
+          <p class="pub-venue">arXiv preprint, 2026</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2601.03286" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Preprint</span>
       </li>
-      <li class="pub-item" data-topics="neural-3d multimodal-generation">
-        <span class="pub-year">2025</span>
+      <li class="pub-item" data-topics="neural-3d multimodal-generation" data-year="2025">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2511.21098" target="_blank">Pygmalion Effect in Vision: Image-to-Clay Translation for Reflective Geometry Reconstruction</a></p>
-          <p class="pub-meta">Gayoung Lee, Junho Kim, <strong>Jin-Hwa Kim</strong>, Junmo Kim — arXiv preprint</p>
-          <div class="pub-topics"><span class="pub-topic">Neural 3D</span><span class="pub-topic">Multimodal Generation</span></div>
+          <p class="pub-title">Pygmalion Effect in Vision: Image-to-Clay Translation for Reflective Geometry Reconstruction</p>
+          <p class="pub-meta">Gayoung Lee, Junho Kim, <strong>Jin-Hwa Kim</strong><sup>†</sup>, Junmo Kim<sup>†</sup></p>
+          <p class="pub-venue">arXiv preprint, 2025</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2511.21098" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="neural-3d">Neural 3D</button><button type="button" class="pub-topic" data-topic="multimodal-generation">Generation</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Preprint</span>
       </li>
-      <li class="pub-item" data-topics="neural-3d">
-        <span class="pub-year">2025</span>
+      <li class="pub-item" data-topics="neural-3d" data-year="2026">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2405.02568" target="_blank">Surface-Based Visibility-Guided Uncertainty for Continuous 3D Active Neural Reconstruction</a></p>
-          <p class="pub-meta">Hyunseo Kim, Hyeonseo Yang, Taekyung Kim, YoonSung Kim, Minsu Lee, <strong>Jin-Hwa Kim</strong>, Byoung-Tak Zhang — AAAI 2026 Workshop on AI with Biased or Scarce Data</p>
-          <div class="pub-topics"><span class="pub-topic">Neural 3D</span></div>
+          <p class="pub-title">Surface-Based Visibility-Guided Uncertainty for Continuous 3D Active Neural Reconstruction</p>
+          <p class="pub-meta">Hyunseo Kim, Hyeonseo Yang, Taekyung Kim, YoonSung Kim, Minsu Lee, <strong>Jin-Hwa Kim</strong><sup>†</sup>, Byoung-Tak Zhang<sup>†</sup></p>
+          <p class="pub-venue">AAAI 2026 Workshop on AI with Biased or Scarce Data, <span class="pub-honor">Oral</span></p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2405.02568" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="neural-3d">Neural 3D</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="diffusion-safety">
-        <span class="pub-year">2025</span>
+      <li class="pub-item" data-topics="diffusion-safety" data-year="2025" data-venue="NeurIPS">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2510.24012" target="_blank">Training-Free Safe Text Embedding Guidance for Text-to-Image Diffusion Models</a></p>
-          <p class="pub-meta">Byeonghu Na, Mina Kang, Jiseok Kwak, Minsang Park, Jiwoo Shin, SeJoon Jun, Gayoung Lee, <strong>Jin-Hwa Kim</strong>, Il-Chul Moon — NeurIPS 2025</p>
-          <div class="pub-topics"><span class="pub-topic">Diffusion & Safety</span></div>
+          <p class="pub-title">Training-Free Safe Text Embedding Guidance for Text-to-Image Diffusion Models</p>
+          <p class="pub-meta">Byeonghu Na, Mina Kang, Jiseok Kwak, Minsang Park, Jiwoo Shin, SeJoon Jun, Gayoung Lee, <strong>Jin-Hwa Kim</strong>, Il-Chul Moon</p>
+          <p class="pub-venue">NeurIPS 2025</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2510.24012" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="diffusion-safety">Safety</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="world-models">
-        <span class="pub-year">2025</span>
+      <li class="pub-item" data-topics="world-models" data-year="2025" data-venue="ICCV">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2404.18423" target="_blank">OCK: Unsupervised Dynamic Video Prediction with Object-Centric Kinematics</a></p>
-          <p class="pub-meta">Yeon-Ji Song, Jaein Kim, Suhyung Choi, <strong>Jin-Hwa Kim</strong>, Byoung-Tak Zhang — ICCV 2025</p>
-          <div class="pub-topics"><span class="pub-topic">World Models</span></div>
+          <p class="pub-title">OCK: Unsupervised Dynamic Video Prediction with Object-Centric Kinematics</p>
+          <p class="pub-meta">Yeon-Ji Song, Jaein Kim, Suhyung Choi, <strong>Jin-Hwa Kim</strong><sup>†</sup>, Byoung-Tak Zhang<sup>†</sup></p>
+          <p class="pub-venue">ICCV 2025</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2404.18423" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="world-models">World Models</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="vision-language">
-        <span class="pub-year">2025</span>
+      <li class="pub-item" data-topics="vision-language" data-year="2025" data-venue="WACV">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2306.02728" target="_blank">Background-aware Moment Detection for Video Moment Retrieval</a></p>
-          <p class="pub-meta">Minjoon Jung, Youwon Jang, Seongho Choi, Joochan Kim, <strong>Jin-Hwa Kim</strong>, Byoung-Tak Zhang — WACV 2025</p>
-          <div class="pub-topics"><span class="pub-topic">Vision & Language</span></div>
+          <p class="pub-title">Background-aware Moment Detection for Video Moment Retrieval</p>
+          <p class="pub-meta">Minjoon Jung, Youwon Jang, Seongho Choi, Joochan Kim, <strong>Jin-Hwa Kim</strong><sup>†</sup>, Byoung-Tak Zhang<sup>†</sup></p>
+          <p class="pub-venue">WACV 2025</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2306.02728" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="ml-theory">
-        <span class="pub-year">2024</span>
+      <li class="pub-item" data-topics="ml-theory" data-featured="true" data-year="2024" data-venue="NeurIPS">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2402.10403" target="_blank">Polyhedral Complex Derivation from Piecewise Trilinear Networks</a></p>
-          <p class="pub-meta"><strong>Jin-Hwa Kim</strong> — NeurIPS 2024</p>
-          <div class="pub-topics"><span class="pub-topic">ML Theory</span></div>
+          <p class="pub-title">TropicalNeRF: Polyhedral Complex Derivation from Piecewise Trilinear Networks</p>
+          <p class="pub-meta"><strong>Jin-Hwa Kim</strong></p>
+          <p class="pub-venue">NeurIPS 2024</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2402.10403" target="_blank">arXiv</a><a class="pub-btn" href="https://naver-ai.github.io/tropical-nerf/" target="_blank">Demo</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="ml-theory">Theory</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="ml-theory">
-        <span class="pub-year">2024</span>
+      <li class="pub-item" data-topics="ml-theory" data-year="2024" data-venue="NeurIPS">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2411.00360" target="_blank">A Simple Remedy for Dataset Bias via Self-Influence: A Mislabeled Sample Perspective</a></p>
-          <p class="pub-meta">Yeonsung Jung, Jaeyun Song, June Yong Yang, <strong>Jin-Hwa Kim</strong>, Sung-Yub Kim, Eunho Yang — NeurIPS 2024</p>
-          <div class="pub-topics"><span class="pub-topic">ML Theory</span></div>
+          <p class="pub-title">A Simple Remedy for Dataset Bias via Self-Influence: A Mislabeled Sample Perspective</p>
+          <p class="pub-meta">Yeonsung Jung, Jaeyun Song, June Yong Yang, <strong>Jin-Hwa Kim</strong>, Sung-Yub Kim, Eunho Yang</p>
+          <p class="pub-venue">NeurIPS 2024</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2411.00360" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="ml-theory">Theory</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="diffusion-safety">
-        <span class="pub-year">2024</span>
+      <li class="pub-item" data-topics="diffusion-safety" data-year="2024" data-venue="NeurIPS">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2407.21035" target="_blank">Direct Unlearning Optimization for Robust and Safe Text-to-Image Models</a></p>
-          <p class="pub-meta">Yong Hyun Park, Sangdoo Yun, <strong>Jin-Hwa Kim</strong>, Junho Kim, Geonhui Jang, Yonghyun Jeong, Junghyo Jo, Gayoung Lee — NeurIPS 2024</p>
-          <div class="pub-topics"><span class="pub-topic">Diffusion & Safety</span></div>
+          <p class="pub-title">Direct Unlearning Optimization for Robust and Safe Text-to-Image Models</p>
+          <p class="pub-meta">Yong-Hyun Park, Sangdoo Yun, <strong>Jin-Hwa Kim</strong>, Junho Kim, Geonhui Jang, Yonghyun Jeong, Junghyo Jo<sup>†</sup>, Gayoung Lee<sup>†</sup></p>
+          <p class="pub-venue">NeurIPS 2024</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2407.21035" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="diffusion-safety">Safety</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="neural-3d">
-        <span class="pub-year">2024</span>
+      <li class="pub-item" data-topics="neural-3d" data-year="2024" data-venue="NeurIPS">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2406.11672" target="_blank">Effective Rank Analysis and Regularization for Enhanced 3D Gaussian Splatting</a></p>
-          <p class="pub-meta">Junha Hyung, Susung Hong, Sungwon Hwang, Jaeseong Lee, <strong>Jin-Hwa Kim</strong>, Jaegul Choo — NeurIPS 2024</p>
-          <div class="pub-topics"><span class="pub-topic">Neural 3D</span></div>
+          <p class="pub-title">Effective Rank Analysis and Regularization for Enhanced 3D Gaussian Splatting</p>
+          <p class="pub-meta">Junha Hyung, Susung Hong, Sungwon Hwang, Jaeseong Lee, <strong>Jin-Hwa Kim</strong><sup>†</sup>, Jaegul Choo<sup>†</sup></p>
+          <p class="pub-venue">NeurIPS 2024</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2406.11672" target="_blank">arXiv</a><a class="pub-btn" href="https://junhahyung.github.io/erankgs.github.io/" target="_blank">Project</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="neural-3d">Neural 3D</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="vision-language">
-        <span class="pub-year">2024</span>
+      <li class="pub-item" data-topics="vision-language" data-year="2024" data-venue="EMNLP">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2410.04064" target="_blank">Text2Chart31: Instruction Tuning for Chart Generation with Automatic Feedback</a></p>
-          <p class="pub-meta">Fatemeh Pesaran Zadeh, Juyeon Kim, <strong>Jin-Hwa Kim</strong>, Gunhee Kim — EMNLP 2024</p>
-          <div class="pub-topics"><span class="pub-topic">Vision & Language</span></div>
+          <p class="pub-title">Text2Chart31: Instruction Tuning for Chart Generation with Automatic Feedback</p>
+          <p class="pub-meta">Fatemeh Pesaran Zadeh, Juyeon Kim, <strong>Jin-Hwa Kim</strong>, Gunhee Kim</p>
+          <p class="pub-venue">EMNLP 2024 <span class="pub-honor">Oral</span></p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2410.04064" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="neural-3d">
-        <span class="pub-year">2024</span>
+      <li class="pub-item" data-topics="neural-3d" data-year="2024">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
           <p class="pub-title">Factorized Multi-Resolution HashGrid for Efficient Neural Radiance Fields: Execution on Edge-Devices</p>
-          <p class="pub-meta">Jun-Seong Kim, Mingyu Kim, GeonU Kim, Tae-Hyun Oh, <strong>Jin-Hwa Kim</strong> — IEEE Robotics and Automation Letters (RA-L) 2024; ICRA 2025</p>
-          <div class="pub-topics"><span class="pub-topic">Neural 3D</span></div>
+          <p class="pub-meta">Jun-Seong Kim*, Mingyu Kim*, GeonU Kim, Tae-Hyun Oh<sup>†</sup>, <strong>Jin-Hwa Kim</strong><sup>†</sup></p>
+          <p class="pub-venue">IEEE Robotics and Automation Letters (RA-L) 2024; ICRA 2025</p>
+          <div class="pub-footer">
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="neural-3d">Neural 3D</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Journal</span>
       </li>
-      <li class="pub-item" data-topics="vision-language">
-        <span class="pub-year">2024</span>
+      <li class="pub-item" data-topics="vision-language" data-year="2024" data-venue="ACL">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
           <p class="pub-title">TimeChara: Evaluating Point-in-Time Character Hallucination of Role-Playing Large Language Models</p>
-          <p class="pub-meta">Jaewoo Ahn, Taehyun Lee, Junyoung Lim, <strong>Jin-Hwa Kim</strong>, Sangdoo Yun, Hwaran Lee, Gunhee Kim — ACL 2024</p>
-          <div class="pub-topics"><span class="pub-topic">Vision &amp; Language</span></div>
+          <p class="pub-meta">Jaewoo Ahn, Taehyun Lee, Junyoung Lim, <strong>Jin-Hwa Kim</strong>, Sangdoo Yun, Hwaran Lee, Gunhee Kim</p>
+          <p class="pub-venue">ACL 2024</p>
+          <div class="pub-footer">
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="neural-3d">
-        <span class="pub-year">2024</span>
+      <li class="pub-item" data-topics="neural-3d" data-year="2024" data-venue="ICML">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
           <p class="pub-title">Synergistic Integration of Coordinate Network and Tensorial Feature for Improving Neural Radiance Fields from Sparse Inputs</p>
-          <p class="pub-meta">Mingyu Kim, Jun-Seong Kim, Se-Young Yun, <strong>Jin-Hwa Kim</strong> — ICML 2024</p>
-          <div class="pub-topics"><span class="pub-topic">Neural 3D</span></div>
+          <p class="pub-meta">Mingyu Kim, Jun-Seong Kim, Se-Young Yun<sup>†</sup>, <strong>Jin-Hwa Kim</strong><sup>†</sup></p>
+          <p class="pub-venue">ICML 2024</p>
+          <div class="pub-footer">
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="neural-3d">Neural 3D</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="neural-3d ml-theory">
-        <span class="pub-year">2024</span>
+      <li class="pub-item" data-topics="neural-3d ml-theory" data-year="2024" data-venue="ICML">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2406.00798" target="_blank">PruNeRF: Segment-Centric Dataset Pruning via 3D Spatial Consistency</a></p>
-          <p class="pub-meta">Yeonsung Jung, Heecheol Yun, Joonhyung Park, <strong>Jin-Hwa Kim</strong>, Eunho Yang — ICML 2024</p>
-          <div class="pub-topics"><span class="pub-topic">Neural 3D</span><span class="pub-topic">ML Theory</span></div>
+          <p class="pub-title">PruNeRF: Segment-Centric Dataset Pruning via 3D Spatial Consistency</p>
+          <p class="pub-meta">Yeonsung Jung, Heecheol Yun, Joonhyung Park, <strong>Jin-Hwa Kim</strong><sup>†</sup>, Eunho Yang<sup>†</sup></p>
+          <p class="pub-venue">ICML 2024</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2406.00798" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="neural-3d">Neural 3D</button><button type="button" class="pub-topic" data-topic="ml-theory">Theory</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="vision-language multimodal-generation">
-        <span class="pub-year">2024</span>
+      <li class="pub-item" data-topics="vision-language multimodal-generation" data-year="2024">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2302.12172" target="_blank">Vision-Language Generative Model for View-Specific Chest X-ray Generation</a></p>
-          <p class="pub-meta">Hyungyung Lee, Da Young Lee, Wonjae Kim, <strong>Jin-Hwa Kim</strong>, Tackeun Kim, Jihang Kim, Leonard Sunwoo, Edward Choi — CHIL 2024</p>
-          <div class="pub-topics"><span class="pub-topic">Vision &amp; Language</span><span class="pub-topic">Multimodal Generation</span></div>
+          <p class="pub-title">Vision-Language Generative Model for View-Specific Chest X-ray Generation</p>
+          <p class="pub-meta">Hyungyung Lee, Da Young Lee, Wonjae Kim, <strong>Jin-Hwa Kim</strong>, Tackeun Kim, Jihang Kim, Leonard Sunwoo, Edward Choi</p>
+          <p class="pub-venue">CHIL 2024</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2302.12172" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button><button type="button" class="pub-topic" data-topic="multimodal-generation">Generation</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="neural-3d multimodal-generation">
-        <span class="pub-year">2024</span>
+      <li class="pub-item" data-topics="neural-3d multimodal-generation" data-year="2024">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2406.16695" target="_blank">Geometry-aware Score Distillation via 3D Consistent Noising and Gradients</a></p>
-          <p class="pub-meta">Min-Seop Kwak, Donghoon Ahn, Inès Hyeonsu Kim, <strong>Jin-Hwa Kim</strong>, Seungryong Kim — arXiv preprint</p>
-          <div class="pub-topics"><span class="pub-topic">Neural 3D</span><span class="pub-topic">Multimodal Generation</span></div>
+          <p class="pub-title">Geometry-Aware Score Distillation via 3D Consistent Noising and Gradient Consistency Modeling</p>
+          <p class="pub-meta">Min-Seop Kwak, Donghoon Ahn, Inès Hyeonsu Kim, <strong>Jin-Hwa Kim</strong><sup>†</sup>, Seungryong Kim<sup>†</sup></p>
+          <p class="pub-venue">arXiv preprint, 2024</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2406.16695" target="_blank">arXiv</a><a class="pub-btn" href="https://ku-cvlab.github.io/GSD/" target="_blank">Project</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="neural-3d">Neural 3D</button><button type="button" class="pub-topic" data-topic="multimodal-generation">Generation</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Preprint</span>
       </li>
-      <li class="pub-item" data-topics="neural-3d multimodal-generation">
-        <span class="pub-year">2024</span>
+      <li class="pub-item" data-topics="neural-3d multimodal-generation" data-year="2024" data-venue="ICLR">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2303.07937" target="_blank">Let 2D Diffusion Model Know 3D-Consistency for Robust Text-to-3D Generation</a></p>
-          <p class="pub-meta">Junyoung Seo, Wooseok Jang, Min-Seop Kwak, Jaehoon Ko, Hyeonsu Kim, Junho Kim, <strong>Jin-Hwa Kim</strong>, Jiyoung Lee, Seungryong Kim — ICLR 2024</p>
-          <div class="pub-topics"><span class="pub-topic">Neural 3D</span><span class="pub-topic">Multimodal Generation</span></div>
+          <p class="pub-title">Let 2D Diffusion Model Know 3D-Consistency for Robust Text-to-3D Generation</p>
+          <p class="pub-meta">Junyoung Seo*, Wooseok Jang*, Min-Seop Kwak*, Jaehoon Ko, Hyeonsu Kim, Junho Kim, <strong>Jin-Hwa Kim</strong><sup>†</sup>, Jiyoung Lee<sup>†</sup>, Seungryong Kim<sup>†</sup></p>
+          <p class="pub-venue">ICLR 2024</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2303.07937" target="_blank">arXiv</a><a class="pub-btn" href="https://ku-cvlab.github.io/3DFuse/" target="_blank">Project</a><a class="pub-btn" href="https://github.com/KU-CVLAB/3DFuse" target="_blank">Code</a><a class="pub-btn" href="https://github.com/KU-CVLAB/3DFuse-threestudio" target="_blank">Threestudio</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="neural-3d">Neural 3D</button><button type="button" class="pub-topic" data-topic="multimodal-generation">Generation</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="vision-language">
-        <span class="pub-year">2024</span>
+      <li class="pub-item" data-topics="vision-language" data-year="2024">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2404.01954" target="_blank">HyperCLOVA X Technical Report</a></p>
-          <p class="pub-meta">NAVER Cloud HyperCLOVA X Team (396 authors) — arXiv preprint</p>
-          <div class="pub-topics"><span class="pub-topic">Vision &amp; Language</span></div>
+          <p class="pub-title">HyperCLOVA X Technical Report</p>
+          <p class="pub-meta">NAVER Cloud HyperCLOVA X Team (396 authors)</p>
+          <p class="pub-venue">arXiv preprint, 2024</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2404.01954" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Preprint</span>
       </li>
-      <li class="pub-item" data-topics="multimodal-generation">
-        <span class="pub-year">2023</span>
+      <li class="pub-item" data-topics="multimodal-generation" data-year="2023" data-venue="ICCV">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2308.12964" target="_blank">Dense Text-to-Image Generation with Attention Modulation</a></p>
-          <p class="pub-meta">Yunji Kim, Jiyoung Lee, <strong>Jin-Hwa Kim</strong>, Jung-Woo Ha, Jun-Yan Zhu — ICCV 2023</p>
-          <div class="pub-topics"><span class="pub-topic">Multimodal Generation</span></div>
+          <p class="pub-title">Dense Text-to-Image Generation with Attention Modulation</p>
+          <p class="pub-meta">Yunji Kim, Jiyoung Lee, <strong>Jin-Hwa Kim</strong>, Jung-Woo Ha, Jun-Yan Zhu</p>
+          <p class="pub-venue">ICCV 2023</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2308.12964" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="multimodal-generation">Generation</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="multimodal-generation">
-        <span class="pub-year">2023</span>
+      <li class="pub-item" data-topics="multimodal-generation" data-year="2023" data-venue="ICCV">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2304.01515" target="_blank">Text-Conditioned Sampling Framework for Text-to-Image Generation with Masked Generative Models</a></p>
-          <p class="pub-meta">Jaewoong Lee, Sangwon Jang, Jaehyeong Jo, Jaehong Yoon, Yunji Kim, <strong>Jin-Hwa Kim</strong>, Jung-Woo Ha, Sung Ju Hwang — ICCV 2023</p>
-          <div class="pub-topics"><span class="pub-topic">Multimodal Generation</span></div>
+          <p class="pub-title">Text-Conditioned Sampling Framework for Text-to-Image Generation with Masked Generative Models</p>
+          <p class="pub-meta">Jaewoong Lee, Sangwon Jang, Jaehyeong Jo, Jaehong Yoon, Yunji Kim, <strong>Jin-Hwa Kim</strong>, Jung-Woo Ha, Sung Ju Hwang</p>
+          <p class="pub-venue">ICCV 2023</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2304.01515" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="multimodal-generation">Generation</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="neural-3d multimodal-generation">
-        <span class="pub-year">2023</span>
+      <li class="pub-item" data-topics="neural-3d multimodal-generation" data-year="2023" data-venue="ICCV">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2302.06608" target="_blank">3D-aware Blending with Generative NeRFs</a></p>
-          <p class="pub-meta">Hyunsu Kim, Gayoung Lee, Yunjey Choi, <strong>Jin-Hwa Kim</strong>, Jun-Yan Zhu — ICCV 2023</p>
-          <div class="pub-topics"><span class="pub-topic">Neural 3D</span><span class="pub-topic">Multimodal Generation</span></div>
+          <p class="pub-title">3D-aware Blending with Generative NeRFs</p>
+          <p class="pub-meta">Hyunsu Kim, Gayoung Lee, Yunjey Choi, <strong>Jin-Hwa Kim</strong>, Jun-Yan Zhu</p>
+          <p class="pub-venue">ICCV 2023</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2302.06608" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="neural-3d">Neural 3D</button><button type="button" class="pub-topic" data-topic="multimodal-generation">Generation</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="neural-3d">
-        <span class="pub-year">2023</span>
+      <li class="pub-item" data-topics="neural-3d" data-year="2023" data-venue="ICML">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2302.01571" target="_blank">Robust Camera Pose Refinement for Multi-Resolution Hash Encoding</a></p>
-          <p class="pub-meta">Hwan Heo, Taekyung Kim, Jiyoung Lee, Jaewon Lee, Soohyun Kim, Hyunwoo J. Kim, <strong>Jin-Hwa Kim</strong> — ICML 2023</p>
-          <div class="pub-topics"><span class="pub-topic">Neural 3D</span></div>
+          <p class="pub-title">Robust Camera Pose Refinement for Multi-Resolution Hash Encoding</p>
+          <p class="pub-meta">Hwan Heo, Taekyung Kim, Jiyoung Lee, Jaewon Lee, Soohyun Kim, Hyunwoo J. Kim<sup>†</sup>, <strong>Jin-Hwa Kim</strong><sup>†</sup></p>
+          <p class="pub-venue">ICML 2023</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2302.01571" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="neural-3d">Neural 3D</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="vision-language diffusion-safety">
-        <span class="pub-year">2023</span>
+      <li class="pub-item" data-topics="vision-language diffusion-safety" data-year="2023" data-venue="ACL">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2305.17444" target="_blank">Query-Efficient Black-Box Red Teaming via Bayesian Optimization</a></p>
-          <p class="pub-meta">Deokjae Lee, JunYeong Lee, Jung-Woo Ha, <strong>Jin-Hwa Kim</strong>, Sang-Woo Lee, Hwaran Lee, Hyun Oh Song — ACL 2023</p>
-          <div class="pub-topics"><span class="pub-topic">Vision &amp; Language</span><span class="pub-topic">Diffusion &amp; Safety</span></div>
+          <p class="pub-title">Query-Efficient Black-Box Red Teaming via Bayesian Optimization</p>
+          <p class="pub-meta">Deokjae Lee, JunYeong Lee, Jung-Woo Ha, <strong>Jin-Hwa Kim</strong>, Sang-Woo Lee, Hwaran Lee, Hyun Oh Song</p>
+          <p class="pub-venue">ACL 2023</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2305.17444" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button><button type="button" class="pub-topic" data-topic="diffusion-safety">Safety</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="vision-language">
-        <span class="pub-year">2023</span>
+      <li class="pub-item" data-topics="vision-language" data-year="2023" data-venue="CVPR">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2205.12502" target="_blank">The Dialog Must Go On: Improving Visual Dialog via Generative Self-Training</a></p>
-          <p class="pub-meta">Gi-Cheon Kang, Sungdong Kim, <strong>Jin-Hwa Kim</strong>, Donghyun Kwak, Byoung-Tak Zhang — CVPR 2023</p>
-          <div class="pub-topics"><span class="pub-topic">Vision &amp; Language</span></div>
+          <p class="pub-title">The Dialog Must Go On: Improving Visual Dialog via Generative Self-Training</p>
+          <p class="pub-meta">Gi-Cheon Kang, Sungdong Kim, <strong>Jin-Hwa Kim</strong>, Donghyun Kwak, Byoung-Tak Zhang</p>
+          <p class="pub-venue">CVPR 2023</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2205.12502" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="multimodal-generation">
-        <span class="pub-year">2023</span>
+      <li class="pub-item" data-topics="multimodal-generation" data-year="2023">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2304.04960" target="_blank">Panoramic Image-to-Image Translation</a></p>
-          <p class="pub-meta">Soohyun Kim, Junho Kim, Taekyung Kim, Hwan Heo, Seungryong Kim, Jiyoung Lee, <strong>Jin-Hwa Kim</strong> — arXiv preprint</p>
-          <div class="pub-topics"><span class="pub-topic">Multimodal Generation</span></div>
+          <p class="pub-title">Panoramic Image-to-Image Translation</p>
+          <p class="pub-meta">Soohyun Kim, Junho Kim, Taekyung Kim, Hwan Heo, Seungryong Kim<sup>†</sup>, Jiyoung Lee<sup>†</sup>, <strong>Jin-Hwa Kim</strong><sup>†</sup></p>
+          <p class="pub-venue">arXiv preprint, 2023</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2304.04960" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="multimodal-generation">Generation</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Preprint</span>
       </li>
-      <li class="pub-item" data-topics="vision-language">
-        <span class="pub-year">2023</span>
+      <li class="pub-item" data-topics="vision-language" data-year="2023">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2301.11507" target="_blank">Semi-Parametric Video-Grounded Text Generation</a></p>
-          <p class="pub-meta">Sungdong Kim, <strong>Jin-Hwa Kim</strong>, Jiyoung Lee, Minjoon Seo — arXiv preprint</p>
-          <div class="pub-topics"><span class="pub-topic">Vision &amp; Language</span></div>
+          <p class="pub-title">Semi-Parametric Video-Grounded Text Generation</p>
+          <p class="pub-meta">Sungdong Kim, <strong>Jin-Hwa Kim</strong>, Jiyoung Lee, Minjoon Seo</p>
+          <p class="pub-venue">arXiv preprint, 2023</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2301.11507" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Preprint</span>
       </li>
-      <li class="pub-item" data-topics="ml-theory vision-language">
-        <span class="pub-year">2022</span>
+      <li class="pub-item" data-topics="ml-theory vision-language" data-year="2022" data-venue="EMNLP">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2210.03858" target="_blank">AlphaTuning: Quantization-Aware Parameter-Efficient Adaptation of Large-Scale Pre-Trained Language Models</a></p>
-          <p class="pub-meta">Se Jung Kwon, Jeonghoon Kim, Jeongin Bae, Kang Min Yoo, <strong>Jin-Hwa Kim</strong>, Baeseong Park, Byeongwook Kim, Jung-Woo Ha, Nako Sung, Dongsoo Lee — Findings of EMNLP 2022</p>
-          <div class="pub-topics"><span class="pub-topic">ML Theory</span><span class="pub-topic">Vision &amp; Language</span></div>
+          <p class="pub-title">AlphaTuning: Quantization-Aware Parameter-Efficient Adaptation of Large-Scale Pre-Trained Language Models</p>
+          <p class="pub-meta">Se Jung Kwon, Jeonghoon Kim, Jeongin Bae, Kang Min Yoo, <strong>Jin-Hwa Kim</strong>, Baeseong Park, Byeongwook Kim, Jung-Woo Ha, Nako Sung, Dongsoo Lee</p>
+          <p class="pub-venue">Findings of EMNLP 2022</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2210.03858" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="ml-theory">Theory</button><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="vision-language">
-        <span class="pub-year">2022</span>
+      <li class="pub-item" data-topics="vision-language" data-year="2022" data-venue="EMNLP">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
           <p class="pub-title">Modal-Specific Pseudo Query Generation for Video Corpus Moment Retrieval</p>
-          <p class="pub-meta">Minjoon Jung, Seongho Choi, Joochan Kim, <strong>Jin-Hwa Kim</strong>, Byoung-Tak Zhang — EMNLP 2022</p>
-          <div class="pub-topics"><span class="pub-topic">Vision &amp; Language</span></div>
+          <p class="pub-meta">Minjoon Jung, Seongho Choi, Joochan Kim, <strong>Jin-Hwa Kim</strong><sup>†</sup>, Byoung-Tak Zhang<sup>†</sup></p>
+          <p class="pub-venue">EMNLP 2022</p>
+          <div class="pub-footer">
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="ml-theory">
-        <span class="pub-year">2022</span>
+      <li class="pub-item" data-topics="ml-theory" data-year="2022" data-venue="NeurIPS">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2211.02291" target="_blank">SelecMix: Debiased Learning by Contradicting-pair Sampling</a></p>
-          <p class="pub-meta">Inwoo Hwang, Sangjun Lee, Yunhyeok Kwak, Seong Joon Oh, Damien Teney, <strong>Jin-Hwa Kim</strong>, Byoung-Tak Zhang — NeurIPS 2022</p>
-          <div class="pub-topics"><span class="pub-topic">ML Theory</span></div>
+          <p class="pub-title">SelecMix: Debiased Learning by Contradicting-pair Sampling</p>
+          <p class="pub-meta">Inwoo Hwang, Sangjun Lee, Yunhyeok Kwak, Seong Joon Oh, Damien Teney, <strong>Jin-Hwa Kim</strong><sup>†</sup>, Byoung-Tak Zhang<sup>†</sup></p>
+          <p class="pub-venue">NeurIPS 2022</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2211.02291" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="ml-theory">Theory</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="multimodal-generation ml-theory">
-        <span class="pub-year">2022</span>
+      <li class="pub-item" data-topics="multimodal-generation ml-theory" data-year="2022" data-venue="NeurIPS">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2205.13445" target="_blank">Mutual Information Divergence: A Unified Metric for Multimodal Generative Models</a></p>
-          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Yunji Kim, Jiyoung Lee, Kang Min Yoo, Sang-Woo Lee — NeurIPS 2022</p>
-          <div class="pub-topics"><span class="pub-topic">Multimodal Generation</span><span class="pub-topic">ML Theory</span></div>
+          <p class="pub-title">Mutual Information Divergence: A Unified Metric for Multimodal Generative Models</p>
+          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>*<sup>†</sup>, Yunji Kim, Jiyoung Lee, Kang Min Yoo, Sang-Woo Lee</p>
+          <p class="pub-venue">NeurIPS 2022</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2205.13445" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="multimodal-generation">Generation</button><button type="button" class="pub-topic" data-topic="ml-theory">Theory</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="ml-theory">
-        <span class="pub-year">2022</span>
+      <li class="pub-item" data-topics="ml-theory" data-year="2022" data-venue="NeurIPS">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2202.01339" target="_blank">Understanding Cross-Domain Few-Shot Learning Based on Domain Similarity and Few-Shot Difficulty</a></p>
-          <p class="pub-meta">Jaehoon Oh, Sungnyun Kim, Namgyu Ho, <strong>Jin-Hwa Kim</strong>, Hwanjun Song, Se-Young Yun — NeurIPS 2022</p>
-          <div class="pub-topics"><span class="pub-topic">ML Theory</span></div>
+          <p class="pub-title">Understanding Cross-Domain Few-Shot Learning Based on Domain Similarity and Few-Shot Difficulty</p>
+          <p class="pub-meta">Jaehoon Oh, Sungnyun Kim, Namgyu Ho, <strong>Jin-Hwa Kim</strong>, Hwanjun Song, Se-Young Yun</p>
+          <p class="pub-venue">NeurIPS 2022</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2202.01339" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="ml-theory">Theory</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="ml-theory">
-        <span class="pub-year">2022</span>
+      <li class="pub-item" data-topics="ml-theory" data-year="2022">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2205.05282" target="_blank">ReFine: Re-randomization before Fine-tuning for Cross-domain Few-shot Learning</a></p>
-          <p class="pub-meta">Jaehoon Oh, Sungnyun Kim, Namgyu Ho, <strong>Jin-Hwa Kim</strong>, Hwanjun Song, Se-Young Yun — CIKM 2022</p>
-          <div class="pub-topics"><span class="pub-topic">ML Theory</span></div>
+          <p class="pub-title">ReFine: Re-randomization before Fine-tuning for Cross-domain Few-shot Learning</p>
+          <p class="pub-meta">Jaehoon Oh, Sungnyun Kim, Namgyu Ho, <strong>Jin-Hwa Kim</strong>, Hwanjun Song, Se-Young Yun</p>
+          <p class="pub-venue">CIKM 2022</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2205.05282" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="ml-theory">Theory</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="ml-theory">
-        <span class="pub-year">2022</span>
+      <li class="pub-item" data-topics="ml-theory" data-year="2022">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://aclanthology.org/2022.gebnlp-1.27/" target="_blank">Why Knowledge Distillation Amplifies Gender Bias and How to Mitigate from the Perspective of DistilBERT</a></p>
-          <p class="pub-meta">Jaimeen Ahn, Hwaran Lee, <strong>Jin-Hwa Kim</strong>, Alice Oh — NAACL 2022 Workshop (GeBNLP)</p>
-          <div class="pub-topics"><span class="pub-topic">ML Theory</span></div>
+          <p class="pub-title">Why Knowledge Distillation Amplifies Gender Bias and How to Mitigate from the Perspective of DistilBERT</p>
+          <p class="pub-meta">Jaimeen Ahn, Hwaran Lee, <strong>Jin-Hwa Kim</strong>, Alice Oh</p>
+          <p class="pub-venue">NAACL 2022 Workshop (GeBNLP)</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://aclanthology.org/2022.gebnlp-1.27/" target="_blank">PDF</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="ml-theory">Theory</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Workshop</span>
       </li>
-      <li class="pub-item" data-topics="ml-theory">
-        <span class="pub-year">2022</span>
+      <li class="pub-item" data-topics="ml-theory" data-year="2022" data-venue="IJCAI">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
           <p class="pub-title">Logit Mixing Training for More Reliable and Accurate Prediction</p>
-          <p class="pub-meta">Duhyeon Bang, Kyungjune Baek, Jiwoo Kim, Yunho Jeon, <strong>Jin-Hwa Kim</strong>, Jiwon Kim, Jongwuk Lee, Hyunjung Shim — IJCAI 2022</p>
-          <div class="pub-topics"><span class="pub-topic">ML Theory</span></div>
+          <p class="pub-meta">Duhyeon Bang, Kyungjune Baek, Jiwoo Kim, Yunho Jeon, <strong>Jin-Hwa Kim</strong>, Jiwon Kim, Jongwuk Lee, Hyunjung Shim</p>
+          <p class="pub-venue">IJCAI 2022</p>
+          <div class="pub-footer">
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="ml-theory">Theory</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="vision-language">
-        <span class="pub-year">2021</span>
+      <li class="pub-item" data-topics="vision-language" data-year="2021" data-venue="EMNLP">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2004.06698" target="_blank">Reasoning Visual Dialog with Sparse Graph Learning and Knowledge Transfer</a></p>
-          <p class="pub-meta">Gi-Cheon Kang, Junseok Park, Hwaran Lee, Byoung-Tak Zhang, <strong>Jin-Hwa Kim</strong> — Findings of EMNLP 2021</p>
-          <div class="pub-topics"><span class="pub-topic">Vision &amp; Language</span></div>
+          <p class="pub-title">Reasoning Visual Dialog with Sparse Graph Learning and Knowledge Transfer</p>
+          <p class="pub-meta">Gi-Cheon Kang, Junseok Park, Hwaran Lee, Byoung-Tak Zhang<sup>†</sup>, <strong>Jin-Hwa Kim</strong><sup>†</sup></p>
+          <p class="pub-venue">Findings of EMNLP 2021</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2004.06698" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="ml-theory">
-        <span class="pub-year">2021</span>
+      <li class="pub-item" data-topics="ml-theory" data-year="2021">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2105.14737" target="_blank">Semi-orthogonal Embedding for Efficient Unsupervised Anomaly Segmentation</a></p>
-          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Do-Hyeong Kim, Saehoon Yi, Taehoon Lee — arXiv preprint</p>
-          <div class="pub-topics"><span class="pub-topic">ML Theory</span></div>
+          <p class="pub-title">Semi-orthogonal Embedding for Efficient Unsupervised Anomaly Segmentation</p>
+          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Do-Hyeong Kim, Saehoon Yi, Taehoon Lee</p>
+          <p class="pub-venue">arXiv preprint, 2021</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2105.14737" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="ml-theory">Theory</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Preprint</span>
       </li>
-      <li class="pub-item" data-topics="ml-theory">
-        <span class="pub-year">2020</span>
+      <li class="pub-item" data-topics="ml-theory" data-year="2020">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/2006.04298" target="_blank">Multi-step Estimation for Gradient-based Meta-learning</a></p>
-          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Junyoung Park, Yongseok Choi — arXiv preprint</p>
-          <div class="pub-topics"><span class="pub-topic">ML Theory</span></div>
+          <p class="pub-title">Multi-step Estimation for Gradient-based Meta-learning</p>
+          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Junyoung Park, Yongseok Choi</p>
+          <p class="pub-venue">arXiv preprint, 2020</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2006.04298" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="ml-theory">Theory</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Preprint</span>
       </li>
-      <li class="pub-item" data-topics="vision-language multimodal-generation">
-        <span class="pub-year">2019</span>
+      <li class="pub-item" data-topics="vision-language multimodal-generation" data-year="2019" data-venue="ACL">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/1712.05558" target="_blank">CoDraw: Collaborative Drawing as a Testbed for Grounded Goal-driven Communication</a></p>
-          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Nikita Kitaev, Xinlei Chen, Marcus Rohrbach, Byoung-Tak Zhang, Yuandong Tian, Dhruv Batra, Devi Parikh — ACL 2019</p>
-          <div class="pub-topics"><span class="pub-topic">Vision &amp; Language</span><span class="pub-topic">Multimodal Generation</span></div>
+          <p class="pub-title">CoDraw: Collaborative Drawing as a Testbed for Grounded Goal-driven Communication</p>
+          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Nikita Kitaev, Xinlei Chen, Marcus Rohrbach, Byoung-Tak Zhang, Yuandong Tian, Dhruv Batra, Devi Parikh</p>
+          <p class="pub-venue">ACL 2019</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/1712.05558" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button><button type="button" class="pub-topic" data-topic="multimodal-generation">Generation</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="vision-language">
-        <span class="pub-year">2019</span>
+      <li class="pub-item" data-topics="vision-language" data-year="2019">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
           <p class="pub-title">Relational Bilinear Attention Networks with the Assumption of Linear Compositionality</p>
-          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Jaehyun Jun, Byoung-Tak Zhang — CVPR 2019 Workshop (VQA &amp; Dialog)</p>
-          <div class="pub-topics"><span class="pub-topic">Vision &amp; Language</span></div>
+          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Jaehyun Jun, Byoung-Tak Zhang</p>
+          <p class="pub-venue">CVPR 2019 Workshop (VQA &amp; Dialog)</p>
+          <div class="pub-footer">
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Workshop</span>
       </li>
-      <li class="pub-item" data-topics="vision-language">
-        <span class="pub-year">2019</span>
+      <li class="pub-item" data-topics="vision-language" data-year="2019">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://aiforsocialgood.github.io/neurips2019/accepted/track1/pdfs/44_aisg_neurips2019.pdf" target="_blank">Korean Localization of Visual Question Answering for Blind People</a></p>
-          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Soohyun Lim, Jaesun Park, Hansu Cho — NeurIPS 2019 Workshop (AI for Social Good)</p>
-          <div class="pub-topics"><span class="pub-topic">Vision &amp; Language</span></div>
+          <p class="pub-title">Korean Localization of Visual Question Answering for Blind People</p>
+          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Soohyun Lim, Jaesun Park, Hansu Cho</p>
+          <p class="pub-venue">NeurIPS 2019 Workshop (AI for Social Good)</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://aiforsocialgood.github.io/neurips2019/accepted/track1/pdfs/44_aisg_neurips2019.pdf" target="_blank">PDF</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Workshop</span>
       </li>
-      <li class="pub-item" data-topics="vision-language">
-        <span class="pub-year">2018</span>
+      <li class="pub-item" data-topics="vision-language" data-year="2018" data-venue="ECCV">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/1809.07999" target="_blank">Multimodal Dual Attention Memory for Video Story Question Answering</a></p>
-          <p class="pub-meta">Kyung-Min Kim, Seong-Ho Choi, <strong>Jin-Hwa Kim</strong>, Byoung-Tak Zhang — ECCV 2018</p>
-          <div class="pub-topics"><span class="pub-topic">Vision &amp; Language</span></div>
+          <p class="pub-title">Multimodal Dual Attention Memory for Video Story Question Answering</p>
+          <p class="pub-meta">Kyung-Min Kim, Seong-Ho Choi, <strong>Jin-Hwa Kim</strong>, Byoung-Tak Zhang</p>
+          <p class="pub-venue">ECCV 2018</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/1809.07999" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="vision-language">
-        <span class="pub-year">2018</span>
+      <li class="pub-item" data-topics="vision-language" data-featured="true" data-year="2018" data-venue="NeurIPS">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/1805.07932" target="_blank">Bilinear Attention Networks</a></p>
-          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Jaehyun Jun, Byoung-Tak Zhang — NeurIPS 2018</p>
-          <div class="pub-topics"><span class="pub-topic">Vision &amp; Language</span></div>
+          <p class="pub-title">Bilinear Attention Networks</p>
+          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Jaehyun Jun, Byoung-Tak Zhang</p>
+          <p class="pub-venue">NeurIPS 2018</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/1805.07932" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="vision-language ml-theory">
-        <span class="pub-year">2017</span>
+      <li class="pub-item" data-topics="vision-language ml-theory" data-year="2017">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/1712.06228" target="_blank">Visual Explanations from Hadamard Product in Multimodal Deep Networks</a></p>
-          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Byoung-Tak Zhang — NIPS 2017 Workshop (ViGIL)</p>
-          <div class="pub-topics"><span class="pub-topic">Vision &amp; Language</span><span class="pub-topic">ML Theory</span></div>
+          <p class="pub-title">Visual Explanations from Hadamard Product in Multimodal Deep Networks</p>
+          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Byoung-Tak Zhang</p>
+          <p class="pub-venue">NIPS 2017 Workshop (ViGIL)</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/1712.06228" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button><button type="button" class="pub-topic" data-topic="ml-theory">Theory</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Workshop</span>
       </li>
-      <li class="pub-item" data-topics="vision-language">
-        <span class="pub-year">2017</span>
+      <li class="pub-item" data-topics="vision-language" data-year="2017">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
           <p class="pub-title">Large-Scale Text Classification with Deep Neural Networks</p>
-          <p class="pub-meta">Hwiyeol Jo, <strong>Jin-Hwa Kim</strong>, Kyung-Min Kim, Jeong-Ho Chang, Jae-Hong Eom, Byoung-Tak Zhang — KIISE Transactions on Computing Practices, Vol. 23, No. 5</p>
-          <div class="pub-topics"><span class="pub-topic">Vision &amp; Language</span></div>
+          <p class="pub-meta">Hwiyeol Jo, <strong>Jin-Hwa Kim</strong>, Kyung-Min Kim, Jeong-Ho Chang, Jae-Hong Eom, Byoung-Tak Zhang</p>
+          <p class="pub-venue">KIISE Transactions on Computing Practices, Vol. 23, No. 5, 2017</p>
+          <div class="pub-footer">
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Journal</span>
       </li>
-      <li class="pub-item" data-topics="vision-language ml-theory">
-        <span class="pub-year">2017</span>
+      <li class="pub-item" data-topics="vision-language ml-theory" data-year="2017" data-venue="ICLR">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/1610.04325" target="_blank">Hadamard Product for Low-rank Bilinear Pooling</a></p>
-          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Kyoung Woon On, Woosang Lim, Jeonghee Kim, Jung-Woo Ha, Byoung-Tak Zhang — ICLR 2017</p>
-          <div class="pub-topics"><span class="pub-topic">Vision &amp; Language</span><span class="pub-topic">ML Theory</span></div>
+          <p class="pub-title">Hadamard Product for Low-rank Bilinear Pooling</p>
+          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Kyoung Woon On, Woosang Lim, Jeonghee Kim, Jung-Woo Ha, Byoung-Tak Zhang</p>
+          <p class="pub-venue">ICLR 2017</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/1610.04325" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button><button type="button" class="pub-topic" data-topic="ml-theory">Theory</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="ml-theory">
-        <span class="pub-year">2017</span>
+      <li class="pub-item" data-topics="ml-theory" data-year="2017" data-venue="NeurIPS">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/1703.08475" target="_blank">Overcoming Catastrophic Forgetting by Incremental Moment Matching</a></p>
-          <p class="pub-meta">Sang-Woo Lee, <strong>Jin-Hwa Kim</strong>, Jaehyun Jun, Jung-Woo Ha, Byoung-Tak Zhang — NeurIPS 2017</p>
-          <div class="pub-topics"><span class="pub-topic">ML Theory</span></div>
+          <p class="pub-title">Overcoming Catastrophic Forgetting by Incremental Moment Matching</p>
+          <p class="pub-meta">Sang-Woo Lee, <strong>Jin-Hwa Kim</strong>, Jaehyun Jun, Jung-Woo Ha, Byoung-Tak Zhang</p>
+          <p class="pub-venue">NeurIPS 2017 <span class="pub-honor">Spotlight</span></p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/1703.08475" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="ml-theory">Theory</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="vision-language">
-        <span class="pub-year">2016</span>
+      <li class="pub-item" data-topics="vision-language" data-year="2016" data-venue="NeurIPS">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/1606.01455" target="_blank">Multimodal Residual Learning for Visual QA</a></p>
-          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Sang-Woo Lee, Donghyun Kwak, Min-Oh Heo, Jeonghee Kim, Jung-Woo Ha, Byoung-Tak Zhang — NeurIPS 2016</p>
-          <div class="pub-topics"><span class="pub-topic">Vision &amp; Language</span></div>
+          <p class="pub-title">Multimodal Residual Learning for Visual QA</p>
+          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Sang-Woo Lee, Donghyun Kwak, Min-Oh Heo, Jeonghee Kim, Jung-Woo Ha, Byoung-Tak Zhang</p>
+          <p class="pub-venue">NeurIPS 2016</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/1606.01455" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="vision-language">
-        <span class="pub-year">2016</span>
+      <li class="pub-item" data-topics="vision-language" data-year="2016">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
           <p class="pub-title">Large-scale Text Classification with Recurrent Neural Networks</p>
-          <p class="pub-meta">Hwiyeol Jo, <strong>Jin-Hwa Kim</strong>, Kyung-Min Kim, Jeong-Ho Chang, Jae-Hong Eom, Byoung-Tak Zhang — Korea Computer Congress 2016</p>
-          <div class="pub-topics"><span class="pub-topic">Vision &amp; Language</span></div>
+          <p class="pub-meta">Hwiyeol Jo, <strong>Jin-Hwa Kim</strong>, Kyung-Min Kim, Jeong-Ho Chang, Jae-Hong Eom, Byoung-Tak Zhang</p>
+          <p class="pub-venue">Korea Computer Congress 2016</p>
+          <div class="pub-footer">
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="vision-language multimodal-generation">
-        <span class="pub-year">2016</span>
+      <li class="pub-item" data-topics="vision-language multimodal-generation" data-year="2016">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
           <p class="pub-title">Active Vision from Image-Text Multimodal System Learning</p>
-          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Byoung-Tak Zhang — Journal of KIISE, Vol. 43, No. 7</p>
-          <div class="pub-topics"><span class="pub-topic">Vision &amp; Language</span><span class="pub-topic">Multimodal Generation</span></div>
+          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Byoung-Tak Zhang</p>
+          <p class="pub-venue">Journal of KIISE, Vol. 43, No. 7, 2016</p>
+          <div class="pub-footer">
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="vision-language">Vision &amp; Language</button><button type="button" class="pub-topic" data-topic="multimodal-generation">Generation</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Journal</span>
       </li>
-      <li class="pub-item" data-topics="ml-theory">
-        <span class="pub-year">2016</span>
+      <li class="pub-item" data-topics="ml-theory" data-year="2016">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
           <p class="pub-title">TrimZero: A Torch Recurrent Module for Efficient Natural Language Processing</p>
-          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Jeonghee Kim, Jung-Woo Ha, Byoung-Tak Zhang — KIIS Spring Conference 2016</p>
-          <div class="pub-topics"><span class="pub-topic">ML Theory</span></div>
+          <p class="pub-meta"><strong>Jin-Hwa Kim</strong>, Jeonghee Kim, Jung-Woo Ha, Byoung-Tak Zhang</p>
+          <p class="pub-venue">KIIS Spring Conference 2016</p>
+          <div class="pub-footer">
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="ml-theory">Theory</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Conference</span>
       </li>
-      <li class="pub-item" data-topics="ml-theory">
-        <span class="pub-year">2015</span>
+      <li class="pub-item" data-topics="ml-theory" data-year="2015">
+        <div class="pub-thumb" aria-hidden="true"></div>
         <div>
-          <p class="pub-title"><a href="https://arxiv.org/abs/1511.07889" target="_blank">rnn: Recurrent Library for Torch</a></p>
-          <p class="pub-meta">Nicholas Léonard, Sagar Waghmare, Yang Wang, <strong>Jin-Hwa Kim</strong> — arXiv preprint</p>
-          <div class="pub-topics"><span class="pub-topic">ML Theory</span></div>
+          <p class="pub-title">rnn: Recurrent Library for Torch</p>
+          <p class="pub-meta">Nicholas Léonard, Sagar Waghmare, Yang Wang, <strong>Jin-Hwa Kim</strong></p>
+          <p class="pub-venue">arXiv preprint, 2015</p>
+          <div class="pub-footer">
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/1511.07889" target="_blank">arXiv</a></div>
+            <div class="pub-topics"><button type="button" class="pub-topic" data-topic="ml-theory">Theory</button></div>
+          </div>
         </div>
-        <span class="pub-tag">Preprint</span>
       </li>
     </ul>
     <button type="button" class="show-all-btn" id="pub-show-all">Show all publications</button>
+    <button type="button" class="show-all-btn" id="pub-show-less" hidden>Show fewer publications</button>
   </section>
 
   <!-- ================= TEACHING ================= -->
   <section class="block" id="teaching">
     <div class="section-head">
       <div>
-        <span class="label eyebrow">02 — Teaching</span>
+        <span class="label eyebrow">Teaching</span>
         <h2>Teaching</h2>
       </div>
       <div class="note">Courses I'm currently teaching as visiting faculty, and an archive of past terms</div>
@@ -714,7 +935,7 @@
   <section class="block" id="blog">
     <div class="section-head">
       <div>
-        <span class="label eyebrow">03 — Writing</span>
+        <span class="label eyebrow">Writing</span>
         <h2>Blog</h2>
       </div>
       <div class="note">Top-level categories plus tags; any <code>$...$</code> or <code>$$...$$</code> in a post renders as math automatically</div>
@@ -772,27 +993,30 @@
   </section>
 
   <footer id="about">
-    <div class="col" style="flex: 2; min-width: 240px;">
-      <h4>Jin-Hwa Kim</h4>
-      <p style="max-width: 42ch; color: var(--ink-soft);">
-        A personal site for research, teaching, and writing under one roof.
-        Bauhaus geometric discipline and a trace of Greek architectural proportion, rendered
-        in a bold, direct primary-color palette.
-      </p>
+    <div class="footer-cols">
+      <div class="col" style="flex: 2; min-width: 240px;">
+        <h4>Jin-Hwa Kim</h4>
+        <p style="max-width: 42ch; color: var(--ink-soft);">
+          A personal site for research, teaching, and writing under one roof.
+          Bauhaus geometric discipline and a trace of Greek architectural proportion, rendered
+          in a bold, direct primary-color palette.
+        </p>
+      </div>
+      <div class="col">
+        <h4>Menu</h4>
+        <a href="#publications">Publications</a>
+        <a href="#teaching">Teaching</a>
+        <a href="#blog">Blog</a>
+        <a href="#about">About</a>
+      </div>
+      <div class="col">
+        <h4>Elsewhere</h4>
+        <a href="https://scholar.google.com/citations?user=3f2wPekAAAAJ" target="_blank">Google Scholar</a>
+        <a href="https://github.com/jnhwkim" target="_blank">GitHub</a>
+        <a href="mailto:j1nhwa.&lt;lastname&gt;@navercorp.com">Email</a>
+      </div>
     </div>
-    <div class="col">
-      <h4>Menu</h4>
-      <a href="#publications">Publications</a>
-      <a href="#teaching">Teaching</a>
-      <a href="#blog">Blog</a>
-      <a href="#about">About</a>
-    </div>
-    <div class="col">
-      <h4>Elsewhere</h4>
-      <a href="https://scholar.google.com/citations?user=3f2wPekAAAAJ" target="_blank">Google Scholar</a>
-      <a href="https://github.com/jnhwkim" target="_blank">GitHub</a>
-      <a href="mailto:j1nhwa.&lt;lastname&gt;@navercorp.com">Email</a>
-    </div>
+    <div class="footer-bottom">© 2026 Jin-Hwa Kim. All rights reserved.</div>
   </footer>
 
 </div>
@@ -839,21 +1063,134 @@
 })();
 
 (function () {
+  var nav = document.querySelector('nav.primary');
+  if (!nav) return;
+  var navLinks = Array.prototype.slice.call(nav.querySelectorAll('a[href^="#"]'));
+  var sections = navLinks
+    .map(function (link) { return document.querySelector(link.getAttribute('href')); })
+    .filter(Boolean);
+  if (!sections.length) return;
+
+  function setNavHeightVar() {
+    document.documentElement.style.setProperty('--nav-height', nav.getBoundingClientRect().height + 'px');
+  }
+
+  function updateScrollSpy() {
+    var navHeight = nav.getBoundingClientRect().height;
+    var current = sections[0];
+    for (var i = 0; i < sections.length; i++) {
+      if (sections[i].getBoundingClientRect().top <= navHeight + 4) {
+        current = sections[i];
+      } else {
+        break;
+      }
+    }
+    navLinks.forEach(function (link) {
+      var isCurrent = link.getAttribute('href') === '#' + current.id;
+      link.setAttribute('aria-current', isCurrent ? 'page' : 'false');
+    });
+  }
+
+  // Shared with the on-load hash-scroll correction below, so both paths
+  // (clicking a nav link, and loading/refreshing a URL that already has a
+  // matching #hash) land on the exact same pixel.
+  function computeTargetTop(target) {
+    var navHeight = nav.getBoundingClientRect().height;
+    // Land the section's own top border on the exact same pixel row as
+    // nav's border-bottom (rather than just underneath it), so the two
+    // 2px borders coincide into one line instead of stacking into a
+    // visually doubled-thickness band.
+    var navBorderWidth = parseFloat(getComputedStyle(nav).borderBottomWidth) || 0;
+    var safetyMargin = 1;
+    return Math.max(Math.round(target.getBoundingClientRect().top + window.scrollY - navHeight + navBorderWidth + safetyMargin), 0);
+  }
+
+  function scrollToTarget(target, smooth) {
+    window.scrollTo({ top: computeTargetTop(target), behavior: smooth ? 'smooth' : 'auto' });
+    // Smooth-scroll animations (and the browser's own native hash-scroll on
+    // page load) can settle a pixel or two off the requested target
+    // (browser-dependent rounding); snap to the exact position once
+    // things have settled so every section lines up identically.
+    var snapped = false;
+    function snap() {
+      if (snapped) return;
+      snapped = true;
+      window.scrollTo({ top: computeTargetTop(target), behavior: 'auto' });
+    }
+    window.addEventListener('scrollend', snap, { once: true });
+    setTimeout(snap, 700);
+  }
+
+  nav.addEventListener('click', function (e) {
+    var link = e.target.closest('a[href^="#"]');
+    if (!link) return;
+    var target = document.querySelector(link.getAttribute('href'));
+    if (!target) return;
+    e.preventDefault();
+    scrollToTarget(target, true);
+    if (history.pushState) history.pushState(null, '', link.getAttribute('href'));
+  });
+
+  setNavHeightVar();
+  updateScrollSpy();
+
+  // The browser's own native hash-scroll (on initial load, or a refresh of
+  // a URL that already carries a #hash from a previous nav click) only
+  // knows about CSS scroll-margin-top, not this exact-pixel-overlap
+  // correction — redo it ourselves once layout has settled.
+  if (location.hash) {
+    var initialTarget = document.querySelector(location.hash);
+    if (initialTarget) {
+      setTimeout(function () { scrollToTarget(initialTarget, false); }, 0);
+    }
+  }
+
+  window.addEventListener('scroll', updateScrollSpy, { passive: true });
+  window.addEventListener('resize', function () {
+    setNavHeightVar();
+    updateScrollSpy();
+  });
+})();
+
+(function () {
   var COLLAPSE_LIMIT = 7;
-  var topicFilter = document.querySelector('.topic-filter');
+  var topicFilter = document.querySelector('.pub-filters');
+  var pubList = document.getElementById('pub-list');
   var pubItems = Array.prototype.slice.call(document.querySelectorAll('#pub-list .pub-item'));
   var showAllBtn = document.getElementById('pub-show-all');
-  if (!topicFilter || !pubItems.length || !showAllBtn) return;
+  var showLessBtn = document.getElementById('pub-show-less');
+  if (!topicFilter || !pubList || !pubItems.length || !showAllBtn || !showLessBtn) return;
 
-  var currentTopic = 'all';
+  var filterLinks = Array.prototype.slice.call(topicFilter.querySelectorAll('a[data-topic]'));
+  var currentTopic = 'featured';
   var expanded = false;
+
+  function matchesTopic(item, topic) {
+    if (topic === 'all') return true;
+    if (topic === 'featured') return item.getAttribute('data-featured') === 'true';
+    if (topic.indexOf('year:') === 0) return item.getAttribute('data-year') === topic.slice(5);
+    if (topic.indexOf('venue:') === 0) return item.getAttribute('data-venue') === topic.slice(6);
+    var topics = (item.getAttribute('data-topics') || '').split(' ');
+    return topics.indexOf(topic) !== -1;
+  }
+
+  function updateBadges() {
+    filterLinks.forEach(function (link) {
+      var topic = link.getAttribute('data-topic');
+      var badge = link.querySelector('.filter-count');
+      if (!badge) return;
+      var count = pubItems.filter(function (item) { return matchesTopic(item, topic); }).length;
+      badge.textContent = count;
+    });
+  }
 
   function render() {
     var visibleCount = 0;
     var totalMatching = 0;
+    var firstVisibleItem = null;
     pubItems.forEach(function (item) {
-      var topics = (item.getAttribute('data-topics') || '').split(' ');
-      var matches = currentTopic === 'all' || topics.indexOf(currentTopic) !== -1;
+      var matches = matchesTopic(item, currentTopic);
+      item.classList.remove('pub-item--first-visible');
       if (!matches) {
         item.style.display = 'none';
         return;
@@ -864,29 +1201,95 @@
       } else {
         item.style.display = '';
         visibleCount++;
+        if (!firstVisibleItem) firstVisibleItem = item;
       }
     });
-    var needsButton = currentTopic === 'all' && !expanded && totalMatching > COLLAPSE_LIMIT;
-    showAllBtn.style.display = needsButton ? '' : 'none';
+    if (firstVisibleItem) firstVisibleItem.classList.add('pub-item--first-visible');
+
+    if (currentTopic === 'featured') {
+      showAllBtn.hidden = false;
+      showAllBtn.textContent = 'Click to see all publications';
+      showLessBtn.hidden = true;
+    } else {
+      var collapsible = currentTopic === 'all' && totalMatching > COLLAPSE_LIMIT;
+      var needsShowAll = collapsible && !expanded;
+      showAllBtn.hidden = !needsShowAll;
+      showLessBtn.hidden = !(collapsible && expanded);
+      if (needsShowAll) {
+        showAllBtn.textContent = 'Show all publications — ' + totalMatching + ' in total';
+      }
+    }
+    updateBadges();
+  }
+
+  var yearSelect = document.getElementById('filter-year-select');
+  var venueSelect = document.getElementById('filter-venue-select');
+
+  function selectTopic(topic) {
+    currentTopic = topic;
+    expanded = false;
+    filterLinks.forEach(function (link) {
+      link.classList.toggle('active', link.getAttribute('data-topic') === topic);
+    });
+    if (yearSelect) yearSelect.value = topic.indexOf('year:') === 0 ? topic : '';
+    if (venueSelect) venueSelect.value = topic.indexOf('venue:') === 0 ? topic : '';
+    render();
   }
 
   topicFilter.addEventListener('click', function (e) {
     var link = e.target.closest('a[data-topic]');
     if (!link) return;
     e.preventDefault();
-    currentTopic = link.getAttribute('data-topic');
-    expanded = false;
-    var links = topicFilter.querySelectorAll('a[data-topic]');
-    for (var i = 0; i < links.length; i++) {
-      links[i].classList.toggle('active', links[i] === link);
+    selectTopic(link.getAttribute('data-topic'));
+  });
+
+  pubList.addEventListener('click', function (e) {
+    var tag = e.target.closest('.pub-topic');
+    if (!tag) return;
+    var item = tag.closest('.pub-item');
+    var beforeTop = item ? item.getBoundingClientRect().top : null;
+    selectTopic(tag.getAttribute('data-topic'));
+    if (item && beforeTop !== null) {
+      var afterTop = item.getBoundingClientRect().top;
+      window.scrollBy(0, afterTop - beforeTop);
     }
-    render();
   });
 
   showAllBtn.addEventListener('click', function () {
-    expanded = true;
+    if (currentTopic === 'featured') {
+      selectTopic('all');
+    } else {
+      expanded = true;
+      render();
+    }
+  });
+
+  showLessBtn.addEventListener('click', function () {
+    expanded = false;
     render();
   });
+
+  var expandToggle = document.getElementById('filter-expand-toggle');
+  var accordion = document.getElementById('filter-accordion');
+  if (expandToggle && accordion) {
+    expandToggle.addEventListener('click', function () {
+      var isOpen = accordion.hidden;
+      accordion.hidden = !isOpen;
+      expandToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      expandToggle.textContent = isOpen ? '−' : '+';
+    });
+  }
+
+  if (yearSelect) {
+    yearSelect.addEventListener('change', function () {
+      if (yearSelect.value) selectTopic(yearSelect.value);
+    });
+  }
+  if (venueSelect) {
+    venueSelect.addEventListener('change', function () {
+      if (venueSelect.value) selectTopic(venueSelect.value);
+    });
+  }
 
   render();
 })();
