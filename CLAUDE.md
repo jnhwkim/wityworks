@@ -57,15 +57,18 @@ Checklist when adding/editing an entry:
 - **`li[data-topics]`**: space-separated list of the same slugs as the
   `pub-topic` buttons inside it. Keep these two in sync.
 - **Thumbnail**: leave `pub-thumb` as an empty placeholder `<div>` unless the
-  user has supplied an actual image/GIF for that paper (planned location:
-  `static/img/pubs/`). The empty state renders a border-colored X (CSS
-  corner-to-corner gradients, no markup needed) so it doesn't read as a
-  broken image. `.pub-thumb` sizes via `aspect-ratio: 160/110`, not a fixed
-  height — that's deliberate so it keeps the same proportions at the mobile
-  width:100% breakpoint instead of flattening into a wide letterbox. When
+  user has supplied an actual image for that paper (`static/img/pubs/`).
+  The empty state renders a border-colored X (CSS corner-to-corner
+  gradients, no markup needed) so it doesn't read as a broken image.
+  `.pub-thumb` is a fixed 16:9 box (160×90 desktop, 344×194 mobile — hand-set
+  integers, not `aspect-ratio`, since 344×9/16 isn't a whole number). When
   adding a real thumbnail, just put an `<img>` filling the box
   (`width/height:100%; object-fit:cover`) inside the same `.pub-thumb` div —
   it paints over the CSS placeholder automatically, no modifier class needed.
+  `.pub-thumb img` picks up a theme-aware `filter: var(--thumb-filter)`
+  automatically (a faint warm desaturation in light mode, dimmed+desaturated
+  in dark — set alongside the other theme variables at the top of
+  style.css) — don't add a per-image inline filter or override this.
 - **Featured**: add `data-featured="true"` on the `<li class="pub-item">` if
   the user asks a paper to be marked Featured. A gold ★ is prepended to the
   title automatically via CSS (`.pub-item[data-featured="true"] .pub-title::before`)

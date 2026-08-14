@@ -18,6 +18,11 @@
     --line: #14130f;
     --line-soft: #d8d0b3;
     --code-bg: #efe9d8;
+    /* Publication thumbnails: a faint warm desaturation (sepia+grayscale)
+       so photographic figures read as archival plates on the parchment
+       ground rather than clashing with the flat Bauhaus primaries — a
+       restrained nod to worn stone/limestone rather than a full duotone. */
+    --thumb-filter: grayscale(12%) sepia(8%) contrast(1.04) saturate(0.92);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -33,6 +38,10 @@
       --line: #f3efe0;
       --line-soft: #3a3626;
       --code-bg: #211f16;
+      /* Dimmed and slightly desaturated so bright figures don't glare
+         against the dark ground — same archival-plate intent as light
+         mode, tuned for a dark surround instead of parchment. */
+      --thumb-filter: grayscale(18%) brightness(0.82) contrast(1.1) saturate(0.85);
     }
   }
   :root[data-theme="dark"] {
@@ -48,6 +57,7 @@
     --line: #f3efe0;
     --line-soft: #3a3626;
     --code-bg: #211f16;
+    --thumb-filter: grayscale(18%) brightness(0.82) contrast(1.1) saturate(0.85);
   }
 
   * { box-sizing: border-box; }
@@ -453,7 +463,7 @@
       linear-gradient(to bottom right, transparent calc(50% - 0.5px), var(--line-soft) calc(50% - 0.5px), var(--line-soft) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
       linear-gradient(to top right, transparent calc(50% - 0.5px), var(--line-soft) calc(50% - 0.5px), var(--line-soft) calc(50% + 0.5px), transparent calc(50% + 0.5px));
   }
-  .pub-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pub-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; filter: var(--thumb-filter); }
   .pub-title { font-size: 16px; font-weight: 700; margin: 0 0 6px; line-height: 1.3; }
   .pub-item[data-featured="true"] .pub-title::before { content: "★ "; color: var(--gold); }
   .pub-meta { color: var(--ink-soft); font-size: 13px; line-height: 1.15; margin: 0; }
