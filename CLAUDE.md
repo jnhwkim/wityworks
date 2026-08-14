@@ -2,6 +2,27 @@
 
 Static site: `index.html` + `static/css/style.css`. No build step.
 
+## Cropping a pub-thumb image
+
+There's an existing crop tool at `tools/thumb-crop/crop-tool.html` (lives on
+the `tools` branch, not `draft` — pull it over with
+`git show origin/tools:tools/thumb-crop/crop-tool.html > tools/thumb-crop/crop-tool.html`
+if it's missing). It's a standalone HTML/JS page (open directly in a browser,
+no server needed) that crops a source image or video frame to the site's
+16:9 thumbnail sizes (160x90 desktop / 344x194 mobile), with pan/zoom and a
+white-fill eraser to clean up unwanted regions. Don't build a new crop tool
+from scratch — extend this one.
+
+Each paper is a hardcoded entry in the `PAPERS` array at the top of the
+script (num, label, list of candidate image/video filenames). To add a new
+paper: append an entry, then drop the source image(s)/video(s) into
+`tools/thumb-crop/` next to the script with matching filenames — these
+source assets and any cropped output PNGs are intentionally kept out of git
+(heavy, per-run/per-paper, not durable project assets). "Download PNGs"
+saves `final_NN_desktop_160x90.png` / `final_NN_mobile_344x194.png` to the
+Downloads folder; move the one you want into `static/img/pubs/` under the
+paper's slug name.
+
 ## Adding a publication entry
 
 Each entry lives in `#pub-list` (`index.html`) as one `<li class="pub-item">`.
