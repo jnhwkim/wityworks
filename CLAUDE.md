@@ -26,8 +26,6 @@ on purpose):
 
 Checklist when adding/editing an entry:
 
-- **Title**: full/official title, no `<a>` link around it (links live in `pub-links`).
-- **`<strong>`**: wraps `Jin-Hwa Kim` only.
 - **Author markers**: `*` = co-first author, `<sup>†</sup>` = co-corresponding
   author. Get these from the actual paper/venue page, not guessed — don't
   assume "last author = corresponding" for multi-author NAVER AI Lab papers,
@@ -53,18 +51,10 @@ Checklist when adding/editing an entry:
   the label text must exactly match that slug's filter-bar label (see
   taxonomy below), including entity encoding (`&amp;`, not a raw `&`).
   These are also click-to-filter controls (event-delegated from `#pub-list`),
-  so `data-topic` must exactly match one of the six slugs.
-- **`li[data-topics]`**: space-separated list of the same slugs as the
-  `pub-topic` buttons inside it. Keep these two in sync.
+  so `data-topic` must exactly match one of the six slugs. Keep
+  `li[data-topics]` in sync with the same slugs.
 - **Thumbnail**: leave `pub-thumb` as an empty placeholder `<div>` unless the
   user has supplied an actual image for that paper (`static/img/pubs/`).
-  The empty state renders a border-colored X (CSS corner-to-corner
-  gradients, no markup needed) so it doesn't read as a broken image.
-  `.pub-thumb` is a fixed 16:9 box (160×90 desktop, 344×194 mobile — hand-set
-  integers, not `aspect-ratio`, since 344×9/16 isn't a whole number). When
-  adding a real thumbnail, just put an `<img>` filling the box
-  (`width/height:100%; object-fit:cover`) inside the same `.pub-thumb` div —
-  it paints over the CSS placeholder automatically, no modifier class needed.
   `.pub-thumb img` picks up a theme-aware `filter: var(--thumb-filter)`
   automatically (a faint warm desaturation in light mode, dimmed+desaturated
   in dark — set alongside the other theme variables at the top of
@@ -100,13 +90,10 @@ Checklist when adding/editing an entry:
   Top-tier venues currently tracked (add a new one here *and* to the
   `<select>` in the Venue accordion group if a new qualifying paper is
   added): NeurIPS, ICLR, ICML, CVPR, ICCV, ECCV, ACL, EMNLP, IJCAI, WACV.
-  (`NIPS`, the pre-2018 name, is treated as an alias for NeurIPS.) **Workshop
-  papers don't count**, even at an otherwise-tracked venue — e.g. "CVPR 2019
-  Workshop (VQA & Dialog)" or "NeurIPS 2019 Workshop (AI for Social Good)"
-  get no `data-venue` at all, and their venue text containing "Workshop" is
-  the tell. AAAI was dropped from the `<select>` entirely because its one
-  matching entry was workshop-only (0 qualifying papers) — re-add it if a
-  main-track AAAI paper shows up. The option text also carries a static
+  (`NIPS`, the pre-2018 name, is treated as an alias for NeurIPS.)
+  **Workshop papers don't count**, even at an otherwise-tracked venue
+  (AAAI was dropped from the `<select>` entirely on this basis — re-add it
+  if a main-track AAAI paper shows up). The option text also carries a static
   `(N)` count baked into the label at edit time (there's no live badge for
   the selects) — recompute and update it by hand when entries change:
   ```bash
@@ -167,13 +154,9 @@ entries, just double check:
 ## Adding a News entry
 
 Each item lives in `.news-list` (`index.html`) as one `<li>`, newest first.
-Two shapes, pick based on length:
-
-**Short one-liner** (most news — a single sentence or two):
-
-```html
-<li><span class="news-date">2026.08.13</span>🧑‍⚖️ Serving as an Area Chair for <a href="https://iclr.cc/Conferences/2027/" target="_blank">ICLR 2027</a>, to be held in California, USA.</li>
-```
+Two shapes, pick based on length: a plain one-liner (copy an existing short
+entry) for most news, or the long-form popover below for multi-paragraph
+announcements.
 
 **Long-form with a scroll popover** — use this when the source material
 (e.g. a LinkedIn post) is a multi-paragraph announcement. Don't paste the
