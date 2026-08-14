@@ -581,7 +581,7 @@
   .footer-bottom {
     margin-top: 28px; padding-top: 14px; padding-bottom: 24px;
     border-top: 1px solid var(--line-soft);
-    font-family: "Century Gothic", ui-sans-serif, sans-serif;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
     font-size: 11px; letter-spacing: 0.04em; color: var(--ink-faint);
   }
 
