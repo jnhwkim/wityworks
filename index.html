@@ -1,6 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+/* Device-frame preview: append ?device=iphone to the URL to reload the
+   page as a side-by-side compare view — a mobile-width pane (393px,
+   iPhone 15/16 logical size) next to a full-width desktop pane — so the
+   real @media (max-width: ...) breakpoints actually engage on the left
+   (a desktop browser resized narrower doesn't fake a phone's viewport
+   quirks as well as an honest-to-god narrow iframe does), while the
+   right pane shows the normal layout for direct comparison. Each pane is
+   its own <iframe>, so each scrolls independently — that's the whole
+   point of using two iframes instead of, say, a single resized div. The
+   outer wrapper page itself is pinned to exactly 100vh with no scrolling
+   of its own, so it never fights with either pane's internal scroll.
+   Must run as the very first thing in <head>, before anything else
+   parses, so document.write() can cleanly replace the whole document
+   instead of fighting with content that already started rendering. */
+(function () {
+  var device = new URLSearchParams(location.search).get('device');
+  var MOBILE_WIDTHS = { iphone: 393 };
+  var mobileWidth = MOBILE_WIDTHS[device];
+  if (!mobileWidth) return;
+  var cleanUrl = location.pathname + location.hash;
+  document.open();
+  document.write(
+    '<!doctype html><html><head><meta charset="utf-8"><title>Device preview — ' + device + '</title>' +
+    '<style>' +
+    'html,body{margin:0;height:100vh;overflow:hidden;background:#2b2b2b;font-family:sans-serif;}' +
+    '.panes{display:flex;flex-direction:row;height:100%;}' +
+    '.pane{display:flex;flex-direction:column;height:100%;}' +
+    '.pane--mobile{flex:0 0 ' + mobileWidth + 'px;border-right:1px solid #444;}' +
+    '.pane--desktop{flex:1 1 auto;min-width:0;}' +
+    '.pane-label{flex:0 0 auto;padding:8px 0;text-align:center;color:#ccc;font-size:12px;letter-spacing:.05em;background:#1c1c1c;}' +
+    '.pane iframe{flex:1 1 auto;width:100%;height:100%;border:0;}' +
+    '</style>' +
+    '</head><body>' +
+    '<div class="panes">' +
+    '<div class="pane pane--mobile"><div class="pane-label">' + mobileWidth + 'px — ' + device + '</div><iframe src="' + cleanUrl + '"></iframe></div>' +
+    '<div class="pane pane--desktop"><div class="pane-label">Desktop</div><iframe src="' + cleanUrl + '"></iframe></div>' +
+    '</div>' +
+    '</body></html>'
+  );
+  document.close();
+})();
+</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Jin-Hwa Kim</title>
@@ -140,9 +183,11 @@
         <h2>Publications</h2>
       </div>
       <div class="note">
-        <span class="updated-badge">Last updated Aug 2026</span><br/>
-        Filter by topic — sorted by most recent<br/>
-        <span class="pub-legend">* Equal contribution &nbsp;&nbsp; <sup>†</sup> Co-corresponding author</span>
+        <span class="updated-badge">Last updated Aug 2026</span>
+        <div class="note-sub">
+          Filter by topic — sorted by most recent<br/>
+          <span class="pub-legend">* Equal contribution &nbsp;&nbsp; <sup>†</sup> Co-corresponding author</span>
+        </div>
       </div>
     </div>
 
@@ -373,7 +418,7 @@
           <p class="pub-meta"><strong>Jin-Hwa Kim</strong></p>
           <p class="pub-venue">NeurIPS 2024</p>
           <div class="pub-footer">
-            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2402.10403" target="_blank">arXiv</a><a class="pub-btn" href="https://naver-ai.github.io/tropical-nerf/" target="_blank">Demo</a></div>
+            <div class="pub-links"><a class="pub-btn" href="https://arxiv.org/abs/2402.10403" target="_blank">arXiv</a><a class="pub-btn" href="https://naver-ai.github.io/tropical-nerf/" target="_blank">Demo</a><a class="pub-btn" href="https://github.com/naver-ai/tropical-nerf.pytorch" target="_blank">Code</a></div>
             <div class="pub-topics"><button type="button" class="pub-topic" data-topic="ml-theory">Theory</button></div>
           </div>
         </div>
@@ -1083,6 +1128,55 @@
     document.documentElement.style.setProperty('--nav-height', nav.getBoundingClientRect().height + 'px');
   }
 
+  // When the nav wraps to 2+ rows (a narrow viewport, or simply more menu
+  // items than fit on one line), draw a full-width divider — edge-to-edge
+  // like the nav's own border-top/border-bottom — at each row boundary.
+  // Group links by their rendered top (rounded, to absorb sub-pixel
+  // rounding differences between items), one divider per gap between
+  // consecutive rows. Works for any number of rows, not just 2.
+  // Row 2+ links get an explicit marginTop (the CSS default is -1px),
+  // and the row divider gets its own pixel offset from the *pre-shift*
+  // row position — the two are independently tunable, not tied to each
+  // other, since they don't necessarily need to move by the same amount.
+  var ROW_MARGIN_TOP = '-1px';
+  var DIVIDER_OFFSET = -0.5;
+
+  function updateNavRowDividers() {
+    var oldDividers = nav.querySelectorAll('.nav-row-divider');
+    for (var i = 0; i < oldDividers.length; i++) oldDividers[i].remove();
+    // Undo any row-shift from a previous call before re-measuring — which
+    // links fall in row 2+ can change between calls (resize, item count).
+    navLinks.forEach(function (link) { link.style.marginTop = ''; });
+
+    var navTop = nav.getBoundingClientRect().top;
+    var rows = [];
+    navLinks.forEach(function (link) {
+      var top = Math.round(link.getBoundingClientRect().top - navTop);
+      var row = null;
+      for (var j = 0; j < rows.length; j++) {
+        if (Math.abs(rows[j].top - top) < 3) { row = rows[j]; break; }
+      }
+      if (!row) { row = { top: top, links: [] }; rows.push(row); }
+      row.links.push(link);
+    });
+    rows.sort(function (a, b) { return a.top - b.top; });
+    if (rows.length < 2) return;
+
+    // Place dividers using each row's *pre-shift* top (captured above,
+    // at the CSS-default -1px margin) plus DIVIDER_OFFSET — independent
+    // of whatever ROW_MARGIN_TOP does to the links themselves.
+    for (var r = 1; r < rows.length; r++) {
+      var divider = document.createElement('div');
+      divider.className = 'nav-row-divider';
+      divider.style.top = (rows[r].top + DIVIDER_OFFSET) + 'px';
+      nav.appendChild(divider);
+    }
+
+    for (var r2 = 1; r2 < rows.length; r2++) {
+      rows[r2].links.forEach(function (link) { link.style.marginTop = ROW_MARGIN_TOP; });
+    }
+  }
+
   function updateScrollSpy() {
     var navHeight = nav.getBoundingClientRect().height;
     var current = sections[0];
@@ -1115,18 +1209,48 @@
 
   function scrollToTarget(target, smooth) {
     window.scrollTo({ top: computeTargetTop(target), behavior: smooth ? 'smooth' : 'auto' });
-    // Smooth-scroll animations (and the browser's own native hash-scroll on
-    // page load) can settle a pixel or two off the requested target
-    // (browser-dependent rounding); snap to the exact position once
-    // things have settled so every section lines up identically.
-    var snapped = false;
-    function snap() {
-      if (snapped) return;
-      snapped = true;
-      window.scrollTo({ top: computeTargetTop(target), behavior: 'auto' });
+    // Smooth-scroll animations settle a pixel or two off the requested
+    // target (browser-dependent rounding); correct once things have
+    // settled so every section lines up identically. The correction is
+    // measurement-based (actual on-screen gap between nav's bottom and
+    // the target's top) rather than re-deriving computeTargetTop's
+    // formula again, since that formula assumes nav is fully *stuck* —
+    // only reliably true well after scrolling has fully settled.
+    //
+    // On mobile Safari specifically, navigating "up" toward the top of
+    // the page (e.g. Blog → Teaching → Publications) tends to bring the
+    // address bar back, which resizes the visual viewport *after* the
+    // scroll/scrollend has already fired. Rather than repeatedly jump-
+    // correcting (which looked like an overshoot-then-snap-back), this
+    // only *measures* every 120ms until the gap itself stops changing
+    // between checks (i.e. the address bar has actually finished
+    // resizing) — then applies at most one smooth correction, so there's
+    // a single continuous easing motion instead of a jarring re-jump.
+    var navBorderWidth = parseFloat(getComputedStyle(nav).borderBottomWidth) || 0;
+    var desiredGap = -(navBorderWidth + 1);
+    var lastGap = null;
+    var stableCount = 0;
+    var attempts = 0;
+    var maxAttempts = 20; // ~2.4s ceiling so a pathological case can't loop forever
+
+    function poll() {
+      attempts++;
+      var actualGap = target.getBoundingClientRect().top - nav.getBoundingClientRect().bottom;
+      if (lastGap !== null && Math.abs(actualGap - lastGap) < 0.5) {
+        stableCount++;
+      } else {
+        stableCount = 0;
+      }
+      lastGap = actualGap;
+      if (stableCount < 2 && attempts < maxAttempts) {
+        setTimeout(poll, 120);
+        return;
+      }
+      if (Math.abs(actualGap - desiredGap) > 0.5) {
+        window.scrollBy({ top: actualGap - desiredGap, behavior: 'smooth' });
+      }
     }
-    window.addEventListener('scrollend', snap, { once: true });
-    setTimeout(snap, 700);
+    setTimeout(poll, 400);
   }
 
   nav.addEventListener('click', function (e) {
@@ -1140,6 +1264,7 @@
   });
 
   setNavHeightVar();
+  updateNavRowDividers();
   updateScrollSpy();
 
   // The browser's own native hash-scroll (on initial load, or a refresh of
@@ -1156,6 +1281,7 @@
   window.addEventListener('scroll', updateScrollSpy, { passive: true });
   window.addEventListener('resize', function () {
     setNavHeightVar();
+    updateNavRowDividers();
     updateScrollSpy();
   });
 })();

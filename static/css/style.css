@@ -144,11 +144,20 @@
     font-size: 12.5px;
     font-weight: 600;
     padding: 10px 18px;
-    border-right: 1px solid var(--line-soft);
+    border: 1px solid var(--line-soft);
+    margin: -1px 0 0 -1px;
     position: relative;
     transition: background-color 0.15s ease, box-shadow 0.15s ease;
   }
-  nav.primary a:first-child { border-left: 1px solid var(--line-soft); }
+  /* Every link carries a full 1px border, pulled up-and-left by 1px
+     (margin: -1px 0 0 -1px) so it overlaps the previous same-row sibling's
+     right edge *and* the row above's bottom edge — the standard
+     border-collapse-via-negative-margin trick. This is what makes internal
+     dividers a clean 1px (not two 1px borders sitting side by side = 2px)
+     AND gives wrapped rows a line between them, regardless of where the
+     wrap happens to fall or how many items end up per row. Don't go back
+     to border-right + :first-child border-left — that's what caused the
+     missing edges in the first place. */
   nav.primary a:hover {
     background-color: color-mix(in srgb, var(--gold) 14%, transparent);
     box-shadow: inset 0 0 18px color-mix(in srgb, var(--gold) 35%, transparent);
@@ -162,6 +171,12 @@
     content: ""; position: absolute; left: 18px; right: 18px; bottom: 6px; height: 3px;
     background: var(--gold);
   }
+  /* Positioned by JS (see the nav-row-dividers IIFE): a full-bleed line,
+     edge-to-edge like the nav's own border-top/border-bottom, at each
+     boundary between wrapped rows. Per-item borders alone can't do this —
+     justify-content:center leaves gaps at each row's ends, so there's no
+     continuous border there to collapse against. */
+  .nav-row-divider { position: absolute; left: 0; right: 0; height: 0; border-top: 1px solid var(--line-soft); pointer-events: none; }
 
   /* ---------- Pediment divider ---------- */
   /* ---------- Profile (photo / name / affiliation + biography) ---------- */
@@ -186,6 +201,18 @@
   .profile-title { color: var(--ink-soft); font-size: 13px; margin: 0 0 2px; }
   .profile-affil { color: var(--ink-soft); font-size: 13px; margin: 0 0 2px; }
   .profile-affil:last-of-type { margin: 0 0 12px; }
+  @media (max-width: 720px) {
+    /* The name/title golden-ratio pairing (21px/13px) was tuned for the
+       desktop layout, where the title sits in a left-aligned paragraph of
+       running text below it. Centered and alone on narrow screens, that
+       same gap reads as a bigger, more awkward jump — size the title up
+       a bit here rather than touching the desktop ratio. Placed *after*
+       the base .profile-title/.profile-affil rules above (same specificity,
+       so source order decides) — putting a same-specificity mobile
+       override earlier in the file, like the first attempt at this did,
+       loses to the later base rule regardless of the media query matching. */
+    .profile-title, .profile-affil { font-size: 14.5px; }
+  }
   .profile-links {
     list-style: none; margin: 0; padding: 12px 0 0; border-top: 1px solid var(--line-soft);
     display: flex; flex-direction: row; gap: 12px;
@@ -281,6 +308,13 @@
     background: var(--gold);
   }
   .topic-filter li a:hover { border-color: var(--blue); color: var(--blue); }
+  @media (max-width: 720px) {
+    /* On mobile the filter pills wrap to several rows with no room to
+       add row-gap (can't push rows apart without breaking the wrap
+       count), so the active underline sitting 5px below the pill reads
+       as floating too far from it. Pull it in closer here only. */
+    .topic-filter li a.active::after { bottom: -2px; }
+  }
   .filter-count {
     display: inline-flex; align-items: center; justify-content: center;
     min-width: 16px; padding: 1px 5px; border-radius: 999px;
@@ -344,14 +378,51 @@
   /* ---------- Sections ---------- */
   section.block { padding: 36px 0; border-top: 2px solid var(--ink); }
   .section-head {
-    display: flex; align-items: baseline; justify-content: space-between; gap: 20px;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 20px;
     margin-bottom: 14px; flex-wrap: wrap;
+  }
+  @media (max-width: 720px) {
+    /* When the title and .note wrap onto separate lines, the 20px gap
+       (meant for side-by-side spacing) reads as a big vertical gap
+       between the title row and the note row — tighten it here. */
+    .section-head { gap: 4px 20px; }
+    /* Publications specifically: the eyebrow ("Research") and the badge
+       ("Last updated...") are meant to read as a matched pair at the same
+       height, but as two wrapped flex items (eyebrow+h2 as one block,
+       the whole .note as another) they land many lines apart once
+       wrapped. display:contents on the two wrapper divs lets their
+       children join a shared grid directly, so eyebrow/badge can share
+       row 1 and h2/note-sub can share row 2 — without touching the
+       desktop layout (which still uses those two divs normally). */
+    #publications .section-head {
+      display: grid; grid-template-columns: 1fr auto; column-gap: 16px; row-gap: 2px;
+    }
+    #publications .section-head > div:first-child,
+    #publications .section-head .note { display: contents; }
+    #publications .section-head .eyebrow { grid-column: 1; grid-row: 1; margin-bottom: 0; }
+    #publications .section-head h2 { grid-column: 1 / -1; grid-row: 2; }
+    #publications .updated-badge { grid-column: 2; grid-row: 1; justify-self: end; }
+    #publications .note-sub {
+      /* Its own row below "Publications" (not sharing row 2 with it) —
+         squeezed into column 2 alongside the h2, this wrapped awkwardly
+         on narrow screens since there wasn't enough room for either. */
+      grid-column: 1 / -1; grid-row: 3; justify-self: end; text-align: right;
+      color: var(--ink-soft); font-size: 13px; max-width: 36ch;
+    }
   }
   .section-head .eyebrow { color: var(--ink-faint); margin-bottom: 4px; display: block; }
   .section-head h2 { font-size: 26px; font-weight: 400; margin: 0; letter-spacing: 0.01em; }
-  .section-head .note { color: var(--ink-soft); font-size: 13px; max-width: 36ch; text-align: right; }
+  .section-head .note {
+    color: var(--ink-soft); font-size: 13px; max-width: 36ch; text-align: right;
+    margin-left: auto;   /* keeps it pinned to the right edge even when it wraps onto
+                             its own flex line — "justify-content: space-between" gives up
+                             and left-aligns a lone item on a wrapped line otherwise */
+  }
 
   .cols { display: grid; gap: 28px; }
+  .cols > * { min-width: 0; }   /* grid items default to min-width:auto — without this, a wide
+                                   overflow-x:auto child (e.g. .math-demo .source) forces the
+                                   whole track (and the page) wider instead of scrolling internally */
   .cols.two { grid-template-columns: 1fr 1fr; }
   .cols.blog { grid-template-columns: 210px 1fr; }
   @media (max-width: 720px) {
@@ -367,14 +438,25 @@
   }
   .pub-item:first-child, .pub-item.pub-item--first-visible { border-top: none; }
   .pub-thumb {
-    width: 160px; height: 110px; background: var(--ground-raised);
+    /* aspect-ratio (not a fixed height) so the box keeps the same 160:110
+       proportions at any width — on mobile the media query below sets
+       width:100%, and without aspect-ratio that would flatten it out into
+       a much wider, shorter box instead of just scaling up uniformly */
+    width: 160px; aspect-ratio: 160 / 110; background: var(--ground-raised);
     border: 1px solid var(--line-soft);
+    /* Empty-placeholder X, same color/weight as the border, so an
+       unfilled thumbnail doesn't read as a broken/missing image. Once a
+       real thumbnail is added (an <img> filling the box), it paints over
+       this and hides it automatically — no modifier class needed. */
+    background-image:
+      linear-gradient(to bottom right, transparent calc(50% - 0.5px), var(--line-soft) calc(50% - 0.5px), var(--line-soft) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      linear-gradient(to top right, transparent calc(50% - 0.5px), var(--line-soft) calc(50% - 0.5px), var(--line-soft) calc(50% + 0.5px), transparent calc(50% + 0.5px));
   }
   .pub-title { font-size: 16px; font-weight: 700; margin: 0 0 6px; line-height: 1.3; }
   .pub-item[data-featured="true"] .pub-title::before { content: "★ "; color: var(--gold); }
   .pub-meta { color: var(--ink-soft); font-size: 13px; line-height: 1.15; margin: 0; }
   .pub-venue { color: var(--ink-soft); font-size: 13px; line-height: 1.3; margin: 6px 0 0; }
-  .pub-honor { color: var(--gold); font-weight: 600; }
+  .pub-honor { color: var(--gold); font-weight: 600; margin-left: 4px; }
   .pub-footer { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
   .pub-links { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; }
   .pub-btn {
