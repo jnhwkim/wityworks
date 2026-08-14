@@ -375,6 +375,11 @@
   }
   .show-all-btn:hover { border-color: var(--blue); color: var(--blue); }
   .show-all-btn[hidden] { display: none; }
+  .show-all-btn--sm {
+    font-size: 9px; padding: 5px 12px; margin-top: 12px;
+  }
+
+  #teaching-courses.collapsed .course-card:nth-child(n+3) { display: none; }
 
   .pub-topics { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 0 auto; }
   .pub-topic {
@@ -428,6 +433,9 @@
                              its own flex line — "justify-content: space-between" gives up
                              and left-aligns a lone item on a wrapped line otherwise */
   }
+  /* Teaching's note is a longer single sentence than other sections' — widen
+     just here instead of shrinking the wording to fit the default 36ch. */
+  #teaching .section-head .note { max-width: 56ch; }
 
   .cols { display: grid; gap: 28px; }
   .cols > * { min-width: 0; }   /* grid items default to min-width:auto — without this, a wide

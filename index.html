@@ -963,25 +963,39 @@
     <div class="section-head">
       <div>
         <span class="label eyebrow">Teaching</span>
-        <h2>Teaching</h2>
+        <h2>Courses</h2>
       </div>
-      <div class="note">Courses I'm currently teaching as visiting faculty, and an archive of past terms</div>
+      <div class="note">Graduate courses taught at <br/>Seoul National University as guest faculty</div>
     </div>
 
-    <div class="cols two">
+    <div class="cols two" id="teaching-courses">
       <div class="course-card">
-        <span class="label term">Fall 2026 · Visiting Professor</span>
-        <h3>Introduction to Deep Learning</h3>
-        <p>From the foundations of representation learning and optimization through transformer architectures, for 3rd–4th year undergraduates.</p>
-        <div class="course-meta"><span>Tue/Thu 15:00</span><span>Eng. Bldg. 401</span><span>Syllabus →</span></div>
+        <span class="label term">Fall 2026 · Guest Faculty, SNU AIIS</span>
+        <h3>Large Foundational Models and Physical World Models for Multimodal AI</h3>
+        <p>Multimodal foundation models — multimodal LLMs and multimodal generative AI — together with physical world models that represent, simulate, and predict the 3D/4D physical world under actions, followed by a paper-driven seminar. Co-taught with Sangdoo Yun.</p>
+        <div class="course-meta"><span>Fri 13:00–15:50</span><span>Bldg. 302, Rm. 106</span><a href="static/pdf/syllabus-multimodal-ai-foundation-world-models-2026-fall.pdf" target="_blank">Syllabus →</a></div>
       </div>
       <div class="course-card">
-        <span class="label term">Spring 2025 · Visiting Professor</span>
-        <h3>Probability and Statistical Inference</h3>
-        <p>A ground-up rebuild of the standard probability and statistics sequence from a Bayesian inference perspective. Labs in R and Python.</p>
-        <div class="course-meta"><span>Mon 13:00</span><span>Online</span><span>Syllabus →</span></div>
+        <span class="label term">Fall 2025 · Guest Faculty, SNU AIIS</span>
+        <h3>Multimodal Generative AI Theories and Applications</h3>
+        <p>Multimodal generative AI from vision and language to audio and speech, with neural graphics (NeRFs, 3DGS) as an emerging topic in multi-view representation learning. Co-taught with Sangdoo Yun.</p>
+        <div class="course-meta"><span>Fri 13:00–15:50</span><span>Bldg. 302, Rm. 107</span><a href="static/pdf/syllabus-multimodal-generative-ai-2025-fall.pdf" target="_blank">Syllabus →</a></div>
+      </div>
+      <div class="course-card">
+        <span class="label term">Fall 2024 · Guest Faculty, SNU AIIS</span>
+        <h3>Multimodal Deep Learning Theories and Applications</h3>
+        <p>Core theories and applications of multimodal deep learning across vision, language, audio, and speech, extending into neural graphics (NeRFs). Co-taught with Sangdoo Yun and Jiyoung Lee.</p>
+        <div class="course-meta"><span>Fri 13:00–15:50</span><span>Bldg. 302, Rm. 107</span><a href="static/pdf/syllabus-multimodal-deep-learning-2024-fall.pdf" target="_blank">Syllabus →</a></div>
+      </div>
+      <div class="course-card">
+        <span class="label term">Fall 2023 · Guest Faculty, SNU AIIS</span>
+        <h3>Multimodal Deep Learning Theories and Applications</h3>
+        <p>Core theories and applications of multimodal deep learning across vision, language, audio, and speech, with neural graphics (NeRFs) as time permits. Co-taught with Jiyoung Lee.</p>
+        <div class="course-meta"><span>Fri 13:00–15:50</span><span>Bldg. 302, Rm. 107</span><a href="static/pdf/syllabus-multimodal-deep-learning-2023-fall.pdf" target="_blank">Syllabus →</a></div>
       </div>
     </div>
+    <button type="button" class="show-all-btn show-all-btn--sm" id="teaching-show-all">Show earlier courses</button>
+    <button type="button" class="show-all-btn show-all-btn--sm" id="teaching-show-less" hidden>Show fewer courses</button>
   </section>
 
   <!-- ================= BLOG ================= -->
@@ -1112,6 +1126,30 @@
     var btn = e.target.closest('button[data-mode]');
     if (!btn) return;
     setTheme(btn.getAttribute('data-mode'));
+  });
+})();
+
+(function () {
+  var courses = document.getElementById('teaching-courses');
+  var showAllBtn = document.getElementById('teaching-show-all');
+  var showLessBtn = document.getElementById('teaching-show-less');
+  if (!courses || !showAllBtn || !showLessBtn) return;
+  if (courses.querySelectorAll('.course-card').length <= 2) {
+    showAllBtn.hidden = true;
+    return;
+  }
+
+  courses.classList.add('collapsed');
+
+  showAllBtn.addEventListener('click', function () {
+    courses.classList.remove('collapsed');
+    showAllBtn.hidden = true;
+    showLessBtn.hidden = false;
+  });
+  showLessBtn.addEventListener('click', function () {
+    courses.classList.add('collapsed');
+    showAllBtn.hidden = false;
+    showLessBtn.hidden = true;
   });
 })();
 
