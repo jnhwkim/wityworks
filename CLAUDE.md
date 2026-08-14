@@ -154,6 +154,58 @@ entries, just double check:
    show before the "Show all" button appears — it does not need to change
    when adding papers.
 
+## Adding a News entry
+
+Each item lives in `.news-list` (`index.html`) as one `<li>`, newest first.
+Two shapes, pick based on length:
+
+**Short one-liner** (most news — a single sentence or two):
+
+```html
+<li><span class="news-date">2026.08.13</span>🧑‍⚖️ Serving as an Area Chair for <a href="https://iclr.cc/Conferences/2027/" target="_blank">ICLR 2027</a>, to be held in California, USA.</li>
+```
+
+**Long-form with a scroll popover** — use this when the source material
+(e.g. a LinkedIn post) is a multi-paragraph announcement. Don't paste the
+full text into the visible one-liner; summarize that to a single sentence,
+and put the full original text behind a hover/focus popover instead:
+
+```html
+<li><span class="news-date">2026.08.03</span>📣 Welcoming <a href="https://jho-yonsei.github.io/" target="_blank">Dr. Jungho Lee</a> to Generation Research, NAVER AI Lab as a Research Scientist working on city-scale physical world models. <span class="news-popover" tabindex="0"><span class="news-popover-trigger" aria-hidden="true"><svg viewBox="0 0 20 14" width="18" height="13"><rect x="1" y="4.5" width="2.4" height="7.5" rx="1.2" fill="var(--gold)"/><rect x="16.6" y="4.5" width="2.4" height="7.5" rx="1.2" fill="var(--gold)"/><path d="M3.4,4.7 Q10,2.6 16.6,4.7 L16.6,11.8 Q10,13.9 3.4,11.8 Z" fill="var(--gold)" opacity="0.18" stroke="var(--gold)" stroke-width="0.8"/><line x1="6" y1="6.5" x2="14" y2="6.5" stroke="var(--gold)" stroke-width="0.7"/><line x1="6" y1="8.3" x2="14" y2="8.3" stroke="var(--gold)" stroke-width="0.7"/><line x1="6" y1="10.1" x2="11.5" y2="10.1" stroke="var(--gold)" stroke-width="0.7"/></svg></span><div class="news-popover-box" role="tooltip"><div class="popover-inner">
+  <p class="popover-date">3 Aug 2026</p>
+  <p class="popover-headline">📣 Welcoming Dr. Jungho Lee to Generation Research, NAVER AI Lab!</p>
+  <p>...full original paragraphs, unedited...</p>
+  <p class="popover-foot">J.H.</p>
+</div></div></span></li>
+```
+
+Notes on this pattern:
+
+- The parchment-scroll SVG (rolled ends + a few text-line strokes, all
+  `var(--gold)`) is the trigger icon — reuse this exact markup, don't swap
+  in an emoji (💬 was tried and rejected as too generic/chat-app-flavored).
+- `<span class="news-popover-box">` and `<div class="popover-inner">` are
+  intentionally `<div>`s (they hold `<p>` tags — a `<span>` wrapping `<p>` is
+  invalid HTML), while `.news-popover` and `.news-popover-trigger` stay
+  `<span>` so the trigger sits inline inside the running sentence.
+- `.news-popover-box` has `padding-top: 10px` instead of `margin-top` on
+  purpose — this is the "invisible bridge" that keeps the CSS `:hover` state
+  alive while the mouse moves from the trigger down into the popover. Using
+  `margin-top` instead would create a dead zone and the popover would
+  vanish before the pointer reaches it. Don't "simplify" this to a margin.
+- `tabindex="0"` + `:focus-within` on `.news-popover` make it keyboard-
+  accessible (Tab to it, popover shows) — keep both when copying the pattern.
+- Inside the popover: `.popover-date` (the dateline, plain weight, muted
+  color, sits above the quote), `.popover-headline` (bold — the first
+  line of the original post, e.g. its own title/exclamation), then plain
+  `<p>`s for the rest of the original text verbatim, then `.popover-foot`
+  (italic, right-aligned, initials only — signature-style, no date; the
+  date already lives up top in `.popover-date`, don't repeat it here).
+- The `border-top: 3px solid var(--gold)` on `.popover-inner` is deliberate
+  (a small nod to a Greek entablature/architrave line) — a triangle/circle/
+  square corner mark was tried in this same spot and removed for being too
+  much decoration on a small utility popup; don't re-add it.
+
 ## Layout/format gotchas (things that broke before, don't reintroduce)
 
 - `pub-links` + `pub-topics` must be siblings inside one `.pub-footer` div

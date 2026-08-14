@@ -210,6 +210,7 @@
 
   .bio { position: relative; top: -2px; }
   .bio p { margin: 0 0 10px; color: var(--ink); line-height: 1.68; }
+  .bio-name { font-family: 'Libre Baskerville', Georgia, "Times New Roman", serif; font-weight: 400; }
 
   .news-list {
     list-style: none; margin: 14px 0 0; padding: 10px 0 0; border-top: 1px solid var(--line-soft);
@@ -219,8 +220,54 @@
     font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: var(--ink-faint);
     margin-right: 8px;
   }
+
+  /* ---- News popover (speech-bubble hint) ---- */
+  .news-popover { position: relative; display: inline-block; }
+  .news-popover-trigger {
+    cursor: help; margin-left: 4px;
+    display: inline-flex; align-items: center;
+    opacity: 0.75; transition: opacity 0.15s ease;
+  }
+  .news-popover-trigger svg { display: block; }
+  .news-popover:hover .news-popover-trigger,
+  .news-popover:focus-within .news-popover-trigger { opacity: 1; }
+  .news-popover-box {
+    display: none;
+    position: absolute; top: 100%; left: 0;
+    padding-top: 10px;               /* invisible bridge — keeps hover unbroken between trigger and box */
+    width: max-content; max-width: min(380px, 80vw);
+    z-index: 40;
+  }
+  .news-popover:hover .news-popover-box,
+  .news-popover:focus-within .news-popover-box,
+  .news-popover-box:hover { display: block; }
+  .popover-inner {
+    position: relative;
+    background: var(--ground-raised);
+    border: 1.5px solid var(--ink);
+    border-top: 3px solid var(--gold);   /* architrave line — a nod to the Greek entablature */
+    padding: 12px 18px 16px;
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif;
+    font-size: 13px; line-height: 1.62; color: var(--ink);
+  }
+  .popover-inner p { margin: 0 0 10px; }
+  .popover-inner p:last-child { margin-bottom: 0; }
+  .popover-inner p.popover-date {
+    font-weight: 400 !important; font-size: 12.5px;
+    letter-spacing: 0.03em; color: var(--ink-faint);
+    margin-bottom: 2px;
+  }
+  .popover-inner p.popover-headline { font-weight: 700 !important; }
+  .popover-inner p:not(.popover-headline):not(.popover-foot) { font-weight: 400 !important; }
+  .popover-foot {
+    margin-top: 12px; padding-top: 8px;
+    border-top: 1px solid var(--line-soft);
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif;
+    font-style: italic; font-size: 12.5px;
+    color: var(--ink-faint); text-align: right;
+  }
   .bio p:last-of-type { margin-bottom: 0; }
-  .topic-filter { list-style: none; display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 18px; padding: 0; }
+  .topic-filter { list-style: none; display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 10px; padding: 0; }
   .topic-filter li a {
     display: flex; align-items: center; gap: 5px; text-decoration: none;
     font-family: "Century Gothic", ui-sans-serif, sans-serif;
@@ -249,14 +296,14 @@
     width: 26px; height: 26px; padding: 0; line-height: 1;
     border: 1.5px solid var(--line-strong); color: var(--ink-soft);
     font-size: 14px; font-weight: 600;
-    position: relative; top: -2px;
+    position: relative; top: 0px;
   }
   .filter-expand:hover { border-color: var(--blue); color: var(--blue); }
   .filter-expand[aria-expanded="true"] { border-color: var(--gold); color: var(--gold); }
 
   .filter-accordion {
-    display: flex; flex-wrap: wrap; gap: 20px;
-    margin: -8px 0 18px; padding-top: 12px;
+    display: flex; flex-wrap: nowrap; gap: 20px;
+    margin: 11px 0 4px; padding-top: 12px;
     border-top: 1px dashed var(--line-soft);
   }
   .filter-accordion[hidden] { display: none; }
@@ -266,6 +313,7 @@
     font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
     color: var(--ink-faint); min-width: 42px;
   }
+  .filter-accordion-label--venue { min-width: 52px; }
   .filter-select {
     font-family: "Century Gothic", ui-sans-serif, sans-serif;
     font-size: 12px; color: var(--ink-soft);
@@ -297,7 +345,7 @@
   section.block { padding: 36px 0; border-top: 2px solid var(--ink); }
   .section-head {
     display: flex; align-items: baseline; justify-content: space-between; gap: 20px;
-    margin-bottom: 18px; flex-wrap: wrap;
+    margin-bottom: 14px; flex-wrap: wrap;
   }
   .section-head .eyebrow { color: var(--ink-faint); margin-bottom: 4px; display: block; }
   .section-head h2 { font-size: 26px; font-weight: 400; margin: 0; letter-spacing: 0.01em; }
@@ -311,7 +359,7 @@
   }
 
   /* ---- Publications ---- */
-  .pub-legend { color: var(--ink-faint); font-size: 12px; margin: 0 0 18px; }
+  .pub-legend { color: var(--ink-faint); font-size: 12px; }
   .pub-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
   .pub-item {
     display: grid; grid-template-columns: 160px 1fr; gap: 20px;
