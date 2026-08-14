@@ -438,11 +438,12 @@
   }
   .pub-item:first-child, .pub-item.pub-item--first-visible { border-top: none; }
   .pub-thumb {
-    /* aspect-ratio (not a fixed height) so the box keeps the same 160:110
-       proportions at any width — on mobile the media query below sets
-       width:100%, and without aspect-ratio that would flatten it out into
-       a much wider, shorter box instead of just scaling up uniformly */
-    width: 160px; aspect-ratio: 160 / 110; background: var(--ground-raised);
+    /* 16:9, explicit integer height rather than aspect-ratio — width stays
+       fixed at each breakpoint (160px desktop, 344px mobile below), and
+       160*9/16 lands on an exact integer (90) but 344*9/16 doesn't
+       (193.5), so both are hand-set to their nearest integer instead of
+       left to aspect-ratio's fractional math. */
+    width: 160px; height: 90px; background: var(--ground-raised);
     border: 1px solid var(--line-soft);
     /* Empty-placeholder X, same color/weight as the border, so an
        unfilled thumbnail doesn't read as a broken/missing image. Once a
@@ -452,6 +453,7 @@
       linear-gradient(to bottom right, transparent calc(50% - 0.5px), var(--line-soft) calc(50% - 0.5px), var(--line-soft) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
       linear-gradient(to top right, transparent calc(50% - 0.5px), var(--line-soft) calc(50% - 0.5px), var(--line-soft) calc(50% + 0.5px), transparent calc(50% + 0.5px));
   }
+  .pub-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .pub-title { font-size: 16px; font-weight: 700; margin: 0 0 6px; line-height: 1.3; }
   .pub-item[data-featured="true"] .pub-title::before { content: "★ "; color: var(--gold); }
   .pub-meta { color: var(--ink-soft); font-size: 13px; line-height: 1.15; margin: 0; }
@@ -469,7 +471,7 @@
   .pub-btn:hover { color: var(--blue); }
   @media (max-width: 560px) {
     .pub-item { grid-template-columns: 1fr; }
-    .pub-thumb { width: 100%; }
+    .pub-thumb { width: 344px; height: 194px; max-width: 100%; }
   }
   .updated-badge {
     display: inline-flex; align-items: center; gap: 6px;
