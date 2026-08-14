@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thumbnail Crop Tool</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    background: #1b1b1b; color: #eee; display: flex; height: 100vh; overflow: hidden;
+  }
+  #sidebar {
+    width: 220px; flex: 0 0 220px; background: #141414; overflow-y: auto;
+    border-right: 1px solid #333; padding: 8px;
+  }
+  .paper-btn {
+    display: block; width: 100%; text-align: left; padding: 10px 10px; margin-bottom: 4px;
+    background: #222; border: 1px solid #333; border-radius: 6px; color: #ddd;
+    cursor: pointer; font-size: 13px; line-height: 1.3;
+  }
+  .paper-btn.done { border-color: #4a7; }
+  .paper-btn.active { background: #35424f; border-color: #6cf; }
+  .paper-btn b { color: #6cf; }
+  .paper-btn.done b { color: #7e7; }
+
+  #main { flex: 1 1 auto; display: flex; flex-direction: column; overflow: hidden; }
+  #gallery {
+    flex: 0 0 auto; display: flex; gap: 8px; padding: 10px; overflow-x: auto;
+    background: #141414; border-bottom: 1px solid #333;
+  }
+  .cand {
+    flex: 0 0 auto; width: 120px; height: 68px; object-fit: cover; border-radius: 4px;
+    border: 2px solid transparent; cursor: pointer; background: #000;
+  }
+  .cand.selected { border-color: #6cf; }
+  .cand-video {
+    flex: 0 0 auto; width: 120px; height: 68px; border-radius: 4px; border: 2px dashed #888;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    font-size: 11px; text-align: center; color: #aaa; background: #000;
+  }
+
+  #editor { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; gap: 24px; overflow: auto; padding: 20px; }
+  #canvasWrap { position: relative; background: #000; box-shadow: 0 0 0 1px #333; }
+  #srcCanvas { display: block; cursor: grab; }
+  #srcCanvas.dragging { cursor: grabbing; }
+  #srcCanvas.erasing { cursor: crosshair; }
+  button.action.on { background: #6cf; color: #002; border-color: #9df; }
+
+  #videoPanel {
+    display: none; flex-direction: column; align-items: center; gap: 8px;
+    background: #141414; border: 1px solid #333; border-radius: 8px; padding: 12px;
+  }
+  #videoPanel video { max-width: 480px; max-height: 320px; }
+
+  #sidePanel { width: 260px; flex: 0 0 260px; display: flex; flex-direction: column; gap: 14px; }
+  .preview-box { background: #000; box-shadow: 0 0 0 1px #333; }
+  .preview-label { font-size: 11px; color: #999; margin-bottom: 4px; }
+  button.action {
+    padding: 8px 14px; border-radius: 6px; border: 1px solid #6cf; background: #244; color: #cff;
+    cursor: pointer; font-size: 13px;
+  }
+  button.action:hover { background: #2c5a5a; }
+  button.secondary { border-color: #555; background: #222; color: #ccc; }
+  input[type=range] { width: 100%; }
+  .hint { font-size: 11px; color: #888; line-height: 1.5; }
+  .row { display: flex; gap: 8px; }
+  #status { position: fixed; bottom: 10px; left: 230px; font-size: 12px; color: #7e7; }
+</style>
+</head>
+<body>
+
+  <div id="sidebar"></div>
+
+  <div id="main">
+    <div id="gallery"></div>
+    <div id="editor">
+      <div id="videoPanel">
+        <video id="videoEl" controls muted></video>
+        <button class="action" id="captureBtn">이 프레임 캡처해서 크롭하기</button>
+      </div>
+      <div id="canvasWrap">
+        <canvas id="srcCanvas"></canvas>
+      </div>
+      <div id="sidePanel">
+        <div>
+          <div class="preview-label">Mobile preview (344×194)</div>
+          <canvas class="preview-box" id="previewMobile" width="344" height="194" style="width:230px;height:129.6px;"></canvas>
+        </div>
+        <div>
+          <div class="preview-label">Desktop preview (160×90)</div>
+          <canvas class="preview-box" id="previewDesktop" width="160" height="90" style="width:160px;height:90px;"></canvas>
+        </div>
+        <div>
+          <div class="preview-label">Zoom</div>
+          <input type="range" id="zoomSlider" min="0" max="1" step="0.001" value="0">
+        </div>
+        <div class="row">
+          <button class="action secondary" id="resetBtn">Reset</button>
+          <button class="action" id="downloadBtn">Download PNGs</button>
+        </div>
+        <div class="row">
+          <button class="action secondary" id="eraserBtn">🩹 지우개</button>
+        </div>
+        <div>
+          <div class="preview-label">지우개 크기</div>
+          <input type="range" id="eraserSizeSlider" min="4" max="120" step="1" value="24">
+        </div>
+        <div class="hint">
+          드래그/화살표키: 이미지 이동&nbsp;·&nbsp;슬라이더/휠/Z,X: 확대·축소<br>
+          크롭 창(파란 테두리)에 보이는 부분만 저장됨. 이미지보다 창이 크면 빈 부분은 흰색으로 채워짐.<br>
+          지우개 켜고 드래그하면 그 부분이 흰색으로 지워짐 (원본 자체가 지워짐, 되돌리려면 후보 이미지를 다시 클릭).<br>
+          다운로드하면 final_XX_desktop_160x90.png / final_XX_mobile_344x194.png 두 개가 저장됨 — Downloads 폴더에서 thumbs 폴더로 옮겨줘.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="status"></div>
+
+<script>
+const CROP_W = 480, CROP_H = 270; // 16:9 display crop window (scaled export to 344x194 / 160x90)
+
+const PAPERS = [
+  { num: '01', label: 'Seoul World Model', images: ['01_frame.png'], videos: ['01_seoulworldmodel.mp4'] },
+  { num: '02', label: 'TetraSDF', images: ['02_tetrasdf.png'], videos: [] },
+  { num: '03', label: 'Relaxed Rigidity (4DGS)', images: ['03_frame.png'], videos: ['03_r3g.mp4'] },
+  { num: '04', label: 'CAMEO', images: ['04_cameo_result.png','04_frame_8.png','04_frame_12.png','04_frame_16.png','04_frame_20.png'], videos: ['04_cameo.mp4'] },
+  { num: '05', label: 'MVCustom', images: ['05_mvcustom.png'], videos: [] },
+  { num: '06', label: 'MoAI', images: ['06_moai.png'], videos: [] },
+  { num: '07', label: 'TropicalNeRF', images: ['07_tropicalnerf.svg','07_frame.png'], videos: [] },
+  { num: '08', label: 'Effective Rank (3DGS)', images: ['08_frame_10.png','08_alt_qualmesh.png','08_alt_qualnormal.png','08_alt_erankvis.png'], videos: ['08_erankgs.mp4','08_alt_replay.mp4'] },
+  { num: '09', label: 'GSD', images: ['09_gsd.png','09_alt_visual.png','09_alt_framework.png'], videos: ['09_alt_3dgen.mp4'] },
+  { num: '10', label: '3DFuse', images: ['10_frame.png','10_alt_teaser.png','10_alt_motivation1.png','10_alt_motivation2.png'], videos: ['10_3dfuse.mp4','10_alt_kitten.mp4','10_alt_hippo.mp4'] },
+];
+
+let currentPaper = null;
+let img = null;          // currently loaded Image
+let imgDispW = 0, imgDispH = 0; // image drawn size within canvas (contain-fit)
+let imgDispX = 0, imgDispY = 0; // image drawn offset within canvas
+let scale = 1;            // user zoom multiplier on top of base fit
+let baseScale = 1;
+let panX = 0, panY = 0;   // pan in canvas px, relative to centered position
+let minScale = 1, maxScale = 6;
+const doneSet = new Set();
+
+const srcCanvas = document.getElementById('srcCanvas');
+const ctx = srcCanvas.getContext('2d');
+srcCanvas.width = 640; srcCanvas.height = 400;
+
+function renderSidebar() {
+  const el = document.getElementById('sidebar');
+  el.innerHTML = '';
+  PAPERS.forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'paper-btn' + (doneSet.has(p.num) ? ' done' : '') + (currentPaper && currentPaper.num === p.num ? ' active' : '');
+    btn.innerHTML = `<b>${p.num}</b> — ${p.label}${doneSet.has(p.num) ? ' ✓' : ''}`;
+    btn.onclick = () => selectPaper(p);
+    el.appendChild(btn);
+  });
+}
+
+function selectPaper(p) {
+  currentPaper = p;
+  renderSidebar();
+  const gallery = document.getElementById('gallery');
+  gallery.innerHTML = '';
+  p.images.forEach(src => {
+    const im = document.createElement('img');
+    im.className = 'cand';
+    im.src = src;
+    im.onclick = () => { loadImageFromUrl(src); highlightCand(im); };
+    gallery.appendChild(im);
+  });
+  (p.videos || []).forEach(src => {
+    const v = document.createElement('div');
+    v.className = 'cand-video';
+    v.textContent = '▶ ' + src + ' (영상에서 캡처)';
+    v.onclick = () => openVideo(src);
+    gallery.appendChild(v);
+  });
+  document.getElementById('videoPanel').style.display = 'none';
+  // auto-load first image candidate
+  if (p.images.length) {
+    loadImageFromUrl(p.images[0]);
+    setTimeout(() => { const first = gallery.querySelector('.cand'); if (first) highlightCand(first); }, 0);
+  }
+}
+
+function highlightCand(el) {
+  document.querySelectorAll('.cand').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function openVideo(src) {
+  document.getElementById('videoPanel').style.display = 'flex';
+  const v = document.getElementById('videoEl');
+  v.src = src;
+  v.load();
+}
+
+document.getElementById('captureBtn').onclick = () => {
+  const v = document.getElementById('videoEl');
+  const c = document.createElement('canvas');
+  c.width = v.videoWidth; c.height = v.videoHeight;
+  c.getContext('2d').drawImage(v, 0, 0);
+  loadImageFromUrl(c.toDataURL('image/png'));
+  document.querySelectorAll('.cand').forEach(el => el.classList.remove('selected'));
+};
+
+function loadImageFromUrl(url) {
+  const image = new Image();
+  image.onload = () => {
+    // work on a mutable canvas copy so the eraser can actually modify pixels
+    const wc = document.createElement('canvas');
+    wc.width = image.naturalWidth;
+    wc.height = image.naturalHeight;
+    wc.getContext('2d').drawImage(image, 0, 0);
+    img = wc;
+    fitImage();
+    draw();
+  };
+  image.src = url;
+}
+
+function fitImage() {
+  const cw = srcCanvas.width, ch = srcCanvas.height;
+  const scaleContain = Math.min(cw / img.width, ch / img.height);
+  imgDispW = img.width * scaleContain;
+  imgDispH = img.height * scaleContain;
+  imgDispX = (cw - imgDispW) / 2;
+  imgDispY = (ch - imgDispH) / 2;
+  baseScale = scaleContain;
+
+  // crop window centered on canvas
+  cropX = (cw - CROP_W_disp()) / 2;
+  cropY = (ch - CROP_H_disp()) / 2;
+
+  // "cover" scale: image exactly fills the crop window — used as the default
+  // starting zoom. minScale/maxScale are set relative to it so zooming out
+  // well past this point is possible (missing area is filled white, not clamped).
+  const coverScale = Math.max(CROP_W_disp() / imgDispW, CROP_H_disp() / imgDispH);
+  minScale = coverScale * 0.12;
+  maxScale = coverScale * 8;
+  scale = coverScale;
+  panX = 0; panY = 0;
+  document.getElementById('zoomSlider').value = 0;
+}
+
+// crop window is fixed at 480x270 in canvas-display space, but canvas is 640x400 so we show margin around it
+function CROP_W_disp() { return CROP_W; }
+function CROP_H_disp() { return CROP_H; }
+let cropX = 0, cropY = 0;
+
+function currentImgRect() {
+  // image displayed rect after zoom+pan, centered around crop window center
+  const w = imgDispW * scale;
+  const h = imgDispH * scale;
+  const cx = cropX + CROP_W / 2 + panX;
+  const cy = cropY + CROP_H / 2 + panY;
+  return { x: cx - w / 2, y: cy - h / 2, w, h };
+}
+
+function clampPan() {
+  // only keep the image pinned against the crop window on axes where it's
+  // still bigger than the window; once zoomed out smaller than the window on
+  // an axis, let it float freely there (the gap gets filled white in draw()).
+  const r = currentImgRect();
+  const cropL = cropX, cropT = cropY, cropR = cropX + CROP_W, cropB = cropY + CROP_H;
+  let dx = 0, dy = 0;
+  if (r.w >= CROP_W) {
+    if (r.x > cropL) dx = cropL - r.x;
+    if (r.x + r.w < cropR) dx = cropR - (r.x + r.w);
+  }
+  if (r.h >= CROP_H) {
+    if (r.y > cropT) dy = cropT - r.y;
+    if (r.y + r.h < cropB) dy = cropB - (r.y + r.h);
+  }
+  panX += dx; panY += dy;
+}
+
+// map the current pan/zoom transform onto an arbitrary destination canvas
+// sized (destW x destH) representing the crop window — draws the FULL image
+// (valid source rect always) rather than cropping by source rect, so it
+// works even when the image is smaller than the crop window.
+function drawCropInto(destCtx, destW, destH) {
+  destCtx.fillStyle = '#fff';
+  destCtx.fillRect(0, 0, destW, destH);
+  if (!img) return;
+  const r = currentImgRect();
+  const f = destW / CROP_W; // === destH / CROP_H
+  const dx = (r.x - cropX) * f;
+  const dy = (r.y - cropY) * f;
+  const dw = r.w * f;
+  const dh = r.h * f;
+  destCtx.drawImage(img, 0, 0, img.width, img.height, dx, dy, dw, dh);
+}
+
+function draw() {
+  ctx.clearRect(0, 0, srcCanvas.width, srcCanvas.height);
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, srcCanvas.width, srcCanvas.height);
+  if (!img) return;
+  const r = currentImgRect();
+  ctx.drawImage(img, r.x, r.y, r.w, r.h);
+
+  // dim outside crop window
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
+  ctx.fillRect(0, 0, srcCanvas.width, cropY);
+  ctx.fillRect(0, cropY + CROP_H, srcCanvas.width, srcCanvas.height - cropY - CROP_H);
+  ctx.fillRect(0, cropY, cropX, CROP_H);
+  ctx.fillRect(cropX + CROP_W, cropY, srcCanvas.width - cropX - CROP_W, CROP_H);
+
+  ctx.strokeStyle = '#6cf';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(cropX + 1, cropY + 1, CROP_W - 2, CROP_H - 2);
+
+  updatePreviews();
+}
+
+function updatePreviews() {
+  [['previewMobile', 344, 194], ['previewDesktop', 160, 90]].forEach(([id, w, h]) => {
+    const c = document.getElementById(id);
+    drawCropInto(c.getContext('2d'), w, h);
+  });
+}
+
+// --- eraser: paints white directly onto the working image canvas ---
+let eraserMode = false;
+let eraserSize = 24; // radius, in canvas-display px
+let erasing = false;
+
+function clientToCanvas(e) {
+  const rect = srcCanvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - rect.left) * (srcCanvas.width / rect.width),
+    y: (e.clientY - rect.top) * (srcCanvas.height / rect.height),
+  };
+}
+
+function eraseAt(canvasX, canvasY) {
+  if (!img) return;
+  const r = currentImgRect();
+  const imgX = (canvasX - r.x) / scale / baseScale;
+  const imgY = (canvasY - r.y) / scale / baseScale;
+  const radiusImg = eraserSize / scale / baseScale;
+  const wctx = img.getContext('2d');
+  wctx.save();
+  wctx.fillStyle = '#fff';
+  wctx.beginPath();
+  wctx.arc(imgX, imgY, radiusImg, 0, Math.PI * 2);
+  wctx.fill();
+  wctx.restore();
+  draw();
+}
+
+document.getElementById('eraserBtn').onclick = () => {
+  eraserMode = !eraserMode;
+  document.getElementById('eraserBtn').classList.toggle('on', eraserMode);
+  srcCanvas.classList.toggle('erasing', eraserMode);
+};
+document.getElementById('eraserSizeSlider').addEventListener('input', e => {
+  eraserSize = parseFloat(e.target.value);
+});
+
+// --- interaction: drag to pan (or erase, when eraser mode is on) ---
+let dragging = false, dragStartX = 0, dragStartY = 0, panStartX = 0, panStartY = 0;
+srcCanvas.addEventListener('mousedown', e => {
+  if (!img) return;
+  if (eraserMode) {
+    erasing = true;
+    const p = clientToCanvas(e);
+    eraseAt(p.x, p.y);
+    return;
+  }
+  dragging = true;
+  srcCanvas.classList.add('dragging');
+  dragStartX = e.clientX; dragStartY = e.clientY;
+  panStartX = panX; panStartY = panY;
+});
+window.addEventListener('mousemove', e => {
+  if (erasing) {
+    const p = clientToCanvas(e);
+    eraseAt(p.x, p.y);
+    return;
+  }
+  if (!dragging) return;
+  const scaleFactor = srcCanvas.width / srcCanvas.getBoundingClientRect().width;
+  panX = panStartX + (e.clientX - dragStartX) * scaleFactor;
+  panY = panStartY + (e.clientY - dragStartY) * scaleFactor;
+  clampPan();
+  draw();
+});
+window.addEventListener('mouseup', () => {
+  dragging = false; erasing = false;
+  srcCanvas.classList.remove('dragging');
+});
+
+srcCanvas.addEventListener('wheel', e => {
+  if (!img) return;
+  e.preventDefault();
+  const delta = -e.deltaY * 0.001;
+  setScale(scale * (1 + delta));
+});
+
+document.getElementById('zoomSlider').addEventListener('input', e => {
+  const t = parseFloat(e.target.value); // 0..1
+  setScale(minScale + t * (maxScale - minScale));
+});
+
+function setScale(newScale) {
+  newScale = Math.max(minScale, Math.min(maxScale, newScale));
+  scale = newScale;
+  document.getElementById('zoomSlider').value = (scale - minScale) / (maxScale - minScale || 1);
+  clampPan();
+  draw();
+}
+
+document.getElementById('resetBtn').onclick = () => { if (img) { fitImage(); draw(); } };
+
+// --- keyboard: z/x to zoom, arrow keys to pan ---
+const PAN_STEP = 12;
+window.addEventListener('keydown', e => {
+  if (!img) return;
+  switch (e.key.toLowerCase()) {
+    case 'z': setScale(scale * 1.02); break;
+    case 'x': setScale(scale / 1.02); break;
+    case 'arrowleft': e.preventDefault(); panX -= PAN_STEP; clampPan(); draw(); break;
+    case 'arrowright': e.preventDefault(); panX += PAN_STEP; clampPan(); draw(); break;
+    case 'arrowup': e.preventDefault(); panY -= PAN_STEP; clampPan(); draw(); break;
+    case 'arrowdown': e.preventDefault(); panY += PAN_STEP; clampPan(); draw(); break;
+    default: return;
+  }
+});
+
+document.getElementById('downloadBtn').onclick = () => {
+  if (!img || !currentPaper) return;
+  const num = currentPaper.num;
+  [[`final_${num}_mobile_344x194.png`, 344, 194], [`final_${num}_desktop_160x90.png`, 160, 90]].forEach(([name, w, h]) => {
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    drawCropInto(c.getContext('2d'), w, h);
+    c.toBlob(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }, 'image/png');
+  });
+  doneSet.add(num);
+  renderSidebar();
+  document.getElementById('status').textContent = `${num} 저장됨 (Downloads 폴더 확인)`;
+  setTimeout(() => { document.getElementById('status').textContent = ''; }, 3000);
+};
+
+renderSidebar();
+selectPaper(PAPERS[0]);
+</script>
+</body>
+</html>
