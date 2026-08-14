@@ -138,7 +138,7 @@
     position: sticky; top: 0; z-index: 50;
     background: var(--ground);
   }
-  .profile, section.block, footer#about {
+  .profile, section.block {
     /* Kept in sync with the nav-click scroll offset in the inline script:
        nav height minus its own border-bottom width (2px) minus a 1px
        safety margin, so a section's top border coincides with nav's
@@ -553,6 +553,17 @@
   .frac .den { padding: 2px 4px 0; }
   .rendered .display-eq { font-size: 23px; margin-top: 10px; }
   .eq-num { color: var(--ink-faint); font-size: 13px; float: right; font-family: ui-monospace, monospace; }
+
+  /* ---- About / Collaborators ---- */
+  .about-bio { color: var(--ink-soft); font-size: 15px; max-width: 60ch; margin: 0 0 26px; }
+  .collab-block { padding-top: 22px; border-top: 1px solid var(--line-soft); }
+  .collab-heading { font-size: 20px; font-weight: 400; letter-spacing: 0.01em; margin: 0 0 10px; color: var(--ink); }
+  .collab-intro { color: var(--ink-soft); font-size: 15px; max-width: 68ch; margin: 0 0 14px; }
+  .collab-row { font-size: 13px; color: var(--ink-soft); line-height: 1.7; margin: 0 0 4px; }
+  .collab-row .collab-cat { color: var(--ink); margin-right: 6px; }
+  .collab-row .collab-cat::after { content: ":"; }
+  .collab-row a { color: var(--ink-soft); text-decoration: underline; text-underline-offset: 2px; }
+  .collab-row a:hover { color: var(--blue); }
 
   /* ---------- Footer ---------- */
   footer {
