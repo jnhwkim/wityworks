@@ -1227,7 +1227,7 @@
 
   var allLi = document.createElement('li');
   var allA = document.createElement('a');
-  allA.href = 'blog.html';
+  allA.href = '/blog/';
   allA.className = 'active';
   allA.innerHTML = 'All <span class="count">' + publicPosts.length + '</span>';
   allLi.appendChild(allA);
@@ -1237,7 +1237,7 @@
     var count = publicPosts.filter(function (p) { return p.category === cat.slug; }).length;
     var li = document.createElement('li');
     var a = document.createElement('a');
-    a.href = 'blog.html?category=' + encodeURIComponent(cat.slug);
+    a.href = '/blog/?category=' + encodeURIComponent(cat.slug);
     a.innerHTML = cat.label + ' <span class="count">' + count + '</span>';
     li.appendChild(a);
     catList.appendChild(li);
@@ -1257,7 +1257,7 @@
     eyebrow.innerHTML = post.categoryLabel;
     var h3 = document.createElement('h3');
     var a = document.createElement('a');
-    a.href = 'blog.html?post=' + encodeURIComponent(post.category) + '/' + encodeURIComponent(post.slug);
+    a.href = '/blog/?post=' + encodeURIComponent(post.category) + '/' + encodeURIComponent(post.slug);
     a.textContent = post.title;
     h3.appendChild(a);
     var p = document.createElement('p');
