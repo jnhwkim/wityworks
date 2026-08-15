@@ -183,6 +183,11 @@
     allLink.href = 'blog.html';
     allLink.textContent = 'All';
     if (!activeSlug) allLink.className = 'active';
+    var allCount = BLOG_POSTS.filter(function (p) { return p.visibility === 'public'; }).length;
+    var allCountSpan = document.createElement('span');
+    allCountSpan.className = 'count';
+    allCountSpan.textContent = allCount;
+    allLink.appendChild(allCountSpan);
     all.appendChild(allLink);
     ul.appendChild(all);
     BLOG_CATEGORIES.forEach(function (cat) {
