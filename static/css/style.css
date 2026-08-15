@@ -545,7 +545,7 @@
     padding: 8px 0; font-size: 14px;
   }
   .cat-list a.active { color: var(--gold); }
-  .cat-list .count { color: var(--ink-faint); font-family: ui-monospace, monospace; font-size: 13px; }
+  .cat-list .count { color: var(--ink-faint); font-family: ui-monospace, monospace; font-size: 13px; margin-right: 8px; }
 
   .post-card { padding: 14px 0; border-top: 1px solid var(--line-soft); }
   .post-card:first-child { border-top: none; padding-top: 0; }
