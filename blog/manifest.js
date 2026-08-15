@@ -26,14 +26,4 @@ const BLOG_POSTS = [
     readTime: '6 min read',
     visibility: 'public',
   },
-  {
-    category: 'math-stats-notes',
-    categoryLabel: 'Math & Stats Notes',
-    slug: 'why-kl-divergence-isnt-a-distance',
-    title: 'Why KL Divergence Isn\'t a Distance',
-    summary: 'Working through asymmetry and the triangle-inequality violation by hand — and why it\'s still the tool of choice.',
-    date: '2026-07-28',
-    readTime: '4 min read',
-    visibility: 'public',
-  },
 ];
