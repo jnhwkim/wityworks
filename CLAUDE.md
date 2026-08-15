@@ -170,7 +170,7 @@ post) is a multi-paragraph announcement. Summarize it to one visible
 sentence and put the full original text behind a hover/focus popover:
 
 ```html
-<li><span class="news-date">2026.08.03</span>📣 Welcoming <a href="https://jho-yonsei.github.io/" target="_blank">Dr. Jungho Lee</a> to Generation Research, NAVER AI Lab as a Research Scientist working on city-scale physical world models. <span class="news-popover" tabindex="0"><span class="news-popover-trigger" aria-hidden="true"><svg viewBox="0 0 20 14" width="18" height="13"><rect x="1" y="4.5" width="2.4" height="7.5" rx="1.2" fill="var(--gold)"/><rect x="16.6" y="4.5" width="2.4" height="7.5" rx="1.2" fill="var(--gold)"/><path d="M3.4,4.7 Q10,2.6 16.6,4.7 L16.6,11.8 Q10,13.9 3.4,11.8 Z" fill="var(--gold)" opacity="0.18" stroke="var(--gold)" stroke-width="0.8"/><line x1="6" y1="6.5" x2="14" y2="6.5" stroke="var(--gold)" stroke-width="0.7"/><line x1="6" y1="8.3" x2="14" y2="8.3" stroke="var(--gold)" stroke-width="0.7"/><line x1="6" y1="10.1" x2="11.5" y2="10.1" stroke="var(--gold)" stroke-width="0.7"/></svg></span><div class="news-popover-box" role="tooltip"><div class="popover-inner">
+<li><span class="news-date">2026.08.03</span>📣 Welcoming <a href="https://jho-yonsei.github.io/" target="_blank">Dr. Jungho Lee</a> to Generation Research, NAVER AI Lab as a Research Scientist working on city-scale physical world models. <span class="news-popover" tabindex="0"><span class="news-popover-trigger" aria-hidden="true"><svg viewBox="0 0 12 14" width="13" height="15"><rect x="1.3" y="1.8" width="9.4" height="1.6" rx="0.8" fill="var(--gold)" fill-opacity="0.55" stroke="color-mix(in srgb, var(--gold) 55%, white)" stroke-width="0.5"/><rect x="1" y="3.4" width="10" height="10" fill="var(--gold)" fill-opacity="0.14" stroke="color-mix(in srgb, var(--gold) 55%, white)" stroke-width="0.5"/><line x1="2.6" y1="6" x2="9.4" y2="6" stroke="var(--gold)" stroke-width="0.6"/><line x1="2.6" y1="8.2" x2="9.4" y2="8.2" stroke="var(--gold)" stroke-width="0.6"/><line x1="2.6" y1="10.4" x2="7.4" y2="10.4" stroke="var(--gold)" stroke-width="0.6"/></svg></span><div class="news-popover-box" role="tooltip"><div class="popover-inner">
   <p class="popover-date">3 Aug 2026</p>
   <p class="popover-headline">📣 Welcoming Dr. Jungho Lee to Generation Research, NAVER AI Lab!</p>
   <p>...full original paragraphs, unedited...</p>
@@ -180,8 +180,12 @@ sentence and put the full original text behind a hover/focus popover:
 
 Notes on this pattern:
 
-- The parchment-scroll SVG is the trigger icon — reuse this exact markup,
-  don't swap in an emoji (💬 was tried and rejected as too chat-app-flavored).
+- The rectangular-tablet SVG (flat box + a brighter rounded bar on top, echoing
+  the popover box's own shape/gold accent) is the trigger icon — reuse this
+  exact markup, don't swap in an emoji (💬 was tried and rejected as too
+  chat-app-flavored; a parchment-scroll shape and a rounded-top tombstone were
+  also tried and dropped — the scroll was too tall/fussy at inline text size,
+  and the rounded top didn't read as clearly).
 - `.news-popover-box`/`.popover-inner` are `<div>`s (they hold `<p>`s — a
   `<span>` wrapping `<p>` is invalid HTML); `.news-popover`/
   `.news-popover-trigger` stay `<span>` to sit inline in the sentence.

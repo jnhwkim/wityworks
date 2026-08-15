@@ -259,7 +259,7 @@
   }
 
   /* ---- News popover (speech-bubble hint) ---- */
-  .news-popover { position: relative; display: inline-block; }
+  .news-popover { position: relative; display: inline-block; vertical-align: -2px; }
   .news-popover-trigger {
     cursor: help; margin-left: 4px;
     display: inline-flex; align-items: center;
