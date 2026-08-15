@@ -165,6 +165,74 @@
 })();
 </script>
 
+<script>
+(function () {
+  // Kept in sync with the same nav-row-divider logic in the root
+  // index.html — see the comments there for why each piece exists.
+  // Blog's nav has no in-page hash links, so scroll-spy is omitted.
+  var nav = document.querySelector('nav.primary');
+  if (!nav) return;
+  var navLinks = Array.prototype.slice.call(nav.querySelectorAll('a'));
+  if (!navLinks.length) return;
+
+  function setNavHeightVar() {
+    document.documentElement.style.setProperty('--nav-height', nav.getBoundingClientRect().height + 'px');
+  }
+
+  var ROW_MARGIN_TOP = '-1px';
+  var DIVIDER_OFFSET = -1;
+  var LAST_ROW_MARGIN_BOTTOM = '-0.5px';
+
+  function updateNavRowDividers() {
+    var oldDividers = nav.querySelectorAll('.nav-row-divider');
+    for (var i = 0; i < oldDividers.length; i++) oldDividers[i].remove();
+    navLinks.forEach(function (link) {
+      link.style.marginTop = '';
+      link.style.marginBottom = '';
+      link.style.borderBottomColor = '';
+    });
+
+    var navTop = nav.getBoundingClientRect().top;
+    var rows = [];
+    navLinks.forEach(function (link) {
+      var top = Math.round(link.getBoundingClientRect().top - navTop);
+      var row = null;
+      for (var j = 0; j < rows.length; j++) {
+        if (Math.abs(rows[j].top - top) < 3) { row = rows[j]; break; }
+      }
+      if (!row) { row = { top: top, links: [] }; rows.push(row); }
+      row.links.push(link);
+    });
+    rows.sort(function (a, b) { return a.top - b.top; });
+
+    if (rows.length >= 2) {
+      for (var r = 1; r < rows.length; r++) {
+        var divider = document.createElement('div');
+        divider.className = 'nav-row-divider';
+        divider.style.top = (rows[r].top + DIVIDER_OFFSET) + 'px';
+        nav.appendChild(divider);
+      }
+
+      for (var r2 = 1; r2 < rows.length; r2++) {
+        rows[r2].links.forEach(function (link) { link.style.marginTop = ROW_MARGIN_TOP; });
+      }
+    }
+
+    rows[rows.length - 1].links.forEach(function (link) {
+      link.style.borderBottomColor = 'transparent';
+      link.style.marginBottom = LAST_ROW_MARGIN_BOTTOM;
+    });
+  }
+
+  setNavHeightVar();
+  updateNavRowDividers();
+  window.addEventListener('resize', function () {
+    setNavHeightVar();
+    updateNavRowDividers();
+  });
+})();
+</script>
+
 <script src="manifest.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
