@@ -22,7 +22,7 @@ const BLOG_POSTS = [
     slug: 'why-attention-is-normalized-with-softmax',
     title: 'Why Attention Is Normalized with Softmax',
     summary: 'Revisiting softmax\'s role in turning query-key dot products into a probability distribution, alongside the temperature parameter.',
-    date: '2026-08-10',
+    date: '2026-08-15',
     readTime: '6 min read',
     visibility: 'public',
   },
