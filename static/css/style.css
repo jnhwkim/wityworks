@@ -441,6 +441,7 @@
   /* Teaching's note is a longer single sentence than other sections' — widen
      just here instead of shrinking the wording to fit the default 36ch. */
   #teaching .section-head .note { max-width: 56ch; }
+  #blog .section-head .note, #blog-note { max-width: 30ch; }
 
   .cols { display: grid; gap: 28px; }
   .cols > * { min-width: 0; }   /* grid items default to min-width:auto — without this, a wide
@@ -553,7 +554,7 @@
 
   .post-card { padding: 14px 0; border-top: 1px solid var(--line-soft); }
   .post-card:first-child { border-top: none; padding-top: 0; }
-  .post-card .eyebrow { color: var(--blue); margin-bottom: 5px; display: block; }
+  .post-card .eyebrow { color: var(--blue); margin-top: 4px; margin-bottom: 5px; display: block; }
   .post-card h3 { margin: 0 0 5px; font-size: 20px; font-weight: 400; }
   .post-card h3 a { color: var(--ink); text-decoration: none; }
   .post-card h3 a:hover { color: var(--blue); }
@@ -585,6 +586,7 @@
   .post-body pre code { padding: 0; }
   .post-body blockquote { margin: 0 0 14px; padding-left: 14px; border-left: 3px solid var(--line-soft); color: var(--ink-soft); }
   .post-body .katex-display { overflow-x: auto; overflow-y: hidden; }
+  .post-body .post-eyebrow { text-decoration: none; }
 
   /* End-of-article mark: a geometric dagger built from straight rects (not
      the typographic † glyph, which already means "co-corresponding author"
@@ -595,6 +597,12 @@
      less cross-like alternative but the dagger was preferred.) */
   .post-end-mark { text-align: center; margin: 26px 0 20px; }
   .post-end-mark svg { display: inline-block; }
+  .post-back-btn {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    display: inline-block;
+    text-decoration: none;
+  }
 
   /* ---- Math demo ---- */
   .math-demo {

@@ -70,7 +70,7 @@
         <span class="label eyebrow" id="blog-eyebrow">Writing</span>
         <h2 id="blog-heading">Blog</h2>
       </div>
-      <div class="note" id="blog-note">Any <code>$...$</code> or <code>$$...$$</code> in a post renders as math automatically.</div>
+      <div class="note" id="blog-note">Research notes, paper reviews, and essays on AI, math, and life.</div>
     </div>
 
     <div class="cols blog" id="blog-cols">
@@ -295,6 +295,7 @@
     meta.className = 'meta';
     meta.textContent = formatDate(post.date) + ' · ' + post.readTime;
     article.appendChild(cardEyebrow);
+    console.log(cardEyebrow);
     article.appendChild(h3);
     article.appendChild(p);
     article.appendChild(meta);
@@ -304,7 +305,7 @@
   function renderListing(activeSlug) {
     if (eyebrow) eyebrow.textContent = 'Writing';
     heading.textContent = 'Blog';
-    note.innerHTML = 'Top-level categories plus tags; any <code>$...$</code> or <code>$$...$$</code> in a post renders as math automatically.';
+    note.innerHTML = 'Research notes, paper reviews, and essays on AI, math, and life.';
     content.innerHTML = '';
 
     renderCategories(activeSlug);
@@ -383,9 +384,12 @@
 
         var article = document.createElement('article');
         article.className = 'post-body';
-        var postEyebrow = document.createElement('span');
-        postEyebrow.className = 'label eyebrow';
+        
+        var postEyebrow = document.createElement('a');
+        postEyebrow.className = 'label eyebrow post-eyebrow';
+        postEyebrow.href = 'blog.html?category=' + encodeURIComponent(entry.category);
         postEyebrow.innerHTML = parsed.data.categoryLabel || entry.categoryLabel;
+
         var meta = document.createElement('p');
         meta.className = 'meta';
         meta.textContent = formatDate(parsed.data.date || entry.date) + ' · ' + (parsed.data.readTime || entry.readTime);
@@ -408,6 +412,7 @@
 
         var back = document.createElement('p');
         var a = document.createElement('a');
+        a.className = 'show-all-btn show-all-btn--sm post-back-btn';
         a.href = 'blog.html?category=' + encodeURIComponent(category);
         a.textContent = '← Back to ' + (parsed.data.categoryLabel || entry.categoryLabel).replace(/&amp;/g, '&');
         back.appendChild(a);
