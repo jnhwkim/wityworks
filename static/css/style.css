@@ -96,6 +96,10 @@
   .brand-row {
     display: flex; flex-direction: column; align-items: center; gap: 5px;
     text-align: center; padding-bottom: 14px;
+    text-decoration: none; color: inherit; cursor: pointer;
+  }
+  .brand-row:hover, .brand-row:focus, .brand-row:active {
+    text-decoration: none; color: inherit;
   }
 
   /* ---------- Theme toggle ---------- */
