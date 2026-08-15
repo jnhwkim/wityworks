@@ -1010,28 +1010,11 @@
 
     <div class="cols blog">
       <aside>
-        <ul class="cat-list">
-          <li><a href="#" class="active">All <span class="count">24</span></a></li>
-          <li><a href="#">ML Concepts <span class="count">9</span></a></li>
-          <li><a href="#">Math &amp; Stats Notes <span class="count">6</span></a></li>
-          <li><a href="#">Paper Reviews <span class="count">7</span></a></li>
-          <li><a href="#">Essays <span class="count">2</span></a></li>
-        </ul>
+        <ul class="cat-list" id="home-blog-cats"></ul>
       </aside>
 
       <div>
-        <article class="post-card">
-          <span class="label eyebrow">ML Concepts</span>
-          <h3>Why Attention Is Normalized with Softmax</h3>
-          <p>Revisiting softmax's role in turning query-key dot products into a probability distribution, alongside the temperature parameter.</p>
-          <span class="meta">Aug 10, 2026 · 6 min read</span>
-        </article>
-        <article class="post-card">
-          <span class="label eyebrow">Math &amp; Stats Notes</span>
-          <h3>Why KL Divergence Isn't a Distance</h3>
-          <p>Working through asymmetry and the triangle-inequality violation by hand — and why it's still the tool of choice.</p>
-          <span class="meta">Jul 28, 2026 · 4 min read</span>
-        </article>
+        <div id="home-blog-posts"></div>
 
         <div class="math-demo">
           <div class="tag-row">
@@ -1136,6 +1119,7 @@
 
 </div>
 
+<script src="blog/manifest.js"></script>
 <script>
 (function () {
   var COOKIE_NAME = 'theme';
@@ -1174,6 +1158,61 @@
     var btn = e.target.closest('button[data-mode]');
     if (!btn) return;
     setTheme(btn.getAttribute('data-mode'));
+  });
+})();
+
+(function () {
+  var catList = document.getElementById('home-blog-cats');
+  var postList = document.getElementById('home-blog-posts');
+  if (!catList || !postList || typeof BLOG_POSTS === 'undefined') return;
+
+  var publicPosts = BLOG_POSTS.filter(function (p) { return p.visibility === 'public'; });
+
+  var allLi = document.createElement('li');
+  var allA = document.createElement('a');
+  allA.href = 'blog.html';
+  allA.className = 'active';
+  allA.innerHTML = 'All <span class="count">' + publicPosts.length + '</span>';
+  allLi.appendChild(allA);
+  catList.appendChild(allLi);
+
+  BLOG_CATEGORIES.forEach(function (cat) {
+    var count = publicPosts.filter(function (p) { return p.category === cat.slug; }).length;
+    var li = document.createElement('li');
+    var a = document.createElement('a');
+    a.href = 'blog.html?category=' + encodeURIComponent(cat.slug);
+    a.innerHTML = cat.label + ' <span class="count">' + count + '</span>';
+    li.appendChild(a);
+    catList.appendChild(li);
+  });
+
+  function formatDate(iso) {
+    var d = new Date(iso + 'T00:00:00');
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  publicPosts.forEach(function (post) {
+    var article = document.createElement('article');
+    article.className = 'post-card';
+    var eyebrow = document.createElement('span');
+    eyebrow.className = 'label eyebrow';
+    eyebrow.innerHTML = post.categoryLabel;
+    var h3 = document.createElement('h3');
+    var a = document.createElement('a');
+    a.href = 'blog.html?post=' + encodeURIComponent(post.category) + '/' + encodeURIComponent(post.slug);
+    a.textContent = post.title;
+    h3.appendChild(a);
+    var p = document.createElement('p');
+    p.innerHTML = post.summary;
+    var meta = document.createElement('span');
+    meta.className = 'meta';
+    meta.textContent = formatDate(post.date) + ' · ' + post.readTime;
+    article.appendChild(eyebrow);
+    article.appendChild(h3);
+    article.appendChild(p);
+    article.appendChild(meta);
+    postList.appendChild(article);
   });
 })();
 

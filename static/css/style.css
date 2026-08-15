@@ -528,8 +528,46 @@
   .post-card:first-child { border-top: none; padding-top: 0; }
   .post-card .eyebrow { color: var(--blue); margin-bottom: 5px; display: block; }
   .post-card h3 { margin: 0 0 5px; font-size: 20px; font-weight: 400; }
+  .post-card h3 a { color: var(--ink); text-decoration: none; }
+  .post-card h3 a:hover { color: var(--blue); }
   .post-card p { margin: 0 0 6px; color: var(--ink-soft); }
   .post-card .meta { font-size: 13px; color: var(--ink-faint); font-style: italic; }
+
+  /* blog.html's lone section sits directly under nav with no JS scroll
+     compensation (unlike index.html's sections, which only coincide with
+     nav's border-bottom when scrolled to via the nav-click handler) — so
+     the section's own border-top plus nav's 6px margin-bottom would stack
+     into a doubled line with a gap. Drop the border and pull the section
+     up by that same 6px so nav's border-bottom reads as the one divider,
+     at the same effective distance (36px padding + 6px) as before. */
+  #blog-page { border-top: none; margin-top: -6px; padding-top: 42px; }
+
+  /* ---- Blog: single-post view + empty-state (blog.html) ---- */
+  .post-empty { color: var(--ink-faint); font-style: italic; padding: 8px 0; }
+  .post-body { padding-top: 4px; }
+  .post-body .eyebrow { color: var(--blue); margin-bottom: 6px; display: block; }
+  .post-body .meta { font-size: 13px; color: var(--ink-faint); font-style: italic; display: block; margin: 0 0 18px; }
+  .post-body h1, .post-body h2, .post-body h3 { font-weight: 400; margin: 28px 0 10px; }
+  .post-body h2 { font-size: 22px; }
+  .post-body h3 { font-size: 19px; }
+  .post-body p { margin: 0 0 14px; }
+  .post-body ul, .post-body ol { margin: 0 0 14px; padding-left: 22px; }
+  .post-body li { margin-bottom: 4px; }
+  .post-body code { background: var(--code-bg); padding: 1px 5px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.9em; }
+  .post-body pre { background: var(--code-bg); padding: 10px 12px; overflow-x: auto; }
+  .post-body pre code { padding: 0; }
+  .post-body blockquote { margin: 0 0 14px; padding-left: 14px; border-left: 3px solid var(--line-soft); color: var(--ink-soft); }
+  .post-body .katex-display { overflow-x: auto; overflow-y: hidden; }
+
+  /* End-of-article mark: a geometric dagger built from straight rects (not
+     the typographic † glyph, which already means "co-corresponding author"
+     in .pub-meta — reusing it here would misread as a footnote). Sits on
+     its own centered line closing the post, distinct from the "Back to..."
+     link underneath, the way a magazine end-mark precedes its own nav.
+     (A solid gold square, QED-tombstone style, was tried as a
+     less cross-like alternative but the dagger was preferred.) */
+  .post-end-mark { text-align: center; margin: 26px 0 20px; }
+  .post-end-mark svg { display: inline-block; }
 
   /* ---- Math demo ---- */
   .math-demo {
@@ -575,6 +613,7 @@
   /* ---------- Footer ---------- */
   footer {
     margin-top: 12px; padding-top: 20px;
+    border-top: 1px solid var(--line-soft);
     font-size: 13px; color: var(--ink-soft);
   }
   .footer-cols { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
@@ -587,7 +626,6 @@
   footer .col a:hover { color: var(--blue); }
   .footer-bottom {
     margin-top: 28px; padding-top: 14px; padding-bottom: 24px;
-    border-top: 1px solid var(--line-soft);
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
     font-size: 11px; letter-spacing: 0.04em; color: var(--ink-faint);
   }
