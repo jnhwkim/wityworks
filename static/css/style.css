@@ -281,7 +281,8 @@
   }
   .news-popover:hover .news-popover-box,
   .news-popover:focus-within .news-popover-box,
-  .news-popover-box:hover { display: block; }
+  .news-popover-box:hover,
+  .news-popover--open .news-popover-box { display: block; }
   .popover-inner {
     position: relative;
     background: var(--ground-raised);
