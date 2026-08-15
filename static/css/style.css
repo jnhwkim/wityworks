@@ -265,23 +265,24 @@
   /* ---- News popover (speech-bubble hint) ---- */
   .news-popover { position: relative; display: inline-block; vertical-align: -2px; }
   .news-popover-trigger {
-    cursor: help; margin-left: 4px;
+    cursor: pointer; margin-left: 4px;
     display: inline-flex; align-items: center;
     opacity: 0.75; transition: opacity 0.15s ease;
   }
   .news-popover-trigger svg { display: block; }
-  .news-popover:hover .news-popover-trigger,
-  .news-popover:focus-within .news-popover-trigger { opacity: 1; }
+  .news-popover--open .news-popover-trigger { opacity: 1; }
   .news-popover-box {
     display: none;
     position: absolute; top: 100%; left: 0;
-    padding-top: 10px;               /* invisible bridge — keeps hover unbroken between trigger and box */
+    padding-top: 10px;
     width: max-content; max-width: min(380px, 80vw);
     z-index: 40;
   }
-  .news-popover:hover .news-popover-box,
-  .news-popover:focus-within .news-popover-box,
-  .news-popover-box:hover,
+  /* Click/tap is the only open trigger (mouse and touch alike — see the JS
+     toggle below, which measures and clamps the box's position on open).
+     A pure CSS :hover trigger was tried and dropped: iOS simulates :hover
+     on the first tap, so touch devices would flash the box unclamped
+     before ever reaching the JS click handler that positions it. */
   .news-popover--open .news-popover-box { display: block; }
   .popover-inner {
     position: relative;

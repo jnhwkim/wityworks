@@ -1667,9 +1667,11 @@
     }
   });
 
-  // News popover: tap-to-toggle on touch devices (hover doesn't exist there),
-  // tap-outside-to-close, and clamp the box's horizontal position so it can't
-  // push past the viewport edge and widen the page.
+  // News popover: click/tap is the single open trigger for mouse, touch, and
+  // keyboard alike (see the CSS comment on .news-popover-box). Toggling
+  // measures and clamps the box's horizontal position so it can't push past
+  // the viewport edge and widen the page. Tapping/clicking anywhere outside
+  // closes it.
   var newsPopovers = document.querySelectorAll('.news-popover');
   function closeAllPopovers() {
     document.querySelectorAll('.news-popover--open').forEach(function (p) {
@@ -1682,8 +1684,7 @@
     var trigger = pop.querySelector('.news-popover-trigger');
     var box = pop.querySelector('.news-popover-box');
     if (!trigger || !box) return;
-    trigger.addEventListener('click', function (e) {
-      e.stopPropagation();
+    function toggle() {
       var wasOpen = pop.classList.contains('news-popover--open');
       closeAllPopovers();
       if (wasOpen) return;
@@ -1694,6 +1695,14 @@
       rect = box.getBoundingClientRect();
       if (rect.left + shift < 8) shift = 8 - rect.left;
       if (shift) box.style.left = shift + 'px';
+    }
+    trigger.addEventListener('click', function (e) { e.stopPropagation(); toggle(); });
+    pop.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        e.stopPropagation();
+        toggle();
+      }
     });
     box.addEventListener('click', function (e) { e.stopPropagation(); });
   });
