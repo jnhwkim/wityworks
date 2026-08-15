@@ -133,6 +133,9 @@ const PAPERS = [
   { num: '08', label: 'Effective Rank (3DGS)', images: ['08_frame_10.png','08_alt_qualmesh.png','08_alt_qualnormal.png','08_alt_erankvis.png'], videos: ['08_erankgs.mp4','08_alt_replay.mp4'] },
   { num: '09', label: 'GSD', images: ['09_gsd.png','09_alt_visual.png','09_alt_framework.png'], videos: ['09_alt_3dgen.mp4'] },
   { num: '10', label: '3DFuse', images: ['10_frame.png','10_alt_teaser.png','10_alt_motivation1.png','10_alt_motivation2.png'], videos: ['10_3dfuse.mp4','10_alt_kitten.mp4','10_alt_hippo.mp4'] },
+  { num: '12', label: 'HyperCLOVA X 8B Omni', images: ['12_hyperclovax_8b_omni.png'], videos: [] },
+  { num: '13', label: 'HyperCLOVA X 32B Think', images: ['13_hyperclovax_32b_think.png'], videos: [] },
+  { num: '14', label: 'Kinematics-Driven Gaussian Shape Deformation', images: ['14_kinematics.png'], videos: [] },
 ];
 
 let currentPaper = null;
@@ -284,6 +287,30 @@ function clampPan() {
 // sized (destW x destH) representing the crop window — draws the FULL image
 // (valid source rect always) rather than cropping by source rect, so it
 // works even when the image is smaller than the crop window.
+// Downscale in successive halving steps rather than one big jump: a single
+// drawImage() call covering a large reduction (our source images are often
+// 2000-3000px wide, shrunk to a 160-344px thumbnail) only gets a single pass
+// of bilinear filtering, which under-samples and looks aliased/moiré no
+// matter how high imageSmoothingQuality is set. Each intermediate step here
+// is at most a 2x reduction, so every step is a proper local average.
+function drawDownscaled(destCtx, srcCanvasOrImg, sx, sy, sw, sh, dx, dy, dw, dh) {
+  let curCanvas = srcCanvasOrImg, curSW = sw, curSH = sh, curSX = sx, curSY = sy;
+  while (curSW > dw * 2 || curSH > dh * 2) {
+    const nextW = Math.max(dw, Math.round(curSW / 2));
+    const nextH = Math.max(dh, Math.round(curSH / 2));
+    const step = document.createElement('canvas');
+    step.width = nextW; step.height = nextH;
+    const stepCtx = step.getContext('2d');
+    stepCtx.imageSmoothingEnabled = true;
+    stepCtx.imageSmoothingQuality = 'high';
+    stepCtx.drawImage(curCanvas, curSX, curSY, curSW, curSH, 0, 0, nextW, nextH);
+    curCanvas = step; curSW = nextW; curSH = nextH; curSX = 0; curSY = 0;
+  }
+  destCtx.imageSmoothingEnabled = true;
+  destCtx.imageSmoothingQuality = 'high';
+  destCtx.drawImage(curCanvas, curSX, curSY, curSW, curSH, dx, dy, dw, dh);
+}
+
 function drawCropInto(destCtx, destW, destH) {
   destCtx.fillStyle = '#fff';
   destCtx.fillRect(0, 0, destW, destH);
@@ -294,7 +321,7 @@ function drawCropInto(destCtx, destW, destH) {
   const dy = (r.y - cropY) * f;
   const dw = r.w * f;
   const dh = r.h * f;
-  destCtx.drawImage(img, 0, 0, img.width, img.height, dx, dy, dw, dh);
+  drawDownscaled(destCtx, img, 0, 0, img.width, img.height, dx, dy, dw, dh);
 }
 
 function draw() {
@@ -419,13 +446,17 @@ function setScale(newScale) {
 
 document.getElementById('resetBtn').onclick = () => { if (img) { fitImage(); draw(); } };
 
-// --- keyboard: z/x to zoom, arrow keys to pan ---
-const PAN_STEP = 12;
+// --- keyboard: z/x to zoom, arrow keys to pan — both in exact 1px steps
+// (in canvas-display space) so fine adjustments are reproducible per keypress
+const PAN_STEP = 1;
 window.addEventListener('keydown', e => {
   if (!img) return;
+  // 1 canvas-px change in the *displayed* image width per press, converted
+  // to the corresponding delta in `scale` (imgDispW is at scale=1).
+  const zoomStep = 1 / imgDispW;
   switch (e.key.toLowerCase()) {
-    case 'z': setScale(scale * 1.02); break;
-    case 'x': setScale(scale / 1.02); break;
+    case 'z': setScale(scale + zoomStep); break;
+    case 'x': setScale(scale - zoomStep); break;
     case 'arrowleft': e.preventDefault(); panX -= PAN_STEP; clampPan(); draw(); break;
     case 'arrowright': e.preventDefault(); panX += PAN_STEP; clampPan(); draw(); break;
     case 'arrowup': e.preventDefault(); panY -= PAN_STEP; clampPan(); draw(); break;
