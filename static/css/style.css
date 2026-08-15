@@ -396,6 +396,7 @@
     display: flex; align-items: flex-start; justify-content: space-between; gap: 20px;
     margin-bottom: 14px; flex-wrap: wrap;
   }
+  #about .section-head { margin-bottom: 0; }
   @media (max-width: 720px) {
     /* When the title and .note wrap onto separate lines, the 20px gap
        (meant for side-by-side spacing) reads as a big vertical gap
@@ -554,10 +555,16 @@
   .rendered .display-eq { font-size: 23px; margin-top: 10px; }
   .eq-num { color: var(--ink-faint); font-size: 13px; float: right; font-family: ui-monospace, monospace; }
 
-  /* ---- About / Collaborators ---- */
-  .about-bio { color: var(--ink-soft); font-size: 15px; max-width: 60ch; margin: 0 0 26px; }
-  .collab-block { padding-top: 22px; border-top: 1px solid var(--line-soft); }
-  .collab-heading { font-size: 20px; font-weight: 400; letter-spacing: 0.01em; margin: 0 0 10px; color: var(--ink); }
+  /* ---- About / Academic Services / Collaborators / Wity Works ---- */
+  .about-bio { color: var(--ink-soft); font-size: 15px; max-width: 49ch; margin: 0; }
+  .about-heading { font-size: 26px; font-weight: 400; letter-spacing: 0.01em; margin: 0 0 14px; color: var(--ink); }
+  .about-block { margin-bottom: 30px; }
+  .collab-block { padding-top: 22px; border-top: 1px solid var(--line-soft); margin-bottom: 30px; }
+  .wity-block { padding-top: 22px; border-top: 1px solid var(--line-soft); }
+  .wity-heading { font-size: 20px; font-weight: 400; letter-spacing: 0.01em; margin: 26px 0 10px; color: var(--ink); }
+  .wity-heading:first-child { margin-top: 0; }
+  .trivia-text { max-width: 68ch; line-height: 1.7; }
+  .trivia-text a { color: var(--ink-soft); text-decoration: underline; text-underline-offset: 2px; }
   .collab-intro { color: var(--ink-soft); font-size: 15px; max-width: 68ch; margin: 0 0 14px; }
   .collab-row { font-size: 13px; color: var(--ink-soft); line-height: 1.7; margin: 0 0 4px; }
   .collab-row .collab-cat { color: var(--ink); margin-right: 6px; }
