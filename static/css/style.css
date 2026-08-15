@@ -495,7 +495,10 @@
   .pub-btn:hover { color: var(--blue); }
   @media (max-width: 560px) {
     .pub-item { grid-template-columns: 1fr; }
-    .pub-thumb { width: 344px; height: 194px; max-width: 100%; }
+    .pub-thumb { width: 344px; height: 194px; max-width: 100%; margin: 0 auto; }
+    .pub-thumb:empty, .pub-thumb:not(:has(img[src])) {
+      display: none !important;
+    }
   }
   .updated-badge {
     display: inline-flex; align-items: center; gap: 6px;
