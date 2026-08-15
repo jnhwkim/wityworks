@@ -1008,12 +1008,19 @@
       <div class="note">Top-level categories plus tags; any <code>$...$</code> or <code>$$...$$</code> in a post renders as math automatically</div>
     </div>
 
-    <div class="cols blog">
+    <div class="cols blog" id="home-blog-cols">
       <aside>
+        <div class="cat-panel-head">
+          <span class="cat-panel-title">Categories</span>
+          <button type="button" class="filter-expand" id="home-cat-minimize-btn" title="Minimize category panel" aria-label="Minimize category panel" aria-expanded="true">‹</button>
+        </div>
         <ul class="cat-list" id="home-blog-cats"></ul>
       </aside>
 
       <div>
+        <div class="cat-expand-wrapper" id="home-cat-expand-wrapper" hidden>
+          <button type="button" class="pub-btn cat-expand-btn" id="home-cat-expand-btn" title="Show category panel" aria-label="Show category panel"><span class="btn-icon" aria-hidden="true">›</span> Categories</button>
+        </div>
         <div id="home-blog-posts"></div>
 
         <div class="math-demo">
@@ -1164,7 +1171,55 @@
 (function () {
   var catList = document.getElementById('home-blog-cats');
   var postList = document.getElementById('home-blog-posts');
+  var homeCols = document.getElementById('home-blog-cols');
+  var expandWrapper = document.getElementById('home-cat-expand-wrapper');
+  var minBtn = document.getElementById('home-cat-minimize-btn');
+  var expBtn = document.getElementById('home-cat-expand-btn');
   if (!catList || !postList || typeof BLOG_POSTS === 'undefined') return;
+
+  var SIDEBAR_COOKIE = 'blog_sidebar';
+
+  function readCookie(name) {
+    var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  function writeCookie(name, value) {
+    document.cookie = name + '=' + encodeURIComponent(value) + ';path=/;max-age=31536000;SameSite=Lax';
+  }
+
+  function applySidebarState(state) {
+    if (!homeCols) return;
+    if (state === 'collapsed') {
+      homeCols.classList.add('sidebar-collapsed');
+      if (expandWrapper) expandWrapper.removeAttribute('hidden');
+      if (minBtn) minBtn.setAttribute('aria-expanded', 'false');
+    } else {
+      homeCols.classList.remove('sidebar-collapsed');
+      if (expandWrapper) expandWrapper.setAttribute('hidden', '');
+      if (minBtn) minBtn.setAttribute('aria-expanded', 'true');
+    }
+  }
+
+  function setSidebarState(state) {
+    writeCookie(SIDEBAR_COOKIE, state);
+    applySidebarState(state);
+  }
+
+  var savedSidebar = readCookie(SIDEBAR_COOKIE) || 'expanded';
+  applySidebarState(savedSidebar);
+
+  if (minBtn) {
+    minBtn.addEventListener('click', function () {
+      setSidebarState('collapsed');
+    });
+  }
+
+  if (expBtn) {
+    expBtn.addEventListener('click', function () {
+      setSidebarState('expanded');
+    });
+  }
 
   var publicPosts = BLOG_POSTS.filter(function (p) { return p.visibility === 'public'; });
 

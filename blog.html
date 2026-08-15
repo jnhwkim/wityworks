@@ -73,8 +73,23 @@
       <div class="note" id="blog-note">Any <code>$...$</code> or <code>$$...$$</code> in a post renders as math automatically.</div>
     </div>
 
-    <div id="blog-content">
-      <p class="post-empty">Loading&hellip;</p>
+    <div class="cols blog" id="blog-cols">
+      <aside id="blog-aside">
+        <div class="cat-panel-head">
+          <span class="cat-panel-title">Categories</span>
+          <button type="button" class="filter-expand" id="cat-minimize-btn" title="Minimize category panel" aria-label="Minimize category panel" aria-expanded="true">‹</button>
+        </div>
+        <div id="blog-cat-container"></div>
+      </aside>
+
+      <main id="blog-main">
+        <div class="cat-expand-wrapper" id="cat-expand-wrapper" hidden>
+          <button type="button" class="pub-btn cat-expand-btn" id="cat-expand-btn" title="Show category panel" aria-label="Show category panel"><span class="btn-icon" aria-hidden="true">›</span> Categories</button>
+        </div>
+        <div id="blog-content">
+          <p class="post-empty">Loading&hellip;</p>
+        </div>
+      </main>
     </div>
   </section>
 
@@ -149,8 +164,58 @@
 (function () {
   var content = document.getElementById('blog-content');
   var heading = document.getElementById('blog-heading');
+  var eyebrow = document.getElementById('blog-eyebrow');
   var note = document.getElementById('blog-note');
+  var catContainer = document.getElementById('blog-cat-container');
+  var blogCols = document.getElementById('blog-cols');
+  var expandWrapper = document.getElementById('cat-expand-wrapper');
+  var minBtn = document.getElementById('cat-minimize-btn');
+  var expBtn = document.getElementById('cat-expand-btn');
   var params = new URLSearchParams(location.search);
+
+  var SIDEBAR_COOKIE = 'blog_sidebar';
+
+  function readCookie(name) {
+    var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  function writeCookie(name, value) {
+    document.cookie = name + '=' + encodeURIComponent(value) + ';path=/;max-age=31536000;SameSite=Lax';
+  }
+
+  function applySidebarState(state) {
+    if (!blogCols) return;
+    if (state === 'collapsed') {
+      blogCols.classList.add('sidebar-collapsed');
+      if (expandWrapper) expandWrapper.removeAttribute('hidden');
+      if (minBtn) minBtn.setAttribute('aria-expanded', 'false');
+    } else {
+      blogCols.classList.remove('sidebar-collapsed');
+      if (expandWrapper) expandWrapper.setAttribute('hidden', '');
+      if (minBtn) minBtn.setAttribute('aria-expanded', 'true');
+    }
+  }
+
+  function setSidebarState(state) {
+    writeCookie(SIDEBAR_COOKIE, state);
+    applySidebarState(state);
+  }
+
+  var savedSidebar = readCookie(SIDEBAR_COOKIE) || 'expanded';
+  applySidebarState(savedSidebar);
+
+  if (minBtn) {
+    minBtn.addEventListener('click', function () {
+      setSidebarState('collapsed');
+    });
+  }
+
+  if (expBtn) {
+    expBtn.addEventListener('click', function () {
+      setSidebarState('expanded');
+    });
+  }
 
   function formatDate(iso) {
     var d = new Date(iso + 'T00:00:00');
@@ -207,12 +272,18 @@
     return ul;
   }
 
+  function renderCategories(activeSlug) {
+    if (!catContainer) return;
+    catContainer.innerHTML = '';
+    catContainer.appendChild(categoryList(activeSlug));
+  }
+
   function postCard(post) {
     var article = document.createElement('article');
     article.className = 'post-card';
-    var eyebrow = document.createElement('span');
-    eyebrow.className = 'label eyebrow';
-    eyebrow.innerHTML = post.categoryLabel;
+    var cardEyebrow = document.createElement('span');
+    cardEyebrow.className = 'label eyebrow';
+    cardEyebrow.innerHTML = post.categoryLabel;
     var h3 = document.createElement('h3');
     var a = document.createElement('a');
     a.href = 'blog.html?post=' + encodeURIComponent(post.category) + '/' + encodeURIComponent(post.slug);
@@ -223,7 +294,7 @@
     var meta = document.createElement('span');
     meta.className = 'meta';
     meta.textContent = formatDate(post.date) + ' · ' + post.readTime;
-    article.appendChild(eyebrow);
+    article.appendChild(cardEyebrow);
     article.appendChild(h3);
     article.appendChild(p);
     article.appendChild(meta);
@@ -231,18 +302,13 @@
   }
 
   function renderListing(activeSlug) {
+    if (eyebrow) eyebrow.textContent = 'Writing';
     heading.textContent = 'Blog';
     note.innerHTML = 'Top-level categories plus tags; any <code>$...$</code> or <code>$$...$$</code> in a post renders as math automatically.';
     content.innerHTML = '';
 
-    var cols = document.createElement('div');
-    cols.className = 'cols blog';
+    renderCategories(activeSlug);
 
-    var aside = document.createElement('aside');
-    aside.appendChild(categoryList(activeSlug));
-    cols.appendChild(aside);
-
-    var main = document.createElement('div');
     var posts = BLOG_POSTS.filter(function (p) {
       return p.visibility === 'public' && (!activeSlug || p.category === activeSlug);
     });
@@ -251,12 +317,10 @@
       var empty = document.createElement('p');
       empty.className = 'post-empty';
       empty.textContent = 'No public posts here yet — check back soon.';
-      main.appendChild(empty);
+      content.appendChild(empty);
     } else {
-      posts.forEach(function (p) { main.appendChild(postCard(p)); });
+      posts.forEach(function (p) { content.appendChild(postCard(p)); });
     }
-    cols.appendChild(main);
-    content.appendChild(cols);
   }
 
   function renderPrivateNotice(label) {
@@ -291,8 +355,18 @@
     var slug = parts.slice(1).join('/');
     var entry = BLOG_POSTS.filter(function (p) { return p.category === category && p.slug === slug; })[0];
 
-    if (!entry) { renderPrivateNotice('Post not found.'); return; }
-    if (entry.visibility !== 'public') { renderPrivateNotice("This post isn't published yet."); return; }
+    if (!entry) {
+      renderCategories(null);
+      renderPrivateNotice('Post not found.');
+      return;
+    }
+    if (entry.visibility !== 'public') {
+      renderCategories(entry.category);
+      renderPrivateNotice("This post isn't published yet.");
+      return;
+    }
+
+    renderCategories(entry.category);
 
     fetch('blog/' + category + '/' + slug + '.md')
       .then(function (res) { if (!res.ok) throw new Error('fetch failed'); return res.text(); })
@@ -302,22 +376,23 @@
           renderPrivateNotice("This post isn't published yet.");
           return;
         }
+        if (eyebrow) eyebrow.innerHTML = parsed.data.categoryLabel || entry.categoryLabel;
         heading.textContent = parsed.data.title || entry.title;
         note.innerHTML = '';
         content.innerHTML = '';
 
         var article = document.createElement('article');
         article.className = 'post-body';
-        var eyebrow = document.createElement('span');
-        eyebrow.className = 'label eyebrow';
-        eyebrow.innerHTML = parsed.data.categoryLabel || entry.categoryLabel;
+        var postEyebrow = document.createElement('span');
+        postEyebrow.className = 'label eyebrow';
+        postEyebrow.innerHTML = parsed.data.categoryLabel || entry.categoryLabel;
         var meta = document.createElement('p');
         meta.className = 'meta';
         meta.textContent = formatDate(parsed.data.date || entry.date) + ' · ' + (parsed.data.readTime || entry.readTime);
         var body = document.createElement('div');
         body.innerHTML = window.marked ? marked.parse(parsed.body) : escapeHtml(parsed.body);
 
-        article.appendChild(eyebrow);
+        article.appendChild(postEyebrow);
         article.appendChild(meta);
         article.appendChild(body);
         content.appendChild(article);

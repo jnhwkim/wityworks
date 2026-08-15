@@ -514,6 +514,29 @@
   .course-meta { display: flex; gap: 16px; font-size: 13px; color: var(--ink-soft); font-style: italic; }
 
   /* ---- Blog ---- */
+  .cols.blog { transition: grid-template-columns 0.2s ease; }
+  .cols.blog.sidebar-collapsed { grid-template-columns: 1fr; }
+  .cols.blog.sidebar-collapsed aside { display: none; }
+
+  .cat-panel-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 8px; margin-bottom: 6px; border-bottom: 1px solid var(--line-soft);
+  }
+  .cat-panel-title {
+    font-family: "Century Gothic", ui-sans-serif, sans-serif;
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;
+    color: var(--ink-faint);
+  }
+
+  .cat-expand-wrapper { margin-bottom: 14px; }
+  .cat-expand-wrapper[hidden] { display: none; }
+  .cat-expand-btn {
+    cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
+  }
+  .cat-expand-btn .btn-icon {
+    font-size: 11px; line-height: 1; position: relative; top: -1px;
+  }
+
   .cat-list { list-style: none; margin: 0; padding: 0; }
   .cat-list li { border-top: 1px solid var(--line-soft); }
   .cat-list li:first-child { border-top: none; }
