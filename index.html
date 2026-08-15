@@ -1330,14 +1330,19 @@
   // row position — the two are independently tunable, not tied to each
   // other, since they don't necessarily need to move by the same amount.
   var ROW_MARGIN_TOP = '-1px';
-  var DIVIDER_OFFSET = -0.5;
+  var DIVIDER_OFFSET = -1;
+  var LAST_ROW_MARGIN_BOTTOM = '-0.5px';
 
   function updateNavRowDividers() {
     var oldDividers = nav.querySelectorAll('.nav-row-divider');
     for (var i = 0; i < oldDividers.length; i++) oldDividers[i].remove();
     // Undo any row-shift from a previous call before re-measuring — which
     // links fall in row 2+ can change between calls (resize, item count).
-    navLinks.forEach(function (link) { link.style.marginTop = ''; });
+    navLinks.forEach(function (link) {
+      link.style.marginTop = '';
+      link.style.marginBottom = '';
+      link.style.borderBottomColor = '';
+    });
 
     var navTop = nav.getBoundingClientRect().top;
     var rows = [];
@@ -1351,21 +1356,36 @@
       row.links.push(link);
     });
     rows.sort(function (a, b) { return a.top - b.top; });
-    if (rows.length < 2) return;
 
-    // Place dividers using each row's *pre-shift* top (captured above,
-    // at the CSS-default -1px margin) plus DIVIDER_OFFSET — independent
-    // of whatever ROW_MARGIN_TOP does to the links themselves.
-    for (var r = 1; r < rows.length; r++) {
-      var divider = document.createElement('div');
-      divider.className = 'nav-row-divider';
-      divider.style.top = (rows[r].top + DIVIDER_OFFSET) + 'px';
-      nav.appendChild(divider);
+    if (rows.length >= 2) {
+      // Place dividers using each row's *pre-shift* top (captured above,
+      // at the CSS-default -1px margin) plus DIVIDER_OFFSET — independent
+      // of whatever ROW_MARGIN_TOP does to the links themselves.
+      for (var r = 1; r < rows.length; r++) {
+        var divider = document.createElement('div');
+        divider.className = 'nav-row-divider';
+        divider.style.top = (rows[r].top + DIVIDER_OFFSET) + 'px';
+        nav.appendChild(divider);
+      }
+
+      for (var r2 = 1; r2 < rows.length; r2++) {
+        rows[r2].links.forEach(function (link) { link.style.marginTop = ROW_MARGIN_TOP; });
+      }
     }
 
-    for (var r2 = 1; r2 < rows.length; r2++) {
-      rows[r2].links.forEach(function (link) { link.style.marginTop = ROW_MARGIN_TOP; });
-    }
+    // The bottom-most row's own border-bottom (light var(--line-soft), same
+    // as every other per-link grid border) sits directly above nav's own
+    // outer border-bottom (thick, var(--ink)) and paints on top of it (child
+    // borders paint after the parent's), so it visually pokes out as a
+    // lighter sliver instead of blending into the thick line. Applies
+    // whether the nav is a single row (desktop) or wraps (mobile) — it's
+    // always the last row that touches nav's outer border-bottom. Hide that
+    // border and pull the row up LAST_ROW_MARGIN_BOTTOM so only nav's own
+    // thick border-bottom shows, nudged up half a pixel to line up cleanly.
+    rows[rows.length - 1].links.forEach(function (link) {
+      link.style.borderBottomColor = 'transparent';
+      link.style.marginBottom = LAST_ROW_MARGIN_BOTTOM;
+    });
   }
 
   function updateScrollSpy() {
