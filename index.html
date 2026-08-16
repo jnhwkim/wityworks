@@ -1714,5 +1714,102 @@
 })();
 </script>
 
+<script>
+(function() {
+  var FRAME_COUNT = 51;
+  var FRAME_PATH = 'static/img/avatar_frames/frame_';
+  var images = [];
+  var isLoaded = false;
+  var currentFrameIndex = -1;
+
+  // DOM 요소 지정
+  var avatarContainer = document.querySelector('.profile .avatar');
+  var avatarImg = avatarContainer ? avatarContainer.querySelector('img') : null;
+  var primaryNav = document.querySelector('nav.primary');
+
+  if (!avatarContainer || !avatarImg) return;
+
+  var originalSrc = avatarImg.src;
+
+  window.addEventListener('load', function() {
+    var loadedCount = 0;
+    
+    for (var i = 0; i < FRAME_COUNT; i++) {
+      var img = new Image();
+      var frameNum = String(i).padStart(4, '0');
+      img.src = FRAME_PATH + frameNum + '.png';
+      
+      img.onload = img.onerror = function() {
+        loadedCount++;
+        if (loadedCount === FRAME_COUNT) {
+          isLoaded = true; // 50개 프레임 전체 로딩 완료 시에만 스크롤 인터렉션 활성화
+          updateFrame();   // 초기 스크롤 위치 반영
+        }
+      };
+      images.push(img);
+    }
+  });
+
+  function getScrollProgress() {
+    var avatarRect = avatarContainer.getBoundingClientRect();
+    var navBottom = primaryNav ? primaryNav.getBoundingClientRect().bottom : 0;
+
+    var startY = navBottom;
+    var endY = navBottom - avatarRect.height;
+
+    var currentY = avatarRect.top;
+
+    if (currentY > startY) return 0;
+    if (currentY < endY) return 1;
+
+    return (startY - currentY) / (startY - endY);
+  }
+
+  var lastRenderTime = 0;
+  var fpsInterval = 1000 / 30; // 30fps 제한 (약 33.3ms 간격)
+  var ticking = false;
+
+  function updateFrame() {
+    if (!isLoaded) return;
+
+    var progress = getScrollProgress();
+
+    if (progress <= 0) {
+      if (currentFrameIndex !== -1) {
+        avatarImg.src = originalSrc;
+        currentFrameIndex = -1;
+      }
+      return;
+    }
+
+    var targetIndex = Math.min(
+      FRAME_COUNT - 1,
+      Math.floor(progress * FRAME_COUNT)
+    );
+
+    if (targetIndex !== currentFrameIndex) {
+      avatarImg.src = images[targetIndex].src;
+      currentFrameIndex = targetIndex;
+    }
+  }
+
+  window.addEventListener('scroll', function() {
+    if (!isLoaded) return;
+    if (!ticking) {
+      window.requestAnimationFrame(function(currentTime) {
+        var elapsed = currentTime - lastRenderTime;
+        if (elapsed > fpsInterval) {
+          lastRenderTime = currentTime - (elapsed % fpsInterval);
+          updateFrame();
+        }
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+  window.addEventListener('resize', updateFrame);
+})();
+</script>
+
 </body>
 </html>
