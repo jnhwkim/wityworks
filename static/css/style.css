@@ -620,6 +620,7 @@
     height: auto;
     margin: 0 auto;
     border-radius: 6px;
+    mix-blend-mode: multiply;
   }
   .post-body .post-illustration figcaption {
     margin-top: 0.6rem;
