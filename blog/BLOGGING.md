@@ -58,4 +58,4 @@ If working solely in a browser/web-AI interface:
      readTime: '5 min read',
      visibility: 'public',
    }
-3. Keep `BLOG_POSTS` sorted by `date` in descending order so counting and sorting work seamlessly on `blog.html`.
+3. Keep `BLOG_POSTS` sorted by `date` in descending order so counting and sorting work seamlessly on `index.html` and `root/blog/index.html`.
