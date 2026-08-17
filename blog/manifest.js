@@ -18,7 +18,7 @@ const BLOG_CATEGORIES = [
 const BLOG_POSTS = [
   {
     category: 'math-stats-notes',
-    categoryLabel: 'ML Concepts',
+    categoryLabel: 'Math & Stats Notes',
     slug: 'spherical-harmonics',
     title: 'Waves on a Sphere, Spherical Harmonics',
     summary: 'History, mathematical definition, and applications of spherical harmonics from quantum mechanics to neural 3D',
