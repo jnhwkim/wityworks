@@ -606,6 +606,42 @@
   .post-body em.footnote { display: inline-block; margin-top: 10px; font-size: 13px; color: var(--ink-faint); font-style: italic; }
   .post-body .katex-display { overflow-x: auto; overflow-y: hidden; }
   .post-body .post-eyebrow { text-decoration: none; }
+  
+  .post-body .post-illustration {
+    margin: 2rem auto;
+    width: 100%;
+    max-width: 680px;
+    text-align: center;
+  }
+  .post-body .post-illustration img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    border-radius: 6px;
+  }
+  .post-body .post-illustration figcaption {
+    margin-top: 0.6rem;
+    font-size: 0.85rem;
+    color: #55503f;
+    font-style: italic;
+    line-height: 1.4;
+  }
+  [data-theme="dark"] .post-body .post-illustration figcaption {
+    color: var(--ink-soft);
+  }
+
+  [data-theme="dark"] .post-illustration img {
+    filter: sepia(0.35) brightness(0.72) contrast(0.92);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .post-illustration img {
+      background-color: #14130f; 
+      mix-blend-mode: luminosity;
+      opacity: 1.0;
+    }
+  }
 
   /* End-of-article mark: a geometric dagger built from straight rects (not
      the typographic † glyph, which already means "co-corresponding author"

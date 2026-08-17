@@ -36,6 +36,11 @@ In recent years, Spherical Harmonics have experienced a resurgence in neural 3D,
 
 ## 2. Historical background of spherical harmonics
 
+<figure class="post-illustration">
+  <img src="../static/img/blog/spherical-harmonics-pioneers.png" alt="Line art illustration of Laplace, Legendre, Thomson, and Tait" loading="lazy">
+  <figcaption>Historical figures of Spherical Harmonics: Laplace, Legendre, Kelvin, and Tait.</figcaption>
+</figure>
+
 Spherical Harmonics were first introduced in the late 18th century by Pierre-Simon Laplace (1782) and Adrien-Marie Legendre (1785) to analyze gravitational potentials and celestial mechanics without relying on computationally heavy Cartesian series expansions. Throughout the 19th century, the framework expanded to describe physical phenomena like heat conduction, wave propagation, and electrostatics in spherical geometries—giving rise to a fundamental class of mathematical formulations known as **boundary value problems**.
 
 In differential equations and classical physics, boundary value problems refer to differential equations coupled with a set of constraints—known as boundary conditions—that the solution must satisfy at the physical borders of a specified domain. Unlike initial value problems, which evolve a system forward in time from a starting state, a boundary value problem seeks a static or stationary state governed by fixed constraints on the perimeter. In the context of Spherical Harmonics, the underlying domain is typically a continuous spherical surface ($S^2$) or a 3D spherical volume. The boundary conditions mandate that physical properties—such as temperature, electric field, or wave amplitude—remain well-behaved, continuous, and single-valued across the boundary.
