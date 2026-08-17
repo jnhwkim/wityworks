@@ -596,6 +596,10 @@
   .post-body pre { background: var(--code-bg); padding: 10px 12px; overflow-x: auto; }
   .post-body pre code { padding: 0; }
   .post-body blockquote { margin: 0 0 14px; padding-left: 14px; border-left: 3px solid var(--line-soft); color: var(--ink-soft); }
+  .post-body a { text-decoration: none; }
+  .post-body a:hover { text-decoration: underline; }
+  .post-body hr { border: none; border-top: 1px solid var(--line-soft); }
+  .post-body ul, li { list-style-type: none; }
   .post-body .katex-display { overflow-x: auto; overflow-y: hidden; }
   .post-body .post-eyebrow { text-decoration: none; }
 

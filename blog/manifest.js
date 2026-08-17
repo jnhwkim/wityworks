@@ -17,6 +17,16 @@ const BLOG_CATEGORIES = [
 
 const BLOG_POSTS = [
   {
+    category: 'math-stats-notes',
+    categoryLabel: 'ML Concepts',
+    slug: 'spherical-harmonics',
+    title: 'Waves on a Sphere, Spherical Harmonics',
+    summary: 'History, mathematical definition, and applications of spherical harmonics from quantum mechanics to neural 3D',
+    date: '2026-08-17',
+    readTime: '15 min read',
+    visibility: 'public',
+  },
+  {
     category: 'ml-concepts',
     categoryLabel: 'ML Concepts',
     slug: 'why-attention-is-normalized-with-softmax',
