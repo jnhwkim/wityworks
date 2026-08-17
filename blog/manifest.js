@@ -23,7 +23,7 @@ const BLOG_POSTS = [
     title: 'Waves on a Sphere, Spherical Harmonics',
     summary: 'History, mathematical definition, and applications of spherical harmonics from quantum mechanics to neural 3D',
     date: '2026-08-17',
-    readTime: '15 min read',
+    readTime: '20 min read',
     visibility: 'public',
   },
   {

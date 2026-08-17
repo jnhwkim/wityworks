@@ -3,7 +3,7 @@ title: Waves on a Sphere: Waves on a Sphere, Spherical Harmonics
 category: math-stats-notes
 categoryLabel: Math & Stats Notes
 date: 2026-08-17
-readTime: 15 min read
+readTime: 20 min read
 summary: History, mathematical definition, and applications of spherical harmonics from quantum mechanics to neural 3D.
 visibility: public
 ---
