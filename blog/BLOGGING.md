@@ -59,3 +59,15 @@ If working solely in a browser/web-AI interface:
      visibility: 'public',
    }
 3. Keep `BLOG_POSTS` sorted by `date` in descending order so counting and sorting work seamlessly on `index.html` and `root/blog/index.html`.
+
+## 3. Illustration Guidelines (Vintage Line Art)
+
+When generating vector/line art illustrations for scientific blog posts, use the following standardized prompt template and rules to maintain consistent aesthetics across all articles.
+
+### Prompt Template
+```text
+A minimal vintage fountain pen line art illustration of [TARGET_SUBJECT]. 
+Fine line drawing style, micro-hatched straight lines and cross-hatching for shading and depth. 
+No solid fills, clean background, vintage scientific sketchbook illustration style. 
+All line strokes in monochrome brownish-gray color (#55503f). 
+High precision, elegant vector line art, isolated on pure white background.
