@@ -51,7 +51,7 @@ The term itself was officially introduced by Lord Kelvin (William Thomson) and P
 
 ---
 
-## 3. Rigorous mathematical definition of spherical harmonics
+## 3. Mathematical definition of spherical harmonics
 
 ### 3.1 Laplace equation in spherical coordinates
 In vector calculus and mathematical physics, **Laplace's equation** ($\nabla^2 f = 0$) governs source-free, static field configurations—such as gravitational potentials in empty space, electrostatic fields outside charges, and steady-state heat distributions. Solutions to Laplace's equation are known as harmonic functions, which possess strong smoothness and the mean-value property—stating that the value of the function at any point equals the average of its values over any sphere centered at that point.
