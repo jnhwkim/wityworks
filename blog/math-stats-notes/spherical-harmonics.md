@@ -1,5 +1,5 @@
 ---
-title: Waves on a Sphere: Waves on a Sphere, Spherical Harmonics
+title: Waves on a Sphere, Spherical Harmonics
 category: math-stats-notes
 categoryLabel: Math & Stats Notes
 date: 2026-08-17
