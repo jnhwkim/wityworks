@@ -426,6 +426,14 @@
     return { data: data, body: m[2] };
   }
 
+  function slugify(text) {
+    return text
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
   function renderPost(pathParam) {
     var parts = pathParam.split('/');
     var category = parts[0];
@@ -470,6 +478,33 @@
         meta.className = 'meta';
         meta.textContent = formatDate(parsed.data.date || entry.date) + ' · ' + (parsed.data.readTime || entry.readTime);
         var body = document.createElement('div');
+
+        if (window.marked) {
+          var isAfterHr = false;
+
+          marked.use({
+            renderer: {
+              heading(text, level) {
+                isAfterHr = false;
+                var plainText = text.replace(/<[^>]*>/g, '');
+                var id = slugify(plainText);
+                return '<h' + level + ' id="' + id + '">' + text + '</h' + level + '>';
+              },
+              hr() {
+                isAfterHr = true;
+                return '<hr>\n';
+              },
+              paragraph(text) {
+                if (isAfterHr) {
+                  isAfterHr = false;
+                  return '<p><em class="footnote">' + text + '</em></p>\n';
+                }
+                return '<p>' + text + '</p>\n';
+              }
+            }
+          });
+        }
+
         body.innerHTML = window.marked ? marked.parse(parsed.body) : escapeHtml(parsed.body);
 
         article.appendChild(postEyebrow);

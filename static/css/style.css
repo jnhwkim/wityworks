@@ -588,7 +588,7 @@
   .post-body .meta { font-size: 13px; color: var(--ink-faint); font-style: italic; display: block; margin: 0 0 18px; }
   .post-body h1, .post-body h2, .post-body h3 { font-weight: 400; margin: 28px 0 10px; }
   .post-body h2 { font-size: 22px; }
-  .post-body h3 { font-size: 19px; }
+  .post-body h3 { font-size: 19px; margin-top: 10px; }
   .post-body p { margin: 0 0 14px; }
   .post-body ul, .post-body ol { margin: 0 0 14px; padding-left: 22px; }
   .post-body li { margin-bottom: 4px; }
@@ -598,8 +598,12 @@
   .post-body blockquote { margin: 0 0 14px; padding-left: 14px; border-left: 3px solid var(--line-soft); color: var(--ink-soft); }
   .post-body a { text-decoration: none; }
   .post-body a:hover { text-decoration: underline; }
+  .post-body a[id^="ref-"] { scroll-margin-top: 60px; }
+  .post-body h2, .post-body h3 { scroll-margin-top: 54px; }
   .post-body hr { border: none; border-top: 1px solid var(--line-soft); }
-  .post-body ul, li { list-style-type: none; }
+  .post-body ul, ol, li { list-style-type: none; padding-left: 0px; }
+  .post-body ul ul, ol ol { margin-bottom: 0px; padding-left: 20px; }
+  .post-body em.footnote { display: inline-block; margin-top: 10px; font-size: 13px; color: var(--ink-faint); font-style: italic; }
   .post-body .katex-display { overflow-x: auto; overflow-y: hidden; }
   .post-body .post-eyebrow { text-decoration: none; }
 
