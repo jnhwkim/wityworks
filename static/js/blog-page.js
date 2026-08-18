@@ -294,7 +294,7 @@
     if (eyebrow) eyebrow.textContent = "Writing";
     heading.textContent = "Blog";
     note.innerHTML =
-      "Research notes, paper reviews, and essays on AI, math, and life.";
+      'Research notes, paper reviews, and essays on AI, math, and life.<a class="rss-link blog-rss-link" href="rss.xml" type="application/rss+xml" title="Subscribe to the Blog RSS Feed"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="3.1" cy="12.9" r="1.35" fill="currentColor"/><path d="M2 7.1a6.9 6.9 0 0 1 6.9 6.9M2 2a12 12 0 0 1 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>RSS</span></a>';
     content.innerHTML = "";
 
     renderCategories(activeSlug);
@@ -401,10 +401,21 @@
 
         var meta = document.createElement("p");
         meta.className = "meta";
-        meta.textContent =
+        var metaDetails = document.createElement("span");
+        metaDetails.className = "post-meta-details";
+        metaDetails.textContent =
           formatDate(parsed.data.date || entry.date) +
           " · " +
           (parsed.data.readTime || entry.readTime);
+        var rssLink = document.createElement("a");
+        rssLink.className = "rss-link post-rss-link";
+        rssLink.href = "rss.xml";
+        rssLink.type = "application/rss+xml";
+        rssLink.title = "Subscribe to the Blog RSS Feed";
+        rssLink.innerHTML =
+          '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="3.1" cy="12.9" r="1.35" fill="currentColor"/><path d="M2 7.1a6.9 6.9 0 0 1 6.9 6.9M2 2a12 12 0 0 1 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>RSS</span>';
+        meta.appendChild(metaDetails);
+        meta.appendChild(rssLink);
         var body = document.createElement("div");
 
         if (window.marked) {

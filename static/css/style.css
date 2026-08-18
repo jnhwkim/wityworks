@@ -452,6 +452,17 @@
      just here instead of shrinking the wording to fit the default 36ch. */
   #teaching .section-head .note { max-width: 56ch; }
   #blog .section-head .note, #blog-note { max-width: 30ch; }
+  .rss-link {
+    align-items: center; color: var(--ink-faint); display: inline-flex; gap: 4px;
+    text-decoration: none;
+  }
+  .rss-link svg { width: 13px; height: 13px; flex: 0 0 auto; }
+  .rss-link:hover { color: var(--blue); }
+  .blog-rss-link {
+    border-left: 1px solid var(--line-soft); font-family: "Century Gothic", ui-sans-serif, sans-serif;
+    font-size: 10px; letter-spacing: 0.08em; margin-left: 8px; padding-left: 8px;
+    text-transform: uppercase; vertical-align: -2px; white-space: nowrap;
+  }
 
   .cols { display: grid; gap: 28px; }
   .cols > * { min-width: 0; }   /* grid items default to min-width:auto — without this, a wide
@@ -586,7 +597,9 @@
   /* ---- Blog: single-post view + empty-state (blog.html) ---- */
   .post-empty { color: var(--ink-faint); font-style: italic; padding: 8px 0; }
   .post-body { padding-top: 4px; }
-  .post-body .meta { font-size: 13px; color: var(--ink-faint); font-style: italic; display: block; margin: 0 0 18px; }
+  .post-body .meta { font-size: 13px; color: var(--ink-faint); font-style: italic; display: flex; flex-wrap: wrap; gap: 6px 12px; margin: 0 0 18px; }
+  .post-body .post-rss-link { font-family: "Century Gothic", ui-sans-serif, sans-serif; font-size: 10px; font-style: normal; letter-spacing: 0.08em; margin-left: auto; text-transform: uppercase; }
+  .post-body .rss-link:hover { text-decoration: none; }
   .post-body h1, .post-body h2, .post-body h3 { font-weight: 400; margin: 28px 0 10px; }
   .post-body h2 { font-size: 22px; }
   .post-body h3 { font-size: 19px; margin-top: 10px; }
@@ -720,6 +733,7 @@
   }
   footer .col a { display: block; color: var(--ink-soft); text-decoration: none; margin-bottom: 4px; }
   footer .col a:hover { color: var(--blue); }
+  footer .col .footer-rss-link { display: inline-flex; }
   .footer-bottom {
     margin-top: 28px; padding-top: 14px; padding-bottom: 24px;
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
