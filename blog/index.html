@@ -508,6 +508,29 @@
 
         body.innerHTML = window.marked ? marked.parse(parsed.body) : escapeHtml(parsed.body);
 
+        var tocHeading = body.querySelector('h2');
+        if (tocHeading && tocHeading.textContent.trim().toLowerCase() === 'table of contents') {
+          var tocList = tocHeading.nextElementSibling;
+          if (tocList && /^(UL|OL)$/.test(tocList.tagName)) {
+            var tocCard = document.createElement('section');
+            tocCard.className = 'toc-card';
+            tocCard.setAttribute('aria-label', 'Table of contents');
+            tocHeading.parentNode.insertBefore(tocCard, tocHeading);
+            tocCard.appendChild(tocHeading);
+            tocCard.appendChild(tocList);
+            tocCard.querySelectorAll('a').forEach(function (link) {
+              var match = link.textContent.match(/^(\d+(?:\.\d+)*\.?)\s+(.+)$/);
+              if (!match) return;
+              var number = document.createElement('span');
+              number.className = 'toc-number';
+              number.textContent = match[1];
+              link.textContent = '';
+              link.appendChild(number);
+              link.appendChild(document.createTextNode(match[2]));
+            });
+          }
+        }
+
         article.appendChild(meta);
         article.appendChild(body);
         content.appendChild(article);

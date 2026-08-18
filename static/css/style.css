@@ -455,8 +455,8 @@
 
   .cols { display: grid; gap: 28px; }
   .cols > * { min-width: 0; }   /* grid items default to min-width:auto — without this, a wide
-                                   overflow-x:auto child (e.g. .math-demo .source) forces the
-                                   whole track (and the page) wider instead of scrolling internally */
+                                   overflow-x:auto child can force the whole track (and the page)
+                                   wider instead of scrolling internally */
   .cols.two { grid-template-columns: 1fr 1fr; }
   .cols.blog { grid-template-columns: 210px 1fr; }
   @media (max-width: 720px) {
@@ -659,29 +659,21 @@
     text-decoration: none;
   }
 
-  /* ---- Math demo ---- */
-  .math-demo {
-    margin-top: 14px; border: 2px solid var(--ink); background: var(--ground-raised);
-    padding: 15px 17px;
+  /* ---- Blog table of contents ---- */
+  .toc-card {
+    margin: 0 0 28px;
+    border: 2px solid var(--ink);
+    border-top: 3px solid var(--gold);
+    background: var(--ground-raised);
+    padding: 15px 17px 15px 21px;
   }
-  .math-demo .tag-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .math-demo .tag-row .label { color: var(--ink-faint); }
-  .math-demo .lib-pill {
-    font-family: ui-monospace, monospace; font-size: 11px; color: var(--blue);
-    border: 1.5px solid var(--blue); padding: 2px 8px; border-radius: 2px;
-  }
-  .math-demo .source {
-    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13.5px;
-    background: var(--code-bg); padding: 8px 12px; color: var(--ink-soft);
-    overflow-x: auto; margin-bottom: 10px; white-space: pre;
-  }
-  .math-demo .source .dollar { color: var(--gold); }
-  .rendered { text-align: center; padding: 6px 0 4px; font-size: 20px; }
-  .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; margin: 0 2px; }
-  .frac .num { border-bottom: 1.4px solid var(--ink); padding: 0 4px 2px; }
-  .frac .den { padding: 2px 4px 0; }
-  .rendered .display-eq { font-size: 23px; margin-top: 10px; }
-  .eq-num { color: var(--ink-faint); font-size: 13px; float: right; font-family: ui-monospace, monospace; }
+  .toc-card h2 { margin: 0 0 10px; font-size: 20px; }
+  .toc-card ul, .toc-card ol { margin: 0; padding-left: 0; }
+  .toc-card li { margin: 4px 0; line-height: 1.4; }
+  .toc-card ul ul, .toc-card ol ol { margin: 4px 0 0; padding-left: calc(1.45em + 7px); }
+  .toc-card a { display: grid; grid-template-columns: 1.45em minmax(0, 1fr); column-gap: 7px; color: var(--ink); text-decoration: none; }
+  .toc-card .toc-number { text-align: right; }
+  .toc-card a:hover { color: var(--blue); text-decoration: underline; text-underline-offset: 2px; }
 
   /* ---- About / Academic Services / Collaborators / Wity Works ---- */
   .about-bio { color: var(--ink-soft); font-size: 15px; max-width: 49ch; margin: 0; }
