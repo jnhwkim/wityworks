@@ -439,6 +439,8 @@
     }
   }
   .section-head .eyebrow { color: var(--ink-faint); margin-bottom: 4px; display: block; }
+  .section-head .eyebrow a { color: var(--blue); text-decoration: none; }
+  .section-head .eyebrow a:hover { text-decoration: underline; text-underline-offset: 2px; }
   .section-head h2 { font-size: 26px; font-weight: 400; margin: 0; letter-spacing: 0.01em; }
   .section-head .note {
     color: var(--ink-soft); font-size: 13px; max-width: 36ch; text-align: right;
@@ -584,7 +586,6 @@
   /* ---- Blog: single-post view + empty-state (blog.html) ---- */
   .post-empty { color: var(--ink-faint); font-style: italic; padding: 8px 0; }
   .post-body { padding-top: 4px; }
-  .post-body .eyebrow { color: var(--blue); margin-bottom: 6px; display: block; }
   .post-body .meta { font-size: 13px; color: var(--ink-faint); font-style: italic; display: block; margin: 0 0 18px; }
   .post-body h1, .post-body h2, .post-body h3 { font-weight: 400; margin: 28px 0 10px; }
   .post-body h2 { font-size: 22px; }
@@ -605,8 +606,6 @@
   .post-body ul ul, ol ol { margin-bottom: 0px; padding-left: 20px; }
   .post-body em.footnote { display: inline-block; margin-top: 10px; font-size: 13px; color: var(--ink-faint); font-style: italic; }
   .post-body .katex-display { overflow-x: auto; overflow-y: hidden; }
-  .post-body .post-eyebrow { text-decoration: none; }
-  
   .post-body .post-illustration {
     margin: 2rem auto;
     width: 100%;

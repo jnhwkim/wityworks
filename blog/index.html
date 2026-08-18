@@ -461,7 +461,13 @@
           renderPrivateNotice("This post isn't published yet.");
           return;
         }
-        if (eyebrow) eyebrow.innerHTML = parsed.data.categoryLabel || entry.categoryLabel;
+        if (eyebrow) {
+          var categoryLink = document.createElement('a');
+          categoryLink.href = './?category=' + encodeURIComponent(entry.category);
+          categoryLink.textContent = parsed.data.categoryLabel || entry.categoryLabel;
+          eyebrow.innerHTML = '';
+          eyebrow.appendChild(categoryLink);
+        }
         heading.textContent = parsed.data.title || entry.title;
         note.innerHTML = '';
         content.innerHTML = '';
@@ -469,11 +475,6 @@
         var article = document.createElement('article');
         article.className = 'post-body';
         
-        var postEyebrow = document.createElement('a');
-        postEyebrow.className = 'label eyebrow post-eyebrow';
-        postEyebrow.href = './?category=' + encodeURIComponent(entry.category);
-        postEyebrow.innerHTML = parsed.data.categoryLabel || entry.categoryLabel;
-
         var meta = document.createElement('p');
         meta.className = 'meta';
         meta.textContent = formatDate(parsed.data.date || entry.date) + ' · ' + (parsed.data.readTime || entry.readTime);
@@ -507,7 +508,6 @@
 
         body.innerHTML = window.marked ? marked.parse(parsed.body) : escapeHtml(parsed.body);
 
-        article.appendChild(postEyebrow);
         article.appendChild(meta);
         article.appendChild(body);
         content.appendChild(article);
