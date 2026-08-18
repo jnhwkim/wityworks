@@ -20,8 +20,8 @@ visibility: public
   - [4.2 Ref-NeRF and Integrated Directional Encoding (IDE)](#42-ref-nerf-and-integrated-directional-encoding-ide)
 - [5. Quantum mechanical correlation: Bohr model & wave mechanics](#5-quantum-mechanical-correlation-bohr-model-amp-wave-mechanics)
   - [5.1 From Bohr's model to Schrödinger's wave function](#51-from-bohr39s-model-to-schrdinger39s-wave-function)
-  - [5.2 Hydrogen atom solution & quantum numbers](#52-hydrogen-atom-solution--quantum-numbers)
-- [6. Epilogue & conclusion](#6-epilogue--conclusion)
+  - [5.2 Hydrogen atom solution & quantum numbers](#52-hydrogen-atom-solution-amp-quantum-numbers)
+- [6. Epilogue & conclusion](#6-epilogue-amp-conclusion)
 - [References](#references)
 
 ---
@@ -61,6 +61,11 @@ To solve Laplace's equation in spherically symmetric domains, we transform the s
 $$\nabla^2 f = \frac{1}{r^2} \frac{\partial}{\partial r}\left(r^2 \frac{\partial f}{\partial r}\right) + \frac{1}{r^2 \sin\theta} \frac{\partial}{\partial \theta}\left(\sin\theta \frac{\partial f}{\partial \theta}\right) + \frac{1}{r^2 \sin^2\theta} \frac{\partial^2 f}{\partial \phi^2} = 0 \tag{1}$$
 
 Equation (1) naturally decomposes the spatial field into a radial variation scale ($r$) and an angular surface geometry $(\theta, \phi)$ defined on the unit sphere $S^2$.
+
+<figure class="post-illustration">
+  <img src="../static/img/blog/spherical-harmonics-spherical-coordinates.png" alt="Spherical coordinate system showing the radial distance r, polar angle theta, and azimuthal angle phi on a unit sphere" loading="lazy" style="max-width: 280px;">
+  <figcaption>Spherical coordinates separate radial distance $r$ from the angular coordinates $(\theta, \phi)$ on the unit sphere.</figcaption>
+</figure>
 
 ### 3.2 Separation of variables & associated Legendre polynomials
 To isolate the angular behavior, we apply the technique of **separation of variables**, assuming a factorized solution $f(r, \theta, \phi) = R(r) Y(\theta, \phi)$. Substituting this decomposition into Equation (1) and multiplying by $r^2 / (R Y)$ separates the equation into independent radial and angular Ordinary Differential Equations (ODEs) bound by a separation constant $l(l+1)$:
@@ -105,6 +110,10 @@ $$\Delta\_{S^2} Y\_l^m = -l(l+1) Y\_l^m \tag{9}$$
 
 Degree $l$ relates directly to spatial angular frequency, with an approximate wavelength $\approx \frac{180^\circ}{l}$.
 
+<figure class="post-illustration">
+  <img src="../static/img/blog/spherical-harmonics-low-order-modes.png" alt="Comparison of low-order spherical harmonic modes, progressing from a uniform sphere to increasingly structured angular patterns" loading="lazy">
+  <figcaption>Low-order spherical harmonic modes: increasing degree $l$ produces increasingly fine angular structure.</figcaption>
+</figure>
 
 ---
 
@@ -127,6 +136,11 @@ Taking the expectation of SH basis functions over the vMF distribution yields In
 $$\mathbb{E}_{\mathbf{\mu} \sim \textnormal{vMF}(\mathbf{\mu}_r, \kappa)} \left[ Y_l^m(\mathbf{\mu}) \right] = A_l(\kappa) Y_l^m(\mathbf{\mu}_r) \tag{11}$$
 
 $$A_l(\kappa) \approx \exp\left( -\frac{l(l+1)}{2\kappa} \right) \tag{12}$$
+
+<figure class="post-illustration">
+  <img src="../static/img/blog/spherical-harmonics-ide-frequency-attenuation.png" alt="Integrated Directional Encoding comparison showing that a broad low-kappa von Mises-Fisher distribution attenuates high-degree spherical harmonic frequencies more strongly" loading="lazy">
+  <figcaption>IDE applies a roughness-dependent angular low-pass filter: lower $\kappa$ preserves low-degree modes while attenuating higher-degree spherical harmonic frequencies.</figcaption>
+</figure>
 
 ---
 
