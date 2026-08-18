@@ -604,7 +604,12 @@
   .post-body hr { border: none; border-top: 1px solid var(--line-soft); }
   .post-body ul, ol, li { list-style-type: none; padding-left: 0px; }
   .post-body ul ul, ol ol { margin-bottom: 0px; padding-left: 20px; }
+  .post-body h2#references + ul > li {
+    padding-left: 1.25em;
+    text-indent: -1.25em;
+  }
   .post-body em.footnote { display: inline-block; margin-top: 10px; font-size: 13px; color: var(--ink-faint); font-style: italic; }
+  .post-body .katex { font-size: 1.08em; }
   .post-body .katex-display { overflow-x: auto; overflow-y: hidden; }
   .post-body .post-illustration {
     margin: 2rem auto;
@@ -618,7 +623,6 @@
     max-width: 100%;
     height: auto;
     margin: 0 auto;
-    border-radius: 6px;
     mix-blend-mode: multiply;
   }
   .post-body .post-illustration figcaption {
@@ -632,14 +636,24 @@
     color: var(--ink-soft);
   }
 
-  [data-theme="dark"] .post-illustration img {
-    filter: sepia(0.35) brightness(0.72) contrast(0.92);
+  [data-theme="dark"] .post-body .post-illustration img {
+    padding: 8px;
+    background: #f5f1e5;
+    border: 1px solid var(--gold);
+    box-shadow: 4px 4px 0 #0e0d09;
+    filter: sepia(0.15) brightness(0.92) contrast(0.96);
+    mix-blend-mode: normal;
+    opacity: 0.94;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) .post-illustration img {
-      background-color: #14130f; 
-      mix-blend-mode: luminosity;
-      opacity: 1.0;
+      padding: 8px;
+      background: #f5f1e5;
+      border: 1px solid var(--gold);
+      box-shadow: 4px 4px 0 #0e0d09;
+      filter: sepia(0.15) brightness(0.92) contrast(0.96);
+      mix-blend-mode: normal;
+      opacity: 0.94;
     }
   }
 

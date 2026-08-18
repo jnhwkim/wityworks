@@ -166,7 +166,7 @@ where $\psi(r, \theta, \phi)$ denotes the full spatial wavefunction, $R\_{n, l}(
 Spherical Harmonics illustrate the deep interdisciplinary connection across mathematical physics, quantum mechanics, and modern computer science. Originally developed to calculate celestial gravity in the 18th century, SH functions became foundational to 20th-century quantum physics by defining electron orbital geometries. Today, they power real-time 3D neural rendering engines like 3D Gaussian Splatting [<a id="ref-kerbl2023-6" href="#ref-kerbl2023">Kerbl et al., 2023</a>] and Ref-NeRF [<a id="ref-verbin2022-6" href="#ref-verbin2022">Verbin et al., 2022</a>], solidifying their role as an essential tool for spatial computing.
 
 ---
-*This article is a lecture note from the Neural Graphics module of the Fall 2025 course "Multimodal Generative AI Theories and Applications" at Seoul National University.*
+*This article is based on lecture notes from the Neural Graphics module of the Fall 2025 course, "Multimodal Generative AI Theories and Applications," at Seoul National University.*
 
 
 ## References
