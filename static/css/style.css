@@ -439,6 +439,8 @@
     }
   }
   .section-head .eyebrow { color: var(--ink-faint); margin-bottom: 4px; display: block; }
+  .section-head .eyebrow a { color: var(--blue); text-decoration: none; }
+  .section-head .eyebrow a:hover { text-decoration: underline; text-underline-offset: 2px; }
   .section-head h2 { font-size: 26px; font-weight: 400; margin: 0; letter-spacing: 0.01em; }
   .section-head .note {
     color: var(--ink-soft); font-size: 13px; max-width: 36ch; text-align: right;
@@ -450,11 +452,22 @@
      just here instead of shrinking the wording to fit the default 36ch. */
   #teaching .section-head .note { max-width: 56ch; }
   #blog .section-head .note, #blog-note { max-width: 30ch; }
+  .rss-link {
+    align-items: center; color: var(--ink-faint); display: inline-flex; gap: 4px;
+    text-decoration: none;
+  }
+  .rss-link svg { width: 13px; height: 13px; flex: 0 0 auto; }
+  .rss-link:hover { color: var(--blue); }
+  .blog-rss-link {
+    border-left: 1px solid var(--line-soft); font-family: "Century Gothic", ui-sans-serif, sans-serif;
+    font-size: 10px; letter-spacing: 0.08em; margin-left: 8px; padding-left: 8px;
+    text-transform: uppercase; vertical-align: -2px; white-space: nowrap;
+  }
 
   .cols { display: grid; gap: 28px; }
   .cols > * { min-width: 0; }   /* grid items default to min-width:auto — without this, a wide
-                                   overflow-x:auto child (e.g. .math-demo .source) forces the
-                                   whole track (and the page) wider instead of scrolling internally */
+                                   overflow-x:auto child can force the whole track (and the page)
+                                   wider instead of scrolling internally */
   .cols.two { grid-template-columns: 1fr 1fr; }
   .cols.blog { grid-template-columns: 210px 1fr; }
   @media (max-width: 720px) {
@@ -584,11 +597,12 @@
   /* ---- Blog: single-post view + empty-state (blog.html) ---- */
   .post-empty { color: var(--ink-faint); font-style: italic; padding: 8px 0; }
   .post-body { padding-top: 4px; }
-  .post-body .eyebrow { color: var(--blue); margin-bottom: 6px; display: block; }
-  .post-body .meta { font-size: 13px; color: var(--ink-faint); font-style: italic; display: block; margin: 0 0 18px; }
+  .post-body .meta { font-size: 13px; color: var(--ink-faint); font-style: italic; display: flex; flex-wrap: wrap; gap: 6px 12px; margin: 0 0 18px; }
+  .post-body .post-rss-link { font-family: "Century Gothic", ui-sans-serif, sans-serif; font-size: 10px; font-style: normal; letter-spacing: 0.08em; margin-left: auto; text-transform: uppercase; }
+  .post-body .rss-link:hover { text-decoration: none; }
   .post-body h1, .post-body h2, .post-body h3 { font-weight: 400; margin: 28px 0 10px; }
   .post-body h2 { font-size: 22px; }
-  .post-body h3 { font-size: 19px; }
+  .post-body h3 { font-size: 19px; margin-top: 10px; }
   .post-body p { margin: 0 0 14px; }
   .post-body ul, .post-body ol { margin: 0 0 14px; padding-left: 22px; }
   .post-body li { margin-bottom: 4px; }
@@ -596,8 +610,65 @@
   .post-body pre { background: var(--code-bg); padding: 10px 12px; overflow-x: auto; }
   .post-body pre code { padding: 0; }
   .post-body blockquote { margin: 0 0 14px; padding-left: 14px; border-left: 3px solid var(--line-soft); color: var(--ink-soft); }
+  .post-body a { text-decoration: none; }
+  .post-body a:hover { text-decoration: underline; }
+  .post-body a[id^="ref-"] { scroll-margin-top: 60px; }
+  .post-body h2, .post-body h3 { scroll-margin-top: 54px; }
+  .post-body hr { border: none; border-top: 1px solid var(--line-soft); }
+  .post-body ul, ol, li { list-style-type: none; padding-left: 0px; }
+  .post-body ul ul, ol ol { margin-bottom: 0px; padding-left: 20px; }
+  .post-body h2#references + ul > li {
+    padding-left: 1.25em;
+    text-indent: -1.25em;
+  }
+  .post-body em.footnote { display: inline-block; margin-top: 10px; font-size: 13px; color: var(--ink-faint); font-style: italic; }
+  .post-body .katex { font-size: 1.08em; }
   .post-body .katex-display { overflow-x: auto; overflow-y: hidden; }
-  .post-body .post-eyebrow { text-decoration: none; }
+  .post-body .post-illustration {
+    margin: 2rem auto;
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+  }
+  .post-body .post-illustration img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    mix-blend-mode: multiply;
+  }
+  .post-body .post-illustration figcaption {
+    margin-top: 0.6rem;
+    font-size: 0.85rem;
+    color: #55503f;
+    font-style: italic;
+    line-height: 1.4;
+  }
+  [data-theme="dark"] .post-body .post-illustration figcaption {
+    color: var(--ink-soft);
+  }
+
+  [data-theme="dark"] .post-body .post-illustration img {
+    padding: 8px;
+    background: #f5f1e5;
+    border: 1px solid var(--gold);
+    box-shadow: 4px 4px 0 #0e0d09;
+    filter: sepia(0.15) brightness(0.92) contrast(0.96);
+    mix-blend-mode: normal;
+    opacity: 0.94;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .post-illustration img {
+      padding: 8px;
+      background: #f5f1e5;
+      border: 1px solid var(--gold);
+      box-shadow: 4px 4px 0 #0e0d09;
+      filter: sepia(0.15) brightness(0.92) contrast(0.96);
+      mix-blend-mode: normal;
+      opacity: 0.94;
+    }
+  }
 
   /* End-of-article mark: a geometric dagger built from straight rects (not
      the typographic † glyph, which already means "co-corresponding author"
@@ -615,29 +686,21 @@
     text-decoration: none;
   }
 
-  /* ---- Math demo ---- */
-  .math-demo {
-    margin-top: 14px; border: 2px solid var(--ink); background: var(--ground-raised);
-    padding: 15px 17px;
+  /* ---- Blog table of contents ---- */
+  .toc-card {
+    margin: 0 0 28px;
+    border: 2px solid var(--ink);
+    border-top: 3px solid var(--gold);
+    background: var(--ground-raised);
+    padding: 15px 17px 15px 21px;
   }
-  .math-demo .tag-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .math-demo .tag-row .label { color: var(--ink-faint); }
-  .math-demo .lib-pill {
-    font-family: ui-monospace, monospace; font-size: 11px; color: var(--blue);
-    border: 1.5px solid var(--blue); padding: 2px 8px; border-radius: 2px;
-  }
-  .math-demo .source {
-    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13.5px;
-    background: var(--code-bg); padding: 8px 12px; color: var(--ink-soft);
-    overflow-x: auto; margin-bottom: 10px; white-space: pre;
-  }
-  .math-demo .source .dollar { color: var(--gold); }
-  .rendered { text-align: center; padding: 6px 0 4px; font-size: 20px; }
-  .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; margin: 0 2px; }
-  .frac .num { border-bottom: 1.4px solid var(--ink); padding: 0 4px 2px; }
-  .frac .den { padding: 2px 4px 0; }
-  .rendered .display-eq { font-size: 23px; margin-top: 10px; }
-  .eq-num { color: var(--ink-faint); font-size: 13px; float: right; font-family: ui-monospace, monospace; }
+  .toc-card h2 { margin: 0 0 10px; font-size: 20px; }
+  .toc-card ul, .toc-card ol { margin: 0; padding-left: 0; }
+  .toc-card li { margin: 4px 0; line-height: 1.4; }
+  .toc-card ul ul, .toc-card ol ol { margin: 4px 0 0; padding-left: calc(1.45em + 7px); }
+  .toc-card a { display: grid; grid-template-columns: 1.45em minmax(0, 1fr); column-gap: 7px; color: var(--ink); text-decoration: none; }
+  .toc-card .toc-number { text-align: right; }
+  .toc-card a:hover { color: var(--blue); text-decoration: underline; text-underline-offset: 2px; }
 
   /* ---- About / Academic Services / Collaborators / Wity Works ---- */
   .about-bio { color: var(--ink-soft); font-size: 15px; max-width: 49ch; margin: 0; }
@@ -670,6 +733,7 @@
   }
   footer .col a { display: block; color: var(--ink-soft); text-decoration: none; margin-bottom: 4px; }
   footer .col a:hover { color: var(--blue); }
+  footer .col .footer-rss-link { display: inline-flex; }
   .footer-bottom {
     margin-top: 28px; padding-top: 14px; padding-bottom: 24px;
     font-family: ui-monospace, "SF Mono", Menlo, monospace;

@@ -17,6 +17,8 @@ import pathlib
 import re
 import sys
 
+from generate_rss import generate_rss
+
 BLOG_DIR = pathlib.Path(__file__).parent
 MANIFEST_PATH = BLOG_DIR / "manifest.js"
 
@@ -105,6 +107,10 @@ def main():
     MANIFEST_PATH.write_text("\n".join(lines), encoding="utf-8")
     public_count = sum(1 for p in posts if p["visibility"] == "public")
     print(f"wrote {MANIFEST_PATH} — {len(posts)} post(s) found, {public_count} public")
+    # RSS is a deployment artifact too: allow failures to terminate this
+    # command rather than publishing a silently stale or missing feed.
+    rss_count = generate_rss()
+    print(f"wrote {BLOG_DIR / 'rss.xml'} — {rss_count} public post(s)")
 
 
 if __name__ == "__main__":

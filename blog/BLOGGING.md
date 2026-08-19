@@ -37,12 +37,20 @@ visibility: public
 * Keep inline math inside single `$ ... $` and display math inside double `$$ ... $$`.
 * Follow the LaTeX formatting rule (avoid spacing primitives like `\!` or `\,`).
 
-### Step 3: Update Blog Features & Post Counts (`manifest.js`)
+### Step 3: Update Blog Features, Post Counts, and RSS (`manifest.js`, `rss.xml`)
 Since this site uses static file hosting without dynamic directory indexing, post listing counts and metadata rely on `root/blog/manifest.js`.
 
 **Option A — Automated (via Terminal):**
-Run the sync script to auto-generate `manifest.js` from all `.md` frontmatter:
+Run the sync script to auto-generate `manifest.js` from all `.md` frontmatter and
+the full-content RSS feed at `root/blog/rss.xml`:
 python3 blog/sync_manifest.py
+
+The feed uses `https://wityworks.com` from `CNAME` for canonical URLs. Set
+`SITE_URL` when building for another canonical domain (for example,
+`SITE_URL=https://example.com python3 blog/sync_manifest.py`). Post GUIDs are
+their canonical category-and-slug URLs, so edits to the title or body do not
+change feed identity. Optional `author`, `cover`, or `coverImage` frontmatter
+is included in RSS when present.
 
 **Option B — Manual (Web/AI Update):**
 If working solely in a browser/web-AI interface:
@@ -59,3 +67,15 @@ If working solely in a browser/web-AI interface:
      visibility: 'public',
    }
 3. Keep `BLOG_POSTS` sorted by `date` in descending order so counting and sorting work seamlessly on `index.html` and `root/blog/index.html`.
+
+## 3. Illustration Guidelines (Vintage Line Art)
+
+When generating vector/line art illustrations for scientific blog posts, use the following standardized prompt template and rules to maintain consistent aesthetics across all articles.
+
+### Prompt Template
+```text
+A minimal vintage fountain pen line art illustration of [TARGET_SUBJECT]. 
+Fine line drawing style, micro-hatched straight lines and cross-hatching for shading and depth. 
+No solid fills, clean background, vintage scientific sketchbook illustration style. 
+All line strokes in monochrome brownish-gray color (#55503f). 
+High precision, elegant vector line art, isolated on pure white background.
