@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HKJT35GPJT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HKJT35GPJT');
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blog · Jin-Hwa Kim</title>
+<link rel="icon" href="../static/img/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="../static/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="16x16" href="../static/img/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../static/img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../static/img/favicon-192x192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../static/img/apple-touch-icon.png">
+<link rel="manifest" href="../static/img/site.webmanifest">
+<link rel="stylesheet" href="../static/css/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="site">
+    <div class="theme-toggle" role="group" aria-label="Theme">
+      <button type="button" data-mode="light" aria-pressed="false" title="Light" aria-label="Light theme">
+        <svg viewBox="0 0 20 20" stroke-width="1.6" stroke-linecap="round">
+          <circle cx="10" cy="10" r="4"/>
+          <line x1="10" y1="1.5" x2="10" y2="3.5"/>
+          <line x1="10" y1="16.5" x2="10" y2="18.5"/>
+          <line x1="1.5" y1="10" x2="3.5" y2="10"/>
+          <line x1="16.5" y1="10" x2="18.5" y2="10"/>
+          <line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/>
+          <line x1="14.4" y1="14.4" x2="15.8" y2="15.8"/>
+          <line x1="4.2" y1="15.8" x2="5.6" y2="14.4"/>
+          <line x1="14.4" y1="5.6" x2="15.8" y2="4.2"/>
+        </svg>
+      </button>
+      <button type="button" data-mode="system" aria-pressed="false" title="System" aria-label="Use system setting">
+        <svg viewBox="0 0 20 20" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="4" width="16" height="10.5" rx="0.5"/>
+          <line x1="7" y1="17.5" x2="13" y2="17.5"/>
+          <line x1="10" y1="14.5" x2="10" y2="17.5"/>
+        </svg>
+      </button>
+      <button type="button" data-mode="dark" aria-pressed="false" title="Dark" aria-label="Dark theme">
+        <svg viewBox="0 0 20 20" stroke-width="1.6" stroke-linejoin="round">
+          <path d="M15.5 12.3A6.8 6.8 0 1 1 7.7 4.5a5.3 5.3 0 0 0 7.8 7.8Z"/>
+        </svg>
+      </button>
+    </div>
+    <div class="brand-row">
+      <div class="emblem" aria-hidden="true">
+        <svg width="14" height="14"><polygon points="7,0 14,14 0,14" fill="#ffcc00"/></svg>
+        <svg width="14" height="14"><circle cx="7" cy="7" r="7" fill="#0060a9"/></svg>
+        <svg width="14" height="14"><rect width="14" height="14" fill="#d81e05"/></svg>
+      </div>
+      <a href="../" class="brand-name">Jin-Hwa Kim</a>
+      <div class="brand-sub">Research · Teaching · Writing</div>
+    </div>
+  </header>
+
+  <nav class="primary" aria-label="Primary">
+    <a href="../#home">Home</a>
+    <a href="../#publications">Publications</a>
+    <a href="../#teaching">Teaching</a>
+    <a href="./" aria-current="page">Blog</a>
+    <a href="../#about">About</a>
+  </nav>
+
+  <section class="block" id="blog-page">
+    <div class="section-head">
+      <div>
+        <span class="label eyebrow" id="blog-eyebrow">Writing</span>
+        <h2 id="blog-heading">Blog</h2>
+      </div>
+      <div class="note" id="blog-note">Research notes, paper reviews, and essays on AI, math, and life.</div>
+    </div>
+
+    <div class="cols blog" id="blog-cols">
+      <aside id="blog-aside">
+        <div class="cat-panel-head">
+          <span class="cat-panel-title">Categories</span>
+          <button type="button" class="filter-expand" id="cat-minimize-btn" title="Minimize category panel" aria-label="Minimize category panel" aria-expanded="true">‹</button>
+        </div>
+        <div id="blog-cat-container"></div>
+      </aside>
+
+      <main id="blog-main">
+        <div class="cat-expand-wrapper" id="cat-expand-wrapper" hidden>
+          <button type="button" class="pub-btn cat-expand-btn" id="cat-expand-btn" title="Show category panel" aria-label="Show category panel"><span class="btn-icon" aria-hidden="true">›</span> Categories</button>
+        </div>
+        <div id="blog-content">
+          <p class="post-empty">Loading&hellip;</p>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-cols">
+      <div class="col">
+        <h4>Menu</h4>
+        <a href="../#publications">Publications</a>
+        <a href="../#teaching">Teaching</a>
+        <a href="./">Blog</a>
+        <a href="../#about">About</a>
+      </div>
+      <div class="col">
+        <h4>Elsewhere</h4>
+        <a href="https://scholar.google.com/citations?user=3f2wPekAAAAJ" target="_blank">Google Scholar</a>
+        <a href="https://github.com/jnhwkim" target="_blank">GitHub</a>
+        <a href="mailto:j1nhwa.&lt;lastname&gt;@navercorp.com">Email</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 Jin-Hwa Kim. All rights reserved.</div>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var COOKIE_NAME = 'theme';
+
+  function readCookie(name) {
+    var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  function writeCookie(name, value) {
+    document.cookie = name + '=' + encodeURIComponent(value) + ';path=/;max-age=31536000;SameSite=Lax';
+  }
+
+  function applyTheme(mode) {
+    if (mode === 'light' || mode === 'dark') {
+      document.documentElement.setAttribute('data-theme', mode);
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    var buttons = document.querySelectorAll('.theme-toggle button');
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].setAttribute('aria-pressed', buttons[i].getAttribute('data-mode') === mode ? 'true' : 'false');
+    }
+  }
+
+  function setTheme(mode) {
+    writeCookie(COOKIE_NAME, mode);
+    applyTheme(mode);
+  }
+
+  var saved = readCookie(COOKIE_NAME) || 'system';
+  applyTheme(saved);
+
+  var toggle = document.querySelector('.theme-toggle');
+  toggle.addEventListener('click', function (e) {
+    var btn = e.target.closest('button[data-mode]');
+    if (!btn) return;
+    setTheme(btn.getAttribute('data-mode'));
+  });
+})();
+</script>
+
+<script>
+(function () {
+  // Kept in sync with the same nav-row-divider logic in the root
+  // index.html — see the comments there for why each piece exists.
+  // Blog's nav has no in-page hash links, so scroll-spy is omitted.
+  var nav = document.querySelector('nav.primary');
+  if (!nav) return;
+  var navLinks = Array.prototype.slice.call(nav.querySelectorAll('a'));
+  if (!navLinks.length) return;
+
+  function setNavHeightVar() {
+    document.documentElement.style.setProperty('--nav-height', nav.getBoundingClientRect().height + 'px');
+  }
+
+  var ROW_MARGIN_TOP = '-1px';
+  var DIVIDER_OFFSET = -1;
+  var LAST_ROW_MARGIN_BOTTOM = '-0.5px';
+
+  function updateNavRowDividers() {
+    var oldDividers = nav.querySelectorAll('.nav-row-divider');
+    for (var i = 0; i < oldDividers.length; i++) oldDividers[i].remove();
+    navLinks.forEach(function (link) {
+      link.style.marginTop = '';
+      link.style.marginBottom = '';
+      link.style.borderBottomColor = '';
+    });
+
+    var navTop = nav.getBoundingClientRect().top;
+    var rows = [];
+    navLinks.forEach(function (link) {
+      var top = Math.round(link.getBoundingClientRect().top - navTop);
+      var row = null;
+      for (var j = 0; j < rows.length; j++) {
+        if (Math.abs(rows[j].top - top) < 3) { row = rows[j]; break; }
+      }
+      if (!row) { row = { top: top, links: [] }; rows.push(row); }
+      row.links.push(link);
+    });
+    rows.sort(function (a, b) { return a.top - b.top; });
+
+    if (rows.length >= 2) {
+      for (var r = 1; r < rows.length; r++) {
+        var divider = document.createElement('div');
+        divider.className = 'nav-row-divider';
+        divider.style.top = (rows[r].top + DIVIDER_OFFSET) + 'px';
+        nav.appendChild(divider);
+      }
+
+      for (var r2 = 1; r2 < rows.length; r2++) {
+        rows[r2].links.forEach(function (link) { link.style.marginTop = ROW_MARGIN_TOP; });
+      }
+    }
+
+    rows[rows.length - 1].links.forEach(function (link) {
+      link.style.borderBottomColor = 'transparent';
+      link.style.marginBottom = LAST_ROW_MARGIN_BOTTOM;
+    });
+  }
+
+  setNavHeightVar();
+  updateNavRowDividers();
+  window.addEventListener('resize', function () {
+    setNavHeightVar();
+    updateNavRowDividers();
+  });
+})();
+</script>
+
+<script src="manifest.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script>
+(function () {
+  var content = document.getElementById('blog-content');
+  var heading = document.getElementById('blog-heading');
+  var eyebrow = document.getElementById('blog-eyebrow');
+  var note = document.getElementById('blog-note');
+  var catContainer = document.getElementById('blog-cat-container');
+  var blogCols = document.getElementById('blog-cols');
+  var expandWrapper = document.getElementById('cat-expand-wrapper');
+  var minBtn = document.getElementById('cat-minimize-btn');
+  var expBtn = document.getElementById('cat-expand-btn');
+  var params = new URLSearchParams(location.search);
+
+  var SIDEBAR_COOKIE = 'blog_sidebar';
+
+  function readCookie(name) {
+    var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  function writeCookie(name, value) {
+    document.cookie = name + '=' + encodeURIComponent(value) + ';path=/;max-age=31536000;SameSite=Lax';
+  }
+
+  function applySidebarState(state) {
+    if (!blogCols) return;
+    if (state === 'collapsed') {
+      blogCols.classList.add('sidebar-collapsed');
+      if (expandWrapper) expandWrapper.removeAttribute('hidden');
+      if (minBtn) minBtn.setAttribute('aria-expanded', 'false');
+    } else {
+      blogCols.classList.remove('sidebar-collapsed');
+      if (expandWrapper) expandWrapper.setAttribute('hidden', '');
+      if (minBtn) minBtn.setAttribute('aria-expanded', 'true');
+    }
+  }
+
+  function setSidebarState(state) {
+    writeCookie(SIDEBAR_COOKIE, state);
+    applySidebarState(state);
+  }
+
+  var savedSidebar = readCookie(SIDEBAR_COOKIE) || 'expanded';
+  applySidebarState(savedSidebar);
+
+  if (minBtn) {
+    minBtn.addEventListener('click', function () {
+      setSidebarState('collapsed');
+    });
+  }
+
+  if (expBtn) {
+    expBtn.addEventListener('click', function () {
+      setSidebarState('expanded');
+    });
+  }
+
+  function formatDate(iso) {
+    var d = new Date(iso + 'T00:00:00');
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function renderMath(root) {
+    if (window.renderMathInElement) {
+      renderMathInElement(root, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false }
+        ]
+      });
+    }
+  }
+
+  function categoryList(activeSlug) {
+    var ul = document.createElement('ul');
+    ul.className = 'cat-list';
+    var all = document.createElement('li');
+    var allLink = document.createElement('a');
+    allLink.href = './';
+    allLink.textContent = 'All';
+    if (!activeSlug) allLink.className = 'active';
+    var allCount = BLOG_POSTS.filter(function (p) { return p.visibility === 'public'; }).length;
+    var allCountSpan = document.createElement('span');
+    allCountSpan.className = 'count';
+    allCountSpan.textContent = allCount;
+    allLink.appendChild(allCountSpan);
+    all.appendChild(allLink);
+    ul.appendChild(all);
+    BLOG_CATEGORIES.forEach(function (cat) {
+      var li = document.createElement('li');
+      var a = document.createElement('a');
+      a.href = './?category=' + encodeURIComponent(cat.slug);
+      a.innerHTML = cat.label;
+      if (cat.slug === activeSlug) a.className += ' active';
+      var count = BLOG_POSTS.filter(function (p) { return p.category === cat.slug && p.visibility === 'public'; }).length;
+      var countSpan = document.createElement('span');
+      countSpan.className = 'count';
+      countSpan.textContent = count;
+      a.appendChild(countSpan);
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+    return ul;
+  }
+
+  function renderCategories(activeSlug) {
+    if (!catContainer) return;
+    catContainer.innerHTML = '';
+    catContainer.appendChild(categoryList(activeSlug));
+  }
+
+  function postCard(post) {
+    var article = document.createElement('article');
+    article.className = 'post-card';
+    var cardEyebrow = document.createElement('span');
+    cardEyebrow.className = 'label eyebrow';
+    cardEyebrow.innerHTML = post.categoryLabel;
+    var h3 = document.createElement('h3');
+    var a = document.createElement('a');
+    a.href = './?post=' + encodeURIComponent(post.category) + '/' + encodeURIComponent(post.slug);
+    a.textContent = post.title;
+    h3.appendChild(a);
+    var p = document.createElement('p');
+    p.innerHTML = post.summary;
+    var meta = document.createElement('span');
+    meta.className = 'meta';
+    meta.textContent = formatDate(post.date) + ' · ' + post.readTime;
+    article.appendChild(cardEyebrow);
+    article.appendChild(h3);
+    article.appendChild(p);
+    article.appendChild(meta);
+    return article;
+  }
+
+  function renderListing(activeSlug) {
+    if (eyebrow) eyebrow.textContent = 'Writing';
+    heading.textContent = 'Blog';
+    note.innerHTML = 'Research notes, paper reviews, and essays on AI, math, and life.';
+    content.innerHTML = '';
+
+    renderCategories(activeSlug);
+
+    var posts = BLOG_POSTS.filter(function (p) {
+      return p.visibility === 'public' && (!activeSlug || p.category === activeSlug);
+    });
+
+    if (!posts.length) {
+      var empty = document.createElement('p');
+      empty.className = 'post-empty';
+      empty.textContent = 'No public posts here yet — check back soon.';
+      content.appendChild(empty);
+    } else {
+      posts.forEach(function (p) { content.appendChild(postCard(p)); });
+    }
+  }
+
+  function renderPrivateNotice(label) {
+    content.innerHTML = '';
+    var div = document.createElement('div');
+    div.className = 'post-empty';
+    div.textContent = label || "This post hasn't been published yet.";
+    content.appendChild(div);
+    var back = document.createElement('p');
+    var a = document.createElement('a');
+    a.href = './';
+    a.textContent = '← Back to Blog';
+    back.appendChild(a);
+    content.appendChild(back);
+  }
+
+  function parseFrontmatter(text) {
+    var m = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+    if (!m) return { data: {}, body: text };
+    var data = {};
+    m[1].split(/\r?\n/).forEach(function (line) {
+      var idx = line.indexOf(':');
+      if (idx === -1) return;
+      data[line.slice(0, idx).trim()] = line.slice(idx + 1).trim();
+    });
+    return { data: data, body: m[2] };
+  }
+
+  function renderPost(pathParam) {
+    var parts = pathParam.split('/');
+    var category = parts[0];
+    var slug = parts.slice(1).join('/');
+    var entry = BLOG_POSTS.filter(function (p) { return p.category === category && p.slug === slug; })[0];
+
+    if (!entry) {
+      renderCategories(null);
+      renderPrivateNotice('Post not found.');
+      return;
+    }
+    if (entry.visibility !== 'public') {
+      renderCategories(entry.category);
+      renderPrivateNotice("This post isn't published yet.");
+      return;
+    }
+
+    renderCategories(entry.category);
+
+    fetch(category + '/' + slug + '.md')
+      .then(function (res) { if (!res.ok) throw new Error('fetch failed'); return res.text(); })
+      .then(function (text) {
+        var parsed = parseFrontmatter(text);
+        if ((parsed.data.visibility || '').trim() !== 'public') {
+          renderPrivateNotice("This post isn't published yet.");
+          return;
+        }
+        if (eyebrow) eyebrow.innerHTML = parsed.data.categoryLabel || entry.categoryLabel;
+        heading.textContent = parsed.data.title || entry.title;
+        note.innerHTML = '';
+        content.innerHTML = '';
+
+        var article = document.createElement('article');
+        article.className = 'post-body';
+        
+        var postEyebrow = document.createElement('a');
+        postEyebrow.className = 'label eyebrow post-eyebrow';
+        postEyebrow.href = './?category=' + encodeURIComponent(entry.category);
+        postEyebrow.innerHTML = parsed.data.categoryLabel || entry.categoryLabel;
+
+        var meta = document.createElement('p');
+        meta.className = 'meta';
+        meta.textContent = formatDate(parsed.data.date || entry.date) + ' · ' + (parsed.data.readTime || entry.readTime);
+        var body = document.createElement('div');
+        body.innerHTML = window.marked ? marked.parse(parsed.body) : escapeHtml(parsed.body);
+
+        article.appendChild(postEyebrow);
+        article.appendChild(meta);
+        article.appendChild(body);
+        content.appendChild(article);
+
+        var endMark = document.createElement('div');
+        endMark.className = 'post-end-mark';
+        endMark.setAttribute('aria-hidden', 'true');
+        endMark.innerHTML = '<svg viewBox="0 0 12 16" width="11" height="15">' +
+          '<rect x="5.2" y="1" width="1.6" height="14" fill="var(--gold)"/>' +
+          '<rect x="1" y="4.4" width="10" height="1.6" fill="var(--gold)"/>' +
+          '</svg>';
+        content.appendChild(endMark);
+
+        var back = document.createElement('p');
+        var a = document.createElement('a');
+        a.className = 'show-all-btn show-all-btn--sm post-back-btn';
+        a.href = './?category=' + encodeURIComponent(category);
+        a.textContent = '← Back to ' + (parsed.data.categoryLabel || entry.categoryLabel).replace(/&amp;/g, '&');
+        back.appendChild(a);
+        content.appendChild(back);
+
+        renderMath(body);
+      })
+      .catch(function () { renderPrivateNotice("This post couldn't be loaded."); });
+  }
+
+  var postParam = params.get('post');
+  var categoryParam = params.get('category');
+
+  if (postParam) {
+    renderPost(postParam);
+  } else {
+    renderListing(categoryParam);
+  }
+})();
+</script>
+
+</body>
+</html>
