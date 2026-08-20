@@ -3,3 +3,6 @@
 # local dev tools (thumbnail crop tool etc.) — never publish to GitHub Pages
 /tools/thumb-crop/*.png
 tools/animated_avatar/092e130d-30b5-48a1-85eb-13273f0441b2.mp4
+
+# Regenerable spherical-harmonics gallery exports are too large for source control.
+/static/glb/*.glb
