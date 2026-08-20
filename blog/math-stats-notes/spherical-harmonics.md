@@ -5,6 +5,7 @@ categoryLabel: Math & Stats Notes
 date: 2026-08-17
 readTime: 20 min read
 summary: History, mathematical definition, and applications of spherical harmonics from quantum mechanics to neural 3D.
+cover: /static/img/blog/spherical-harmonics-cover.png
 visibility: public
 ---
 
@@ -112,7 +113,7 @@ Degree $l$ relates directly to spatial angular frequency, with an approximate wa
 
 <figure class="post-illustration">
   <img src="../static/img/blog/spherical-harmonics-low-order-modes.png" alt="Comparison of low-order spherical harmonic modes, progressing from a uniform sphere to increasingly structured angular patterns" loading="lazy">
-  <figcaption>Low-order spherical harmonic modes: increasing degree $l$ produces increasingly fine angular structure.</figcaption>
+  <figcaption>Visual representations of the first few real spherical harmonics. Light regions represent positive values and dark regions negative values. For each angular direction $(\theta, \phi)$, the surface's radial distance from the origin encodes the magnitude $|Y_l^m(\theta, \phi)|$. Increasing degree $l$ produces increasingly fine angular structure.</figcaption>
 </figure>
 
 ---

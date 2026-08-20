@@ -10,7 +10,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import generate_rss
 
 
-CONTENT = {"content": generate_rss.CONTENT_NS}
+CONTENT = {"content": generate_rss.CONTENT_NS, "media": generate_rss.MEDIA_NS}
 
 
 class RssGenerationTests(unittest.TestCase):
@@ -36,6 +36,14 @@ class RssGenerationTests(unittest.TestCase):
             self.assertIsNotNone(parsedate_to_datetime(item.findtext("pubDate")))
             self.assertTrue(item.findtext("description"))
             self.assertIn("<p>", item.findtext("content:encoded", namespaces=CONTENT))
+
+        spherical_harmonics = next(
+            item for item in first_items if item.findtext("title") == "Waves on a Sphere, Spherical Harmonics"
+        )
+        cover = spherical_harmonics.find("media:content", namespaces=CONTENT)
+        self.assertIsNotNone(cover)
+        self.assertEqual(cover.attrib["medium"], "image")
+        self.assertEqual(cover.attrib["url"], "https://wityworks.com/static/img/blog/spherical-harmonics-cover.png")
 
     def test_portable_html_absolutizes_urls_and_removes_active_content(self):
         rendered = generate_rss.markdown_to_html(

@@ -266,6 +266,8 @@
   function postCard(post) {
     var article = document.createElement("article");
     article.className = "post-card";
+    var cardContent = document.createElement("div");
+    cardContent.className = "post-card-content";
     var cardEyebrow = document.createElement("span");
     cardEyebrow.className = "label eyebrow";
     cardEyebrow.innerHTML = post.categoryLabel;
@@ -283,10 +285,30 @@
     var meta = document.createElement("span");
     meta.className = "meta";
     meta.textContent = formatDate(post.date) + " · " + post.readTime;
-    article.appendChild(cardEyebrow);
-    article.appendChild(h3);
-    article.appendChild(p);
-    article.appendChild(meta);
+    cardContent.appendChild(cardEyebrow);
+    cardContent.appendChild(h3);
+    cardContent.appendChild(p);
+    cardContent.appendChild(meta);
+    if (post.cover) {
+      article.classList.add("has-cover");
+      var coverLink = document.createElement("a");
+      coverLink.className = "post-card-cover";
+      coverLink.href = a.href;
+      var cover = document.createElement("img");
+      cover.src = post.cover;
+      cover.alt = "";
+      cover.loading = "lazy";
+      coverLink.appendChild(cover);
+      article.appendChild(coverLink);
+      var syncCoverSize = function () {
+        coverLink.style.width = cardContent.offsetHeight + "px";
+      };
+      requestAnimationFrame(syncCoverSize);
+      if (window.ResizeObserver) {
+        new ResizeObserver(syncCoverSize).observe(cardContent);
+      }
+    }
+    article.appendChild(cardContent);
     return article;
   }
 
@@ -457,6 +479,17 @@
         body.innerHTML = window.marked
           ? marked.parse(parsed.body)
           : escapeHtml(parsed.body);
+
+        var coverSource = parsed.data.cover || entry.cover;
+        if (coverSource) {
+          var coverFigure = document.createElement("figure");
+          coverFigure.className = "post-cover";
+          var coverImage = document.createElement("img");
+          coverImage.src = coverSource;
+          coverImage.alt = parsed.data.title || entry.title;
+          coverFigure.appendChild(coverImage);
+          body.insertBefore(coverFigure, body.firstChild);
+        }
 
         var tocHeading = body.querySelector("h2");
         if (

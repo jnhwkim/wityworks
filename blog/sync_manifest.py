@@ -66,7 +66,7 @@ def main():
             category = data.get("category", slug_dir)
             if category != slug_dir:
                 print(f"warning: {md_path} frontmatter category '{category}' != folder '{slug_dir}', using folder", file=sys.stderr)
-            posts.append({
+            post = {
                 "category": slug_dir,
                 "categoryLabel": data.get("categoryLabel", category_labels.get(slug_dir, slug_dir)),
                 "slug": md_path.stem,
@@ -75,7 +75,10 @@ def main():
                 "date": data["date"],
                 "readTime": data["readTime"],
                 "visibility": data["visibility"],
-            })
+            }
+            if data.get("cover"):
+                post["cover"] = data["cover"]
+            posts.append(post)
 
     posts.sort(key=lambda p: p["date"], reverse=True)
 
@@ -100,6 +103,8 @@ def main():
         lines.append("  {")
         for key in ("category", "categoryLabel", "slug", "title", "summary", "date", "readTime", "visibility"):
             lines.append(f"    {key}: {js_string(post[key])},")
+        if post.get("cover"):
+            lines.append(f"    cover: {js_string(post['cover'])},")
         lines.append("  },")
     lines.append("];")
     lines.append("")

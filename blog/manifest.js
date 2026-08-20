@@ -25,6 +25,7 @@ const BLOG_POSTS = [
     date: '2026-08-17',
     readTime: '20 min read',
     visibility: 'public',
+    cover: '/static/img/blog/spherical-harmonics-cover.png',
   },
   {
     category: 'ml-concepts',
