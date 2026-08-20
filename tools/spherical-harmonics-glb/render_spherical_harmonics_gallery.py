@@ -2,7 +2,7 @@
 """Render a fast PNG preview of the floating spherical-harmonics GLB scene.
 
 This compact, dependency-free orthographic renderer uses the same mode list,
-camera framing, geometry, and sign colours as the GLB generator.  It is meant
+camera framing, geometry, mesh-edge grid, and ink colours as the GLB generator. It is meant
 for composition review before a final render in Blender or another DCC tool.
 """
 
@@ -12,7 +12,7 @@ import argparse
 import math
 from array import array
 
-from generate_spherical_harmonics_glb import BLUE, YELLOW, png_rgba, real_spherical_harmonic
+from generate_spherical_harmonics_glb import INK_FAINT, INK_SOFT, png_rgba, real_spherical_harmonic
 from generate_spherical_harmonics_gallery_glb import GALLERY_MODES, euler_quaternion
 
 
@@ -70,6 +70,23 @@ def projected(point, width, height):
             CAMERA_Z - z)
 
 
+def draw_line(pixels, depths, width, height, first, second, rgba):
+    """Draw a one-pixel mesh edge when it belongs to the visible surface."""
+    x0, y0, z0 = first
+    x1, y1, z1 = second
+    steps = max(1, int(max(abs(x1 - x0), abs(y1 - y0))))
+    for step in range(steps + 1):
+        fraction = step / float(steps)
+        x = int(round(x0 + (x1 - x0) * fraction))
+        y = int(round(y0 + (y1 - y0) * fraction))
+        if not (0 <= x < width and 0 <= y < height):
+            continue
+        index = y * width + x
+        depth = z0 + (z1 - z0) * fraction
+        if depth <= depths[index] + 0.08:
+            pixels[index * 4:index * 4 + 4] = bytes(rgba)
+
+
 def render_mode(pixels, depths, width, height, mode, theta_steps, phi_steps):
     degree, order, translation, scale, rotation = mode
     quaternion = euler_quaternion(rotation)
@@ -104,13 +121,27 @@ def render_mode(pixels, depths, width, height, mode, theta_steps, phi_steps):
                 normal_length = math.sqrt(sum(component * component for component in normal))
                 if normal_length < 1.0e-10 or normal[2] <= 0.0:
                     continue
+                base = INK_FAINT if sum(values[index] for index in indices) >= 0.0 else INK_SOFT
                 illumination = 0.30 + 0.70 * max(0.0, sum(
                     normal[axis] * light[axis] for axis in range(3)
                 ) / normal_length)
-                base = BLUE if sum(values[index] for index in indices) >= 0.0 else YELLOW
                 color = tuple(min(255, int(component * illumination)) for component in base[:3]) + (255,)
                 draw_triangle(pixels, depths, width, height,
                               tuple(projected(vertices[index], width, height) for index in indices), color)
+
+    grid_step = max(1, int(round(theta_steps / 9.0)))
+    for row in range(grid_step, theta_steps, grid_step):
+        for column in range(phi_steps):
+            start = row * row_width + column
+            draw_line(pixels, depths, width, height,
+                      projected(vertices[start], width, height),
+                      projected(vertices[start + 1], width, height), INK_FAINT)
+    for column in range(0, phi_steps, grid_step):
+        for row in range(1, theta_steps - 1):
+            start = row * row_width + column
+            draw_line(pixels, depths, width, height,
+                      projected(vertices[start], width, height),
+                      projected(vertices[start + row_width], width, height), INK_FAINT)
 
 
 def render(output_path, width, height, theta_steps, phi_steps):

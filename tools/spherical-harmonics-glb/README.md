@@ -13,10 +13,16 @@ adjust mesh density. The generated example is stored at
 `../../blog/math-stats-notes/spherical_harmonic_l3_m2.glb`.
 
 The model represents the real spherical-harmonic basis: its radius in each
-angular direction is `|Y_l^m(theta, phi)|`. Its embedded PNG texture is blue
-where the value is positive and yellow where it is negative. The GLB also
-contains UV coordinates, normals, and a PBR material, so it has no external
-texture-file dependency.
+angular direction is `|Y_l^m(theta, phi)|`. Its positive and negative regions
+use lit `#8d876e` and `#55503f` ink materials respectively. A sparse latitude/longitude grid is exported as selected
+`LINES` mesh edges in constant `#8d876e`, so it follows the stretched surface
+rather than a texture and remains visible independently of surface lighting.
+
+The grid gets its own position buffer, displaced by `GRID_NORMAL_OFFSET =
+0.004` along each surface normal. This prevents depth fighting against the
+surface triangles while preserving occlusion. If a target viewer still hides
+the grid, regenerate with a larger `--grid-offset` value; reduce it if the
+lines look detached from the surface.
 
 The script uses only the Python standard library and is compatible with Python
 3.8 or later.
@@ -25,11 +31,25 @@ The script uses only the Python standard library and is compatible with Python
 
 `generate_spherical_harmonics_gallery_glb.py` composes 25 different modes into
 one wide floating-object scene, based on the accompanying cover-art layout.
-Every object has its own embedded texture and the GLB includes an orthographic
-camera framing the composition.
+Every object has the same lit ink materials and mesh-edge grid; the GLB
+includes an orthographic camera framing the composition.
 
 ```bash
-python3 generate_spherical_harmonics_gallery_glb.py -o ../../static/img/blog/spherical-harmonics-cover.glb
+python3 generate_spherical_harmonics_gallery_glb.py -o ../../static/glb/spherical-harmonics-cover.glb
+```
+
+For example, use `--grid-offset 0.006` to make the grid sit slightly farther
+above the surface in a renderer with a less forgiving depth buffer.
+
+To retain a layout-editor camera pose when regenerating the mesh, make a backup
+first and pass it explicitly:
+
+```bash
+cp ../../static/glb/spherical-harmonics-cover.glb ../../static/glb/spherical-harmonics-cover-backup.glb
+python3 generate_spherical_harmonics_gallery_glb.py \
+  --camera-from ../../static/glb/spherical-harmonics-cover-backup.glb \
+  --transforms-from ../../static/glb/spherical-harmonics-cover-backup.glb \
+  -o ../../static/glb/spherical-harmonics-cover.glb
 ```
 
 For a fast composition review before a production render, create the matching
@@ -42,7 +62,7 @@ python3 render_spherical_harmonics_gallery.py -o ../../blog/math-stats-notes/sph
 ## Layout editor
 
 `spherical-harmonics-gallery-editor.html` is a small WebGL layout editor. It
-loads `../../static/img/blog/spherical-harmonics-cover.glb` by
+loads `../../static/glb/spherical-harmonics-cover.glb` by
 default, lets you move only the selected object, and exports a new standalone
 GLB with the adjusted translations. The cyan render frame shows
 the 1440 × 810 (16:9) PNG output area; **렌더 이미지 저장 (PNG)** saves that rendering
@@ -54,10 +74,10 @@ When saving the GLB, the editor also stores the current 60° perspective camera
 pose and look target. Reopening that saved file restores the same view. Use
 **방금 저장한 GLB 다시 열기** to verify the saved pose without leaving the editor.
 
-The editor starts in **카툰 윤곽선** mode: a WebGL inverted-hull shader draws
-`#55503f` outlines around the original blue/yellow sign materials. Choose
-**컬러** to disable the shader. The outline is a renderer effect for the editor
-and PNG output; GLB saving keeps portable standard materials.
+The editor starts in **잉크 + 얇은 윤곽선** mode: a WebGL inverted-hull shader
+draws 1.1px `#55503f` outlines around the ink materials. Choose
+**잉크 + 그리드** to disable the extra silhouette. The outline is a renderer
+effect for the editor and PNG output; GLB saving keeps portable standard materials.
 
 ```bash
 cd ../..

@@ -55,8 +55,8 @@
       </div>
       <label>렌더 스타일</label>
       <div class="tool-buttons">
-        <button id="color-style" class="tool" type="button">컬러</button>
-        <button id="outline-style" class="tool active" type="button">카툰 윤곽선</button>
+        <button id="color-style" class="tool" type="button">잉크 + 그리드</button>
+        <button id="outline-style" class="tool active" type="button">잉크 + 얇은 윤곽선</button>
       </div>
       <label>오브젝트</label>
       <div id="object-list"></div>
@@ -158,7 +158,7 @@
     function createOutlineMaterial() {
       const material = new THREE.ShaderMaterial({
         uniforms: {
-          outlineWidth: { value: 2.2 },
+          outlineWidth: { value: 1.1 },
           resolution: { value: new THREE.Vector2(1440, 810) },
           outlineColor: { value: new THREE.Color(0x55503f) }
         },
@@ -204,7 +204,7 @@
         outline.userData.cartoonOutline = true;
         mesh.add(outline);
       });
-      if (announce) setStatus(style === 'outline' ? 'WebGL 카툰 윤곽선을 적용했습니다.' : '원래 컬러 스타일을 적용했습니다.');
+      if (announce) setStatus(style === 'outline' ? '1.1px 카툰 윤곽선을 적용했습니다.' : '두 잉크 톤과 mesh-edge 그리드를 적용했습니다.');
     }
     function setCameraAspect(aspect) {
       camera.aspect = aspect;
@@ -487,7 +487,7 @@
       downloadDataUrl(imageData, 'spherical_harmonics_gallery_render.png');
       setStatus('저장됨: spherical_harmonics_gallery_render.png');
     });
-    loadGltf('../../static/img/blog/spherical-harmonics-cover.glb', '기본 갤러리');
+    loadGltf('../../static/glb/spherical-harmonics-cover.glb', '기본 갤러리');
     render();
   </script>
 </body>

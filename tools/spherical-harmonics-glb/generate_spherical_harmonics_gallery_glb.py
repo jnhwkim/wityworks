@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Create a floating spherical-harmonics gallery as one textured GLB scene.
+"""Create a floating, ink-rendered spherical-harmonics gallery as one GLB scene.
 
 The included camera frames the scene in a wide, illustration-like composition.
-Each object has its own embedded sign texture: blue means positive and yellow
-means negative for the real spherical-harmonic basis function.
+Each object uses faint and soft ink for its signs, with selected surface edges
+forming a sparse grid that deforms with the spherical-harmonic geometry.
 """
 
 from __future__ import print_function
@@ -13,7 +13,8 @@ import json
 import math
 import struct
 
-from generate_spherical_harmonics_glb import build_surface, padded
+from generate_spherical_harmonics_glb import (GRID_NORMAL_OFFSET, INK_FAINT, INK_SOFT,
+                                              build_surface, grid_material, ink_material, padded)
 
 
 # (degree, order, position, scale, Euler rotation in degrees)
@@ -65,22 +66,70 @@ def add_buffer_part(binary, part):
     return binary + padded(part), offset
 
 
-def write_gallery_glb(output_path, theta_steps, phi_steps):
-    """Build and write a GLB containing all gallery objects and textures."""
+def glb_document(source_path):
+    """Read the JSON document from a glTF 2.0 binary file."""
+    with open(source_path, "rb") as source_file:
+        data = source_file.read()
+    magic, version, _ = struct.unpack("<4sII", data[:12])
+    if magic != b"glTF" or version != 2:
+        raise ValueError("camera source must be a glTF 2.0 binary (.glb) file")
+    json_length, chunk_type = struct.unpack("<I4s", data[12:20])
+    if chunk_type != b"JSON":
+        raise ValueError("camera source does not begin with a JSON glTF chunk")
+    return json.loads(data[20:20 + json_length])
+
+
+def camera_setup_from_glb(source_path):
+    """Copy camera definitions and camera-node poses from an existing GLB."""
+    document = glb_document(source_path)
+    source_cameras = document.get("cameras", [])
+    camera_nodes = [node for node in document.get("nodes", []) if "camera" in node]
+    if not camera_nodes:
+        raise ValueError("camera source contains no camera nodes")
+
+    used_cameras, remap = [], {}
+    copied_nodes = []
+    for node in camera_nodes:
+        source_index = node["camera"]
+        if source_index not in remap:
+            remap[source_index] = len(used_cameras)
+            used_cameras.append(source_cameras[source_index])
+        copied = {key: value for key, value in node.items()
+                  if key in ("name", "matrix", "translation", "rotation", "scale", "extras")}
+        copied["camera"] = remap[source_index]
+        copied_nodes.append(copied)
+    return used_cameras, copied_nodes
+
+
+def mesh_transforms_from_glb(source_path):
+    """Extract mesh-node transforms in scene order from an existing GLB."""
+    transforms = []
+    for node in glb_document(source_path).get("nodes", []):
+        if "mesh" not in node:
+            continue
+        transforms.append({key: node[key] for key in ("matrix", "translation", "rotation", "scale")
+                           if key in node})
+    return transforms
+
+
+def write_gallery_glb(output_path, theta_steps, phi_steps, grid_offset=GRID_NORMAL_OFFSET,
+                      camera_from=None, transforms_from=None):
+    """Build and write a GLB containing all gallery objects and mesh-edge grids."""
     binary = b""
     buffer_views, accessors, meshes, materials, images, textures, nodes = [], [], [], [], [], [], []
 
     for number, (degree, order, translation, scale, rotation) in enumerate(GALLERY_MODES):
-        positions, normals, uvs, indices, texture_png = build_surface(
-            degree, order, theta_steps, phi_steps
+        positions, normals, grid_positions, positive_indices, negative_indices, grid_indices = build_surface(
+            degree, order, theta_steps, phi_steps, grid_offset=grid_offset
         )
         vertex_count = len(positions) // 3
         chunks = [
             (struct.pack("<%sf" % len(positions), *positions), 34962),
             (struct.pack("<%sf" % len(normals), *normals), 34962),
-            (struct.pack("<%sf" % len(uvs), *uvs), 34962),
-            (struct.pack("<%sI" % len(indices), *indices), 34963),
-            (texture_png, None),
+            (struct.pack("<%sf" % len(grid_positions), *grid_positions), 34962),
+            (struct.pack("<%sI" % len(positive_indices), *positive_indices), 34963),
+            (struct.pack("<%sI" % len(negative_indices), *negative_indices), 34963),
+            (struct.pack("<%sI" % len(grid_indices), *grid_indices), 34963),
         ]
         view_indices = []
         for chunk, target in chunks:
@@ -98,44 +147,67 @@ def write_gallery_glb(output_path, theta_steps, phi_steps):
              "type": "VEC3", "min": [min(xs), min(ys), min(zs)],
              "max": [max(xs), max(ys), max(zs)]},
             {"bufferView": view_indices[1], "componentType": 5126, "count": vertex_count, "type": "VEC3"},
-            {"bufferView": view_indices[2], "componentType": 5126, "count": vertex_count, "type": "VEC2"},
-            {"bufferView": view_indices[3], "componentType": 5125, "count": len(indices), "type": "SCALAR"},
+            {"bufferView": view_indices[2], "componentType": 5126, "count": vertex_count, "type": "VEC3"},
+            {"bufferView": view_indices[3], "componentType": 5125, "count": len(positive_indices), "type": "SCALAR"},
+            {"bufferView": view_indices[4], "componentType": 5125, "count": len(negative_indices), "type": "SCALAR"},
+            {"bufferView": view_indices[5], "componentType": 5125, "count": len(grid_indices), "type": "SCALAR"},
         ])
         material_index = len(materials)
-        texture_index = len(textures)
-        materials.append({"name": "Y_{0}^{1}: blue positive, yellow negative".format(degree, order),
-                          "pbrMetallicRoughness": {"baseColorTexture": {"index": texture_index},
-                                                   "metallicFactor": 0.0, "roughnessFactor": 0.55}})
-        images.append({"bufferView": view_indices[4], "mimeType": "image/png",
-                       "name": "Y_{0}^{1}_signs.png".format(degree, order)})
-        textures.append({"sampler": 0, "source": number})
+        materials.extend([
+            ink_material("Y_{0}^{1}: positive faint ink".format(degree, order), INK_FAINT),
+            ink_material("Y_{0}^{1}: negative soft ink".format(degree, order), INK_SOFT),
+            grid_material("Y_{0}^{1}: faint ink mesh grid".format(degree, order), INK_FAINT),
+        ])
         mesh_index = len(meshes)
         label = "Real spherical harmonic l={0}, m={1}".format(degree, order)
-        meshes.append({"name": label, "primitives": [{"attributes": {
-            "POSITION": accessor_base, "NORMAL": accessor_base + 1, "TEXCOORD_0": accessor_base + 2},
-            "indices": accessor_base + 3, "material": material_index}]})
+        meshes.append({"name": label, "primitives": [
+            {"attributes": {"POSITION": accessor_base, "NORMAL": accessor_base + 1},
+             "indices": accessor_base + 3, "material": material_index},
+            {"attributes": {"POSITION": accessor_base, "NORMAL": accessor_base + 1},
+             "indices": accessor_base + 4, "material": material_index + 1},
+            {"attributes": {"POSITION": accessor_base + 2}, "indices": accessor_base + 5,
+             "material": material_index + 2, "mode": 1},
+        ]})
         nodes.append({"name": label, "mesh": mesh_index, "translation": list(translation),
                       "rotation": list(euler_quaternion(rotation)), "scale": [scale, scale, scale]})
 
-    # A camera lets GLB viewers immediately show the intended wide composition.
+    if transforms_from:
+        saved_transforms = mesh_transforms_from_glb(transforms_from)
+        object_nodes = [node for node in nodes if "mesh" in node]
+        if len(saved_transforms) != len(object_nodes):
+            raise ValueError("transform source must contain {0} mesh nodes, found {1}".format(
+                len(object_nodes), len(saved_transforms)))
+        for node, saved_transform in zip(object_nodes, saved_transforms):
+            for key in ("matrix", "translation", "rotation", "scale"):
+                node.pop(key, None)
+            node.update(saved_transform)
+
+    # Preserve an editor camera pose when requested; otherwise include the
+    # generator's default wide camera.
     camera_node = len(nodes)
-    nodes.append({"name": "Gallery camera", "camera": 0, "translation": [0, 0, 24]})
+    if camera_from:
+        cameras, camera_nodes = camera_setup_from_glb(camera_from)
+        nodes.extend(camera_nodes)
+    else:
+        cameras = [{"name": "Gallery camera", "type": "orthographic",
+                    "orthographic": {"xmag": 8.3, "ymag": 4.7, "znear": 0.1, "zfar": 100.0}}]
+        nodes.append({"name": "Gallery camera", "camera": 0, "translation": [0, 0, 24]})
     document = {
         "asset": {"version": "2.0", "generator": "generate_spherical_harmonics_gallery_glb.py"},
         "scene": 0,
         "scenes": [{"name": "Floating spherical-harmonics gallery", "nodes": list(range(len(nodes)))}],
         "nodes": nodes,
-        "cameras": [{"name": "Gallery camera", "type": "orthographic",
-                     "orthographic": {"xmag": 8.3, "ymag": 4.7, "znear": 0.1, "zfar": 100.0}}],
+        "cameras": cameras,
         "meshes": meshes,
         "materials": materials,
-        "samplers": [{"magFilter": 9728, "minFilter": 9728, "wrapS": 10497, "wrapT": 33071}],
-        "images": images,
-        "textures": textures,
+        "extensionsUsed": ["KHR_materials_unlit"],
         "buffers": [{"byteLength": len(binary)}],
         "bufferViews": buffer_views,
         "accessors": accessors,
-        "extras": {"cameraNode": camera_node, "colorMeaning": "Blue: positive; yellow: negative."},
+        "extras": {"cameraNode": camera_node,
+                   "colorMeaning": "Faint ink (#8d876e): positive; soft ink (#55503f): negative.",
+                   "grid": "Selected latitude and longitude mesh edges, not a texture.",
+                   "gridNormalOffset": grid_offset},
     }
     json_bytes = json.dumps(document, separators=(",", ":")).encode("utf-8")
     json_bytes += b" " * ((4 - len(json_bytes) % 4) % 4)
@@ -154,11 +226,18 @@ def main():
                         help="latitude subdivisions per object (default: 72)")
     parser.add_argument("--phi-steps", type=int, default=144,
                         help="longitude subdivisions per object (default: 144)")
+    parser.add_argument("--grid-offset", type=float, default=GRID_NORMAL_OFFSET,
+                        help="normal offset for mesh-edge grid vertices (default: %(default)s)")
+    parser.add_argument("--camera-from", help="copy camera definitions and poses from an existing GLB")
+    parser.add_argument("--transforms-from", help="copy mesh-node transforms from an existing GLB")
     args = parser.parse_args()
     if args.theta_steps < 2 or args.phi_steps < 3:
         parser.error("--theta-steps must be >= 2 and --phi-steps must be >= 3")
-    write_gallery_glb(args.output, args.theta_steps, args.phi_steps)
-    print("Wrote {0} with {1} textured spherical-harmonic objects.".format(
+    if args.grid_offset < 0.0:
+        parser.error("--grid-offset must be non-negative")
+    write_gallery_glb(args.output, args.theta_steps, args.phi_steps, args.grid_offset,
+                      args.camera_from, args.transforms_from)
+    print("Wrote {0} with {1} ink-rendered spherical-harmonic objects.".format(
         args.output, len(GALLERY_MODES)))
 
 
