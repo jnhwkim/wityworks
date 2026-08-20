@@ -158,9 +158,9 @@
     function createOutlineMaterial() {
       const material = new THREE.ShaderMaterial({
         uniforms: {
-          outlineWidth: { value: 1.1 },
+          outlineWidth: { value: 1.0 },
           resolution: { value: new THREE.Vector2(1440, 810) },
-          outlineColor: { value: new THREE.Color(0x55503f) }
+          outlineColor: { value: new THREE.Color(0x14130f) }
         },
         vertexShader: `
           uniform float outlineWidth;
@@ -202,7 +202,16 @@
         const outline = new THREE.Mesh(mesh.geometry, createOutlineMaterial());
         outline.name = 'Cartoon_outline_shader';
         outline.userData.cartoonOutline = true;
+        // Surface, grid, then silhouette: the grid stays visible over fill,
+        // while the silhouette remains the visually topmost mark.
+        mesh.renderOrder = 0;
+        outline.renderOrder = 2;
         mesh.add(outline);
+      });
+      gallery.traverse(object => {
+        if (!object.isLineSegments) return;
+        object.renderOrder = 1;
+        object.material.depthWrite = false;
       });
       if (announce) setStatus(style === 'outline' ? '1.1px 카툰 윤곽선을 적용했습니다.' : '두 잉크 톤과 mesh-edge 그리드를 적용했습니다.');
     }

@@ -13,7 +13,7 @@ import json
 import math
 import struct
 
-from generate_spherical_harmonics_glb import (GRID_NORMAL_OFFSET, INK_FAINT, INK_SOFT,
+from generate_spherical_harmonics_glb import (GRID_NORMAL_OFFSET, INK_FAINT, INK_OUTLINE, INK_SOFT,
                                               build_surface, grid_material, ink_material, padded)
 
 
@@ -119,7 +119,8 @@ def write_gallery_glb(output_path, theta_steps, phi_steps, grid_offset=GRID_NORM
     buffer_views, accessors, meshes, materials, images, textures, nodes = [], [], [], [], [], [], []
 
     for number, (degree, order, translation, scale, rotation) in enumerate(GALLERY_MODES):
-        positions, normals, grid_positions, positive_indices, negative_indices, grid_indices = build_surface(
+        (positions, normals, grid_positions, positive_indices, negative_indices,
+         soft_grid_indices, dark_grid_indices) = build_surface(
             degree, order, theta_steps, phi_steps, grid_offset=grid_offset
         )
         vertex_count = len(positions) // 3
@@ -129,7 +130,8 @@ def write_gallery_glb(output_path, theta_steps, phi_steps, grid_offset=GRID_NORM
             (struct.pack("<%sf" % len(grid_positions), *grid_positions), 34962),
             (struct.pack("<%sI" % len(positive_indices), *positive_indices), 34963),
             (struct.pack("<%sI" % len(negative_indices), *negative_indices), 34963),
-            (struct.pack("<%sI" % len(grid_indices), *grid_indices), 34963),
+            (struct.pack("<%sI" % len(soft_grid_indices), *soft_grid_indices), 34963),
+            (struct.pack("<%sI" % len(dark_grid_indices), *dark_grid_indices), 34963),
         ]
         view_indices = []
         for chunk, target in chunks:
@@ -150,13 +152,15 @@ def write_gallery_glb(output_path, theta_steps, phi_steps, grid_offset=GRID_NORM
             {"bufferView": view_indices[2], "componentType": 5126, "count": vertex_count, "type": "VEC3"},
             {"bufferView": view_indices[3], "componentType": 5125, "count": len(positive_indices), "type": "SCALAR"},
             {"bufferView": view_indices[4], "componentType": 5125, "count": len(negative_indices), "type": "SCALAR"},
-            {"bufferView": view_indices[5], "componentType": 5125, "count": len(grid_indices), "type": "SCALAR"},
+            {"bufferView": view_indices[5], "componentType": 5125, "count": len(soft_grid_indices), "type": "SCALAR"},
+            {"bufferView": view_indices[6], "componentType": 5125, "count": len(dark_grid_indices), "type": "SCALAR"},
         ])
         material_index = len(materials)
         materials.extend([
             ink_material("Y_{0}^{1}: positive faint ink".format(degree, order), INK_FAINT),
             ink_material("Y_{0}^{1}: negative soft ink".format(degree, order), INK_SOFT),
-            grid_material("Y_{0}^{1}: faint ink mesh grid".format(degree, order), INK_FAINT),
+            grid_material("Y_{0}^{1}: soft ink mesh grid".format(degree, order), INK_SOFT),
+            grid_material("Y_{0}^{1}: dark-lobe outline ink mesh grid".format(degree, order), INK_OUTLINE),
         ])
         mesh_index = len(meshes)
         label = "Real spherical harmonic l={0}, m={1}".format(degree, order)
@@ -167,6 +171,8 @@ def write_gallery_glb(output_path, theta_steps, phi_steps, grid_offset=GRID_NORM
              "indices": accessor_base + 4, "material": material_index + 1},
             {"attributes": {"POSITION": accessor_base + 2}, "indices": accessor_base + 5,
              "material": material_index + 2, "mode": 1},
+            {"attributes": {"POSITION": accessor_base + 2}, "indices": accessor_base + 6,
+             "material": material_index + 3, "mode": 1},
         ]})
         nodes.append({"name": label, "mesh": mesh_index, "translation": list(translation),
                       "rotation": list(euler_quaternion(rotation)), "scale": [scale, scale, scale]})
@@ -205,8 +211,8 @@ def write_gallery_glb(output_path, theta_steps, phi_steps, grid_offset=GRID_NORM
         "bufferViews": buffer_views,
         "accessors": accessors,
         "extras": {"cameraNode": camera_node,
-                   "colorMeaning": "Faint ink (#8d876e): positive; soft ink (#55503f): negative.",
-                   "grid": "Selected latitude and longitude mesh edges, not a texture.",
+                   "colorMeaning": "Faint ink (#e8e4d8): positive; soft ink (#55503f): negative and positive-lobe grid; outline ink (#14130f): negative-lobe grid.",
+                   "grid": "Every second selected latitude and longitude mesh edge, not a texture.",
                    "gridNormalOffset": grid_offset},
     }
     json_bytes = json.dumps(document, separators=(",", ":")).encode("utf-8")

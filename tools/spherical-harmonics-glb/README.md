@@ -14,8 +14,9 @@ adjust mesh density. The generated example is stored at
 
 The model represents the real spherical-harmonic basis: its radius in each
 angular direction is `|Y_l^m(theta, phi)|`. Its positive and negative regions
-use lit `#8d876e` and `#55503f` ink materials respectively. A sparse latitude/longitude grid is exported as selected
-`LINES` mesh edges in constant `#8d876e`, so it follows the stretched surface
+use lit `#e8e4d8` and `#55503f` ink materials respectively. A latitude/longitude grid is exported from every second selected
+mesh edge as `#55503f` `LINES` on positive lobes and `#14130f` `LINES` on
+negative lobes, so it follows the stretched surface
 rather than a texture and remains visible independently of surface lighting.
 
 The grid gets its own position buffer, displaced by `GRID_NORMAL_OFFSET =
@@ -75,7 +76,8 @@ pose and look target. Reopening that saved file restores the same view. Use
 **방금 저장한 GLB 다시 열기** to verify the saved pose without leaving the editor.
 
 The editor starts in **잉크 + 얇은 윤곽선** mode: a WebGL inverted-hull shader
-draws 1.1px `#55503f` outlines around the ink materials. Choose
+draws 1.0px `#14130f` outlines around the ink materials. The grid is drawn
+below this outline layer. Choose
 **잉크 + 그리드** to disable the extra silhouette. The outline is a renderer
 effect for the editor and PNG output; GLB saving keeps portable standard materials.
 

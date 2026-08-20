@@ -12,7 +12,7 @@ import argparse
 import math
 from array import array
 
-from generate_spherical_harmonics_glb import INK_FAINT, INK_SOFT, png_rgba, real_spherical_harmonic
+from generate_spherical_harmonics_glb import INK_FAINT, INK_OUTLINE, INK_SOFT, png_rgba, real_spherical_harmonic
 from generate_spherical_harmonics_gallery_glb import GALLERY_MODES, euler_quaternion
 
 
@@ -135,13 +135,15 @@ def render_mode(pixels, depths, width, height, mode, theta_steps, phi_steps):
             start = row * row_width + column
             draw_line(pixels, depths, width, height,
                       projected(vertices[start], width, height),
-                      projected(vertices[start + 1], width, height), INK_FAINT)
+                      projected(vertices[start + 1], width, height),
+                      INK_OUTLINE if values[start] + values[start + 1] < 0.0 else INK_SOFT)
     for column in range(0, phi_steps, grid_step):
         for row in range(1, theta_steps - 1):
             start = row * row_width + column
             draw_line(pixels, depths, width, height,
                       projected(vertices[start], width, height),
-                      projected(vertices[start + row_width], width, height), INK_FAINT)
+                      projected(vertices[start + row_width], width, height),
+                      INK_OUTLINE if values[start] + values[start + row_width] < 0.0 else INK_SOFT)
 
 
 def render(output_path, width, height, theta_steps, phi_steps):

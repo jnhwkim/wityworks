@@ -19,8 +19,11 @@ import struct
 import zlib
 
 
-INK_FAINT = (0x8D, 0x87, 0x6E, 0xFF)
+# Near-white warm ink keeps the positive sign and surface grid airy on paper.
+INK_FAINT = (0xE8, 0xE4, 0xD8, 0xFF)
 INK_SOFT = (0x55, 0x50, 0x3F, 0xFF)
+INK_OUTLINE = (0x14, 0x13, 0x0F, 0xFF)
+GRID_EDGE_STEP = 2
 # Grid vertices are deliberately separate from the surface vertices and moved
 # outward along their normals. Raise this only if a viewer still z-fights.
 GRID_NORMAL_OFFSET = 0.004
@@ -110,16 +113,17 @@ def padded(binary):
 
 
 def write_glb(output_path, positions, normals, grid_positions, positive_indices,
-              negative_indices, grid_indices, name):
+              negative_indices, soft_grid_indices, dark_grid_indices, name):
     """Write a lit GLB with signed surfaces and selected mesh-edge lines."""
     position_bytes = struct.pack("<%sf" % len(positions), *positions)
     normal_bytes = struct.pack("<%sf" % len(normals), *normals)
     grid_position_bytes = struct.pack("<%sf" % len(grid_positions), *grid_positions)
     positive_index_bytes = struct.pack("<%sI" % len(positive_indices), *positive_indices)
     negative_index_bytes = struct.pack("<%sI" % len(negative_indices), *negative_indices)
-    grid_index_bytes = struct.pack("<%sI" % len(grid_indices), *grid_indices)
+    soft_grid_index_bytes = struct.pack("<%sI" % len(soft_grid_indices), *soft_grid_indices)
+    dark_grid_index_bytes = struct.pack("<%sI" % len(dark_grid_indices), *dark_grid_indices)
     parts = [position_bytes, normal_bytes, grid_position_bytes, positive_index_bytes,
-             negative_index_bytes, grid_index_bytes]
+             negative_index_bytes, soft_grid_index_bytes, dark_grid_index_bytes]
     offsets, binary = [], b""
     for part in parts:
         offsets.append(len(binary))
@@ -138,11 +142,13 @@ def write_glb(output_path, positions, normals, grid_positions, positive_indices,
             {"attributes": {"POSITION": 0, "NORMAL": 1}, "indices": 3, "material": 0},
             {"attributes": {"POSITION": 0, "NORMAL": 1}, "indices": 4, "material": 1},
             {"attributes": {"POSITION": 2}, "indices": 5, "material": 2, "mode": 1},
+            {"attributes": {"POSITION": 2}, "indices": 6, "material": 3, "mode": 1},
         ]}],
         "materials": [
             ink_material("Positive ink (faint)", INK_FAINT),
             ink_material("Negative ink (soft)", INK_SOFT),
-            grid_material("Surface grid (faint ink)", INK_FAINT),
+            grid_material("Surface grid (soft ink)", INK_SOFT),
+            grid_material("Negative surface grid (outline ink)", INK_OUTLINE),
         ],
         "extensionsUsed": ["KHR_materials_unlit"],
         "buffers": [{"byteLength": len(binary)}],
@@ -152,7 +158,8 @@ def write_glb(output_path, positions, normals, grid_positions, positive_indices,
             {"buffer": 0, "byteOffset": offsets[2], "byteLength": len(grid_position_bytes), "target": 34962},
             {"buffer": 0, "byteOffset": offsets[3], "byteLength": len(positive_index_bytes), "target": 34963},
             {"buffer": 0, "byteOffset": offsets[4], "byteLength": len(negative_index_bytes), "target": 34963},
-            {"buffer": 0, "byteOffset": offsets[5], "byteLength": len(grid_index_bytes), "target": 34963}
+            {"buffer": 0, "byteOffset": offsets[5], "byteLength": len(soft_grid_index_bytes), "target": 34963},
+            {"buffer": 0, "byteOffset": offsets[6], "byteLength": len(dark_grid_index_bytes), "target": 34963}
         ],
         "accessors": [
             {"bufferView": 0, "componentType": 5126, "count": vertex_count,
@@ -162,7 +169,8 @@ def write_glb(output_path, positions, normals, grid_positions, positive_indices,
             {"bufferView": 2, "componentType": 5126, "count": vertex_count, "type": "VEC3"},
             {"bufferView": 3, "componentType": 5125, "count": len(positive_indices), "type": "SCALAR"},
             {"bufferView": 4, "componentType": 5125, "count": len(negative_indices), "type": "SCALAR"},
-            {"bufferView": 5, "componentType": 5125, "count": len(grid_indices), "type": "SCALAR"},
+            {"bufferView": 5, "componentType": 5125, "count": len(soft_grid_indices), "type": "SCALAR"},
+            {"bufferView": 6, "componentType": 5125, "count": len(dark_grid_indices), "type": "SCALAR"},
         ],
     }
     json_bytes = json.dumps(document, separators=(",", ":")).encode("utf-8")
@@ -195,7 +203,7 @@ def grid_material(name, rgba):
     }
 
 
-def build_surface(degree, order, theta_steps, phi_steps, grid_step=8,
+def build_surface(degree, order, theta_steps, phi_steps, grid_step=GRID_EDGE_STEP,
                   grid_offset=GRID_NORMAL_OFFSET):
     """Build surface triangles plus sparse grid edges from the same mesh."""
     vertices = []
@@ -230,15 +238,22 @@ def build_surface(degree, order, theta_steps, phi_steps, grid_step=8,
 
     # These are actual surface mesh edges, not a projected or texture grid.
     # Offset from poles avoids a visually dense star where all longitude edges meet.
-    grid_indices = []
+    soft_grid_indices, dark_grid_indices = [], []
+    def add_grid_edge(first, second):
+        first_value = values[first // row_width][first % row_width]
+        second_value = values[second // row_width][second % row_width]
+        # Edges predominantly on the negative (dark) lobe get the darker ink.
+        target = dark_grid_indices if first_value + second_value < 0.0 else soft_grid_indices
+        target.extend((first, second))
+
     for row in range(grid_step, theta_steps, grid_step):
         for column in range(phi_steps):
             start = row * row_width + column
-            grid_indices.extend((start, start + 1))
+            add_grid_edge(start, start + 1)
     for column in range(0, phi_steps, grid_step):
         for row in range(1, theta_steps - 1):
             start = row * row_width + column
-            grid_indices.extend((start, start + row_width))
+            add_grid_edge(start, start + row_width)
 
     # Area-weighted vertex normals make the PBR material follow the actual
     # harmonic surface rather than merely pointing away from the origin.
@@ -256,7 +271,8 @@ def build_surface(degree, order, theta_steps, phi_steps, grid_step=8,
     normals = [component for normal in normal_sums for component in unit_normal(normal)]
     positions = [component for vertex in vertices for component in vertex]
     grid_positions = [position + grid_offset * normal for position, normal in zip(positions, normals)]
-    return positions, normals, grid_positions, positive_indices, negative_indices, grid_indices
+    return (positions, normals, grid_positions, positive_indices, negative_indices,
+            soft_grid_indices, dark_grid_indices)
 
 
 def main():
