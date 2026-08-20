@@ -128,19 +128,23 @@ $$\mathbf{c}(\mathbf{v}) = \sum_{l=0}^{l_{\max}} \sum_{m=-l}^{l} \mathbf{c}_{l, 
 For standard real-time rendering, degree $l_{\max} = 3$ is used, corresponding to $(3+1)^2 = 16$ coefficients per color channel (48 parameters per primitive).
 
 ### 4.2 Ref-NeRF and Integrated Directional Encoding (IDE)
-To account for specular reflections and surface roughness without aliasing artifacts, viewing distributions can be modeled as a von Mises–Fisher (vMF) distribution with concentration parameter $\kappa$ (where $\kappa \propto \frac{1}{\textnormal{roughness}}$) in Ref-NeRF [<a id="ref-verbin2022-42" href="#ref-verbin2022">Verbin et al., 2022</a>]:
+To account for specular reflections and surface roughness without aliasing artifacts, Ref-NeRF models a distribution of reflected directions with a von Mises–Fisher (vMF) distribution [<a id="ref-verbin2022-42" href="#ref-verbin2022">Verbin et al., 2022</a>]. Here, $\mathbf{\mu}_r \in S^2$ is the unit reflection direction and the mean direction of the distribution, $\mathbf{x} \in S^2$ is a unit direction sampled on the sphere, and $\kappa \ge 0$ is the concentration parameter: lower $\kappa$ represents a broader lobe and thus a rougher surface. The factor $C_3(\kappa)$ normalizes the density over the 3D unit sphere; the subscript $3$ is the ambient dimension because $S^2$ consists of unit vectors in $\mathbb{R}^3$, as specified by the <a href="https://en.wikipedia.org/wiki/Von_Mises%E2%80%93Fisher_distribution#Definition" target="_blank" rel="noopener noreferrer">general vMF definition</a>.
 
-$$f(\mathbf{x}; \mathbf{\mu}_r, \kappa) = C_d(\kappa) \exp(\kappa \mathbf{\mu}_r^T \mathbf{x}) \tag{10}$$
+$$f(\mathbf{x}; \mathbf{\mu}_r, \kappa) = C_3(\kappa) \exp(\kappa \mathbf{\mu}_r^T \mathbf{x}) \tag{10}$$
 
 Taking the expectation of SH basis functions over the vMF distribution yields Integrated Directional Encoding (IDE), which closed-form attenuates higher frequencies:
 
-$$\mathbb{E}_{\mathbf{\mu} \sim \textnormal{vMF}(\mathbf{\mu}_r, \kappa)} \left[ Y_l^m(\mathbf{\mu}) \right] = A_l(\kappa) Y_l^m(\mathbf{\mu}_r) \tag{11}$$
+$$\mathbb{E}_{\boldsymbol{\omega} \sim \textnormal{vMF}(\mathbf{\mu}_r, \kappa)} \left[ Y_l^m(\boldsymbol{\omega}) \right] = A_l(\kappa) Y_l^m(\mathbf{\mu}_r) \tag{11}$$
 
 $$A_l(\kappa) \approx \exp\left( -\frac{l(l+1)}{2\kappa} \right) \tag{12}$$
 
+Here, $\boldsymbol{\omega} \in S^2$ is the random unit direction drawn from the vMF distribution, and $A_l(\kappa)$ is the roughness-dependent attenuation factor for SH degree $l$.
+
+**Why does Equation (11) hold? (Proof sketch.)** First rotate the coordinates so that the mean direction $\mathbf{\mu}_r$ becomes the north pole. The vMF density then depends only on the polar angle and is rotationally symmetric about that pole. Its integral against a degree-$l$ spherical harmonic therefore cannot mix different degrees or orders: it only rescales that degree by a scalar $A_l(\kappa)$. Rotating back yields $A_l(\kappa)Y_l^m(\mathbf{\mu}_r)$. This derivation can be viewed as an application of the Funk–Hecke theorem; Ref-NeRF gives the full derivation, including the Legendre-polynomial integral for $A_l(\kappa)$, in <a href="https://dorverbin.github.io/refnerf/refnerf.pdf" target="_blank" rel="noopener noreferrer">Appendix A, “Integrated Directional Encoding Proofs”</a>.
+
 <figure class="post-illustration">
   <img src="../static/img/blog/spherical-harmonics-ide-frequency-attenuation.png" alt="Integrated Directional Encoding comparison showing that a broad low-kappa von Mises-Fisher distribution attenuates high-degree spherical harmonic frequencies more strongly" loading="lazy">
-  <figcaption>IDE applies a roughness-dependent angular low-pass filter: lower $\kappa$ preserves low-degree modes while attenuating higher-degree spherical harmonic frequencies.</figcaption>
+  <figcaption>IDE applies a roughness-dependent angular low-pass filter: lower $\kappa$ (rougher surfaces) attenuates higher-degree spherical harmonic frequencies more strongly.</figcaption>
 </figure>
 
 ---
@@ -174,5 +178,5 @@ Spherical Harmonics illustrate the deep interdisciplinary connection across math
 
 * <a id="ref-kerbl2023"></a>Bernhard Kerbl, Georgios Kopanas, Thomas Leimkühler, and George Drettakis. 3D Gaussian Splatting for Real-Time Radiance Field Rendering. *ACM Transactions on Graphics (TOG)*, 42(4):1–14, 2023. [<a href="#ref-kerbl2023-1">1</a>, <a href="#ref-kerbl2023-41">4.1</a>, <a href="#ref-kerbl2023-6">6</a>]
 * <a id="ref-mildenhall2020"></a>Ben Mildenhall, Pratul P. Srinivasan, Matthew Tancik, Jonathan T. Barron, Ravi Ramamoorthi, and Ren Ng. NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis. In *European Conference on Computer Vision (ECCV)*, pages 405–421. Springer, 2020. [<a href="#ref-mildenhall2020-1">1</a>]
-* <a id="ref-verbin2022"></a>Dor Verbin, Peter Hedman, Ben Mildenhall, Todd Zickler, Jonathan T. Barron, and Pratul P. Srinivasan. Ref-NeRF: Structured View-Dependent Appearance for Neural Radiance Fields. In *IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)*, pages 5481–5490, 2022. [<a href="#ref-verbin2022-42">4.2</a>, <a href="#ref-verbin2022-6">6</a>]
+* <a id="ref-verbin2022"></a>Dor Verbin, Peter Hedman, Ben Mildenhall, Todd Zickler, Jonathan T. Barron, and Pratul P. Srinivasan. Ref-NeRF: Structured View-Dependent Appearance for Neural Radiance Fields. In *IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)*, pages 5491–5500, 2022. [<a href="#ref-verbin2022-42">4.2</a>, <a href="#ref-verbin2022-6">6</a>]
 * <a id="ref-kelvin1867"></a>William Thomson (Lord Kelvin) and Peter Guthrie Tait. Treatise on Natural Philosophy, Part I. Clarendon Press, Oxford, 1867. [<a href="#ref-kelvin1867-2">2</a>]
