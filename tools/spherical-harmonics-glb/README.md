@@ -50,6 +50,16 @@ includes an orthographic camera framing the composition.
 python3 generate_spherical_harmonics_gallery_glb.py -o ../../static/glb/spherical-harmonics-cover.glb
 ```
 
+To generate the built-in 16-object cover composition and its perspective
+camera—without an unused wide orthographic camera—use the canonical
+`cover.glb` name:
+
+```bash
+python3 generate_spherical_harmonics_gallery_glb.py \
+  --cover-layout \
+  -o ../../static/glb/spherical-harmonics-cover.glb
+```
+
 For example, use `--grid-offset 0.006` to make the grid sit slightly farther
 above the surface in a renderer with a less forgiving depth buffer.
 

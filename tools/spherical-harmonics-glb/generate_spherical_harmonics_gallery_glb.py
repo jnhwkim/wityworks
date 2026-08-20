@@ -11,6 +11,7 @@ from __future__ import print_function
 import argparse
 import json
 import math
+import re
 import struct
 
 from generate_spherical_harmonics_glb import (GRID_LOG_FADE_MAXIMUM, GRID_LOG_FADE_MINIMUM,
@@ -50,6 +51,27 @@ GALLERY_MODES = [
     (2, 1, (5.60, -2.85, -0.2), 2.20, (15, -30, 8)),
     (3, -1, (6.20, -3.00, 0.2), 3.25, (-12, 30, 12)),
 ]
+
+# Curated 16-object cover composition. Matrices are column-major glTF transforms.
+COVER_LAYOUT_MODES = [
+    (0, 0, [5.2, 0, 0, 0, 0, 5.2, 0, 0, 0, 0, 5.2, 0, 4.7918, 2.8267, 9.1949, 1]),
+    (2, 1, [1.0128, -0.1911, -2.4955, 0, -0.9303, 2.4705, -0.5668, 0, 2.3235, 1.0725, 0.8608, 0, 0.6231, -2.9528, 6.9161, 1]),
+    (2, -1, [-0.4824, 1.2564, 2.3982, 0, 1.4432, 2.1803, -0.8520, 0, -2.2906, 1.1091, -1.0418, 0, -2.1977, 3.4149, 7.3247, 1]),
+    (2, 0, [0.7403, 1.2747, 2.3806, 0, 0.2688, 2.4214, -1.3801, 0, -2.6870, 0.5934, 0.5178, 0, 1.3696, 2.7926, 8.3669, 1]),
+    (3, 3, [2.2493, -1.2203, 1.2547, 0, 1.6090, 0.6376, -2.2643, 0, 0.6888, 2.4954, 1.1921, 0, -2.3950, -0.8742, 10.5566, 1]),
+    (2, -2, [-0.2775, 0.8700, -1.1263, 0, -1.4232, -0.1627, 0.2250, 0, 0.0086, 1.1485, 0.8851, 0, -4.8233, 0.2346, 4.7365, 1]),
+    (3, -1, [-1.5953, 1.4833, -0.3078, 0, -0.7184, -1.1343, -1.7428, 0, -1.3337, -1.1632, 1.3069, 0, 0.6379, 0.5308, 10.6592, 1]),
+    (3, 2, [-0.7766, 1.6974, -0.8474, 0, -1.7344, -1.0063, -0.4262, 0, -0.7689, 0.5555, 1.8173, 0, -0.9388, 1.3953, 8.3484, 1]),
+    (1, -1, [2.6556, -1.6210, 1.4907, 0, 0.9666, 2.9563, 1.4928, 0, -1.9788, -0.7314, 2.7298, 0, -6.8472, 2.7203, 0.7959, 1]),
+    (2, 0, [2.8036, 1.9508, -0.7644, 0, -0.5515, -0.5448, -3.4131, 0, -2.0213, 2.8544, -0.1291, 0, -2.4939, -1.4185, 0.6615, 1]),
+    (3, -2, [1.0773, -0.6254, 1.6282, 0, 0.0156, 1.9171, 0.7260, 0, -1.7441, -0.3691, 1.0122, 0, -4.3473, 1.1413, 8.9435, 1]),
+    (3, -3, [2.4545, 0.4000, -1.1739, 0, 1.1445, 0.2716, 2.4857, 0, 0.4775, -2.7072, 0.0759, 0, 3.4622, -1.6373, 9.6027, 1]),
+    (2, 2, [3.4377, -0.1147, -1.6153, 0, 0.4831, 3.6905, 0.7662, 0, 1.5456, -0.8985, 3.3532, 0, -2.3722, -6.7211, -4.2608, 1]),
+    (1, 0, [0.5943, 0.6958, -2.2727, 0, 0.3244, 2.2970, 0.7880, 0, 2.3546, -0.4920, 0.4650, 0, -3.0560, 2.2095, 10.5087, 1]),
+    (3, 2, [2.0865, 0.6173, -1.1259, 0, -0.7594, 2.3256, -0.1323, 0, 1.0354, 0.4617, 2.1719, 0, 3.3845, 0.5536, 9.8824, 1]),
+    (2, 1, [-1.8678, -1.1494, 0.1736, 0, -1.0380, 1.7970, 0.7302, 0, -0.5233, 0.5381, -2.0680, 0, 1.7242, -0.9044, 8.6048, 1]),
+]
+COVER_LAYOUT_CAMERA = {"camera": {"name": "Cover camera", "type": "perspective", "perspective": {"aspectRatio": 16.0 / 9.0, "yfov": math.pi / 3.0, "zfar": 1000.0, "znear": 0.1}}, "node": {"name": "Cover camera", "matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -0.1179333, 0.1926496, 14.3926162, 1], "extras": {"layoutEditorCamera": True, "layoutEditorTarget": [-0.1179333, 0.1926496, 0]}}}
 
 
 def euler_quaternion(rotation):
@@ -126,18 +148,47 @@ def layout_camera_position_from_glb(source_path):
     raise ValueError("camera source contains no saved layout-editor camera")
 
 
+def cover_layout_from_glb(source_path):
+    """Extract a saved cover layout's object matrices and perspective camera."""
+    document = glb_document(source_path)
+    modes = []
+    for node in document.get("nodes", []):
+        label = node.get("extras", {}).get("name", "")
+        match = re.match(r"Real spherical harmonic l=(-?\d+), m=(-?\d+)$", label)
+        if match and "matrix" in node:
+            modes.append((int(match.group(1)), int(match.group(2)), node["matrix"]))
+    if not modes:
+        raise ValueError("cover layout source contains no logical spherical-harmonic object matrices")
+
+    for node in document.get("nodes", []):
+        if node.get("extras", {}).get("layoutEditorCamera") is not True:
+            continue
+        camera = document.get("cameras", [])[node["camera"]]
+        copied_node = {key: node[key] for key in ("name", "matrix", "translation", "rotation", "scale", "extras")
+                       if key in node}
+        return modes, {"camera": camera, "node": copied_node}
+    raise ValueError("cover layout source contains no saved layout-editor camera")
+
+
 def write_gallery_glb(output_path, theta_steps, phi_steps, grid_offset=GRID_NORMAL_OFFSET,
-                      camera_from=None, transforms_from=None, modes=None):
+                      camera_from=None, transforms_from=None, modes=None, camera_setup=None):
     """Build and write a GLB containing all gallery objects and mesh-edge grids."""
     modes = list(GALLERY_MODES if modes is None else modes)
     binary = b""
     buffer_views, accessors, meshes, materials, images, textures, nodes = [], [], [], [], [], [], []
-    grid_specular_contexts = None
+    transforms = None
+    camera_position = None
     if camera_from and transforms_from:
         camera_position = layout_camera_position_from_glb(camera_from)
         transforms = mesh_transforms_from_glb(transforms_from)
         if len(transforms) != len(modes) or any("matrix" not in transform for transform in transforms):
             raise ValueError("specular grid baking requires a matrix for every mesh node")
+    elif modes and len(modes[0]) == 3 and camera_setup:
+        transforms = [{"matrix": mode[2]} for mode in modes]
+        camera_position = camera_setup["node"].get("matrix", [])[12:15]
+
+    grid_specular_contexts = None
+    if transforms:
         grid_specular_contexts = [{
             "matrix": transform["matrix"],
             "camera_position": camera_position,
@@ -147,7 +198,8 @@ def write_gallery_glb(output_path, theta_steps, phi_steps, grid_offset=GRID_NORM
             "log_maximum": GRID_LOG_FADE_MAXIMUM,
         } for transform in transforms]
 
-    for number, (degree, order, translation, scale, rotation) in enumerate(modes):
+    for number, mode in enumerate(modes):
+        degree, order = mode[:2]
         (positions, normals, grid_positions, positive_indices, negative_indices,
          grid_index_groups) = build_surface(
             degree, order, theta_steps, phi_steps, grid_offset=grid_offset,
@@ -212,8 +264,12 @@ def write_gallery_glb(output_path, theta_steps, phi_steps, grid_offset=GRID_NORM
                 "indices": accessor_base + 5 + index,
                 "material": len(materials) - 1, "mode": 1,
             })
-        nodes.append({"name": label, "mesh": mesh_index, "translation": list(translation),
-                      "rotation": list(euler_quaternion(rotation)), "scale": [scale, scale, scale]})
+        if len(mode) == 3:
+            nodes.append({"name": label, "mesh": mesh_index, "matrix": list(mode[2])})
+        else:
+            _, _, translation, scale, rotation = mode
+            nodes.append({"name": label, "mesh": mesh_index, "translation": list(translation),
+                          "rotation": list(euler_quaternion(rotation)), "scale": [scale, scale, scale]})
 
     if transforms_from:
         saved_transforms = mesh_transforms_from_glb(transforms_from)
@@ -229,7 +285,12 @@ def write_gallery_glb(output_path, theta_steps, phi_steps, grid_offset=GRID_NORM
     # Preserve an editor camera pose when requested; otherwise include the
     # generator's default wide camera.
     camera_node = len(nodes)
-    if camera_from:
+    if camera_setup:
+        cameras = [camera_setup["camera"]]
+        camera_node_data = dict(camera_setup["node"])
+        camera_node_data["camera"] = 0
+        nodes.append(camera_node_data)
+    elif camera_from:
         cameras, camera_nodes = camera_setup_from_glb(camera_from)
         nodes.extend(camera_nodes)
     else:
@@ -276,16 +337,30 @@ def main():
     parser.add_argument("--transforms-from", help="copy mesh-node transforms from an existing GLB")
     parser.add_argument("--mode-index", type=int, action="append", dest="mode_indices",
                         help="include one zero-based gallery mode; repeat to keep a selected subset")
+    parser.add_argument("--cover-layout-from",
+                        help="copy logical transforms and the perspective camera from a saved cover GLB")
+    parser.add_argument("--cover-layout", action="store_true",
+                        help="generate the built-in 16-object cover composition")
     args = parser.parse_args()
     if args.theta_steps < 2 or args.phi_steps < 3:
         parser.error("--theta-steps must be >= 2 and --phi-steps must be >= 3")
     if args.grid_offset < 0.0:
         parser.error("--grid-offset must be non-negative")
+    if (args.cover_layout or args.cover_layout_from) and (args.camera_from or args.transforms_from or args.mode_indices):
+        parser.error("cover layout options cannot be combined with camera, transform, or mode-index options")
+    if args.cover_layout and args.cover_layout_from:
+        parser.error("--cover-layout and --cover-layout-from are mutually exclusive")
     if args.mode_indices and any(index < 0 or index >= len(GALLERY_MODES) for index in args.mode_indices):
         parser.error("--mode-index must be between 0 and {0}".format(len(GALLERY_MODES) - 1))
-    modes = [GALLERY_MODES[index] for index in args.mode_indices] if args.mode_indices else GALLERY_MODES
+    camera_setup = None
+    if args.cover_layout:
+        modes, camera_setup = COVER_LAYOUT_MODES, COVER_LAYOUT_CAMERA
+    elif args.cover_layout_from:
+        modes, camera_setup = cover_layout_from_glb(args.cover_layout_from)
+    else:
+        modes = [GALLERY_MODES[index] for index in args.mode_indices] if args.mode_indices else GALLERY_MODES
     write_gallery_glb(args.output, args.theta_steps, args.phi_steps, args.grid_offset,
-                      args.camera_from, args.transforms_from, modes)
+                      args.camera_from, args.transforms_from, modes, camera_setup)
     print("Wrote {0} with {1} ink-rendered spherical-harmonic objects.".format(
         args.output, len(modes)))
 
