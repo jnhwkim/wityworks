@@ -24,6 +24,16 @@ INK_FAINT = (0xE8, 0xE4, 0xD8, 0xFF)
 INK_SOFT = (0x55, 0x50, 0x3F, 0xFF)
 INK_OUTLINE = (0x14, 0x13, 0x0F, 0xFF)
 GRID_EDGE_STEP = 2
+# Approximate the editor's key light. Grid edges whose normal is strongly
+# aligned with this direction fade through discrete opacity levels, preventing
+# highlights from filling with competing line detail.
+GRID_KEY_LIGHT = (-4.0 / 13.0, 7.0 / 13.0, 12.0 / 13.0)
+GRID_FADE_START = -0.80
+GRID_FADE_END = 0.95
+GRID_OPACITY_STEPS = 16
+GRID_SPECULAR_POWER = 28.0
+GRID_LOG_FADE_MINIMUM = -10.0
+GRID_LOG_FADE_MAXIMUM = 0.0
 # Grid vertices are deliberately separate from the surface vertices and moved
 # outward along their normals. Raise this only if a viewer still z-fights.
 GRID_NORMAL_OFFSET = 0.004
@@ -108,22 +118,35 @@ def unit_normal(position):
     return tuple(component / length for component in position)
 
 
+def transform_point(matrix, point):
+    """Transform a point by a glTF column-major matrix."""
+    return tuple(sum(matrix[column * 4 + row] * point[column] for column in range(3)) +
+                 matrix[12 + row] for row in range(3))
+
+
+def transform_direction(matrix, direction):
+    """Transform a direction by the linear part of a glTF matrix."""
+    return unit_normal(tuple(sum(matrix[column * 4 + row] * direction[column]
+                                 for column in range(3)) for row in range(3)))
+
+
 def padded(binary):
     return binary + b"\x00" * ((4 - len(binary) % 4) % 4)
 
 
 def write_glb(output_path, positions, normals, grid_positions, positive_indices,
-              negative_indices, soft_grid_indices, dark_grid_indices, name):
+              negative_indices, grid_index_groups, name):
     """Write a lit GLB with signed surfaces and selected mesh-edge lines."""
     position_bytes = struct.pack("<%sf" % len(positions), *positions)
     normal_bytes = struct.pack("<%sf" % len(normals), *normals)
     grid_position_bytes = struct.pack("<%sf" % len(grid_positions), *grid_positions)
     positive_index_bytes = struct.pack("<%sI" % len(positive_indices), *positive_indices)
     negative_index_bytes = struct.pack("<%sI" % len(negative_indices), *negative_indices)
-    soft_grid_index_bytes = struct.pack("<%sI" % len(soft_grid_indices), *soft_grid_indices)
-    dark_grid_index_bytes = struct.pack("<%sI" % len(dark_grid_indices), *dark_grid_indices)
+    grid_items = sorted(grid_index_groups.items())
+    grid_index_bytes = [struct.pack("<%sI" % len(indices), *indices)
+                        for _, indices in grid_items]
     parts = [position_bytes, normal_bytes, grid_position_bytes, positive_index_bytes,
-             negative_index_bytes, soft_grid_index_bytes, dark_grid_index_bytes]
+             negative_index_bytes] + grid_index_bytes
     offsets, binary = [], b""
     for part in parts:
         offsets.append(len(binary))
@@ -141,14 +164,10 @@ def write_glb(output_path, positions, normals, grid_positions, positive_indices,
         "meshes": [{"name": name, "primitives": [
             {"attributes": {"POSITION": 0, "NORMAL": 1}, "indices": 3, "material": 0},
             {"attributes": {"POSITION": 0, "NORMAL": 1}, "indices": 4, "material": 1},
-            {"attributes": {"POSITION": 2}, "indices": 5, "material": 2, "mode": 1},
-            {"attributes": {"POSITION": 2}, "indices": 6, "material": 3, "mode": 1},
         ]}],
         "materials": [
             ink_material("Positive ink (faint)", INK_FAINT),
             ink_material("Negative ink (soft)", INK_SOFT),
-            grid_material("Surface grid (soft ink)", INK_SOFT),
-            grid_material("Negative surface grid (outline ink)", INK_OUTLINE),
         ],
         "extensionsUsed": ["KHR_materials_unlit"],
         "buffers": [{"byteLength": len(binary)}],
@@ -158,8 +177,9 @@ def write_glb(output_path, positions, normals, grid_positions, positive_indices,
             {"buffer": 0, "byteOffset": offsets[2], "byteLength": len(grid_position_bytes), "target": 34962},
             {"buffer": 0, "byteOffset": offsets[3], "byteLength": len(positive_index_bytes), "target": 34963},
             {"buffer": 0, "byteOffset": offsets[4], "byteLength": len(negative_index_bytes), "target": 34963},
-            {"buffer": 0, "byteOffset": offsets[5], "byteLength": len(soft_grid_index_bytes), "target": 34963},
-            {"buffer": 0, "byteOffset": offsets[6], "byteLength": len(dark_grid_index_bytes), "target": 34963}
+        ] + [
+            {"buffer": 0, "byteOffset": offsets[5 + index], "byteLength": len(part), "target": 34963}
+            for index, part in enumerate(grid_index_bytes)
         ],
         "accessors": [
             {"bufferView": 0, "componentType": 5126, "count": vertex_count,
@@ -169,10 +189,21 @@ def write_glb(output_path, positions, normals, grid_positions, positive_indices,
             {"bufferView": 2, "componentType": 5126, "count": vertex_count, "type": "VEC3"},
             {"bufferView": 3, "componentType": 5125, "count": len(positive_indices), "type": "SCALAR"},
             {"bufferView": 4, "componentType": 5125, "count": len(negative_indices), "type": "SCALAR"},
-            {"bufferView": 5, "componentType": 5125, "count": len(soft_grid_indices), "type": "SCALAR"},
-            {"bufferView": 6, "componentType": 5125, "count": len(dark_grid_indices), "type": "SCALAR"},
+        ] + [
+            {"bufferView": 5 + index, "componentType": 5125, "count": len(indices), "type": "SCALAR"}
+            for index, (_, indices) in enumerate(grid_items)
         ],
     }
+    for index, ((tone, level), _) in enumerate(grid_items):
+        opacity = level / float(GRID_OPACITY_STEPS - 1)
+        color = INK_OUTLINE if tone == "dark" else INK_SOFT
+        document["materials"].append(grid_material(
+            "{0} grid, opacity {1:.2f}".format(tone, opacity), color, opacity
+        ))
+        document["meshes"][0]["primitives"].append({
+            "attributes": {"POSITION": 2, "NORMAL": 1}, "indices": 5 + index,
+            "material": 2 + index, "mode": 1,
+        })
     json_bytes = json.dumps(document, separators=(",", ":")).encode("utf-8")
     json_bytes += b" " * ((4 - len(json_bytes) % 4) % 4)
     glb = (struct.pack("<4sII", b"glTF", 2, 12 + 8 + len(json_bytes) + 8 + len(binary)) +
@@ -194,17 +225,21 @@ def ink_material(name, rgba):
     }
 
 
-def grid_material(name, rgba):
+def grid_material(name, rgba, opacity=1.0):
     """Return a constant-color line material so grid edges are not light-dependent."""
     return {
         "name": name,
-        "pbrMetallicRoughness": {"baseColorFactor": [component / 255.0 for component in rgba]},
+        "pbrMetallicRoughness": {
+            "baseColorFactor": [component / 255.0 for component in rgba[:3]] + [opacity]
+        },
         "extensions": {"KHR_materials_unlit": {}},
+        "alphaMode": "BLEND" if opacity < 1.0 else "OPAQUE",
     }
 
 
 def build_surface(degree, order, theta_steps, phi_steps, grid_step=GRID_EDGE_STEP,
-                  grid_offset=GRID_NORMAL_OFFSET):
+                  grid_offset=GRID_NORMAL_OFFSET, grid_opacity_thresholds=None,
+                  return_grid_alignments=False, grid_specular_context=None):
     """Build surface triangles plus sparse grid edges from the same mesh."""
     vertices = []
     values = []
@@ -238,13 +273,9 @@ def build_surface(degree, order, theta_steps, phi_steps, grid_step=GRID_EDGE_STE
 
     # These are actual surface mesh edges, not a projected or texture grid.
     # Offset from poles avoids a visually dense star where all longitude edges meet.
-    soft_grid_indices, dark_grid_indices = [], []
+    grid_edges = []
     def add_grid_edge(first, second):
-        first_value = values[first // row_width][first % row_width]
-        second_value = values[second // row_width][second % row_width]
-        # Edges predominantly on the negative (dark) lobe get the darker ink.
-        target = dark_grid_indices if first_value + second_value < 0.0 else soft_grid_indices
-        target.extend((first, second))
+        grid_edges.append((first, second))
 
     for row in range(grid_step, theta_steps, grid_step):
         for column in range(phi_steps):
@@ -269,10 +300,59 @@ def build_surface(degree, order, theta_steps, phi_steps, grid_step=GRID_EDGE_STE
             for axis in range(3):
                 normal_sums[vertex_index][axis] += face_normal[axis]
     normals = [component for normal in normal_sums for component in unit_normal(normal)]
+    edge_samples = []
+    for first, second in grid_edges:
+        average_normal = unit_normal(tuple(
+            normals[first * 3 + axis] + normals[second * 3 + axis] for axis in range(3)
+        ))
+        light_alignment = sum(average_normal[axis] * GRID_KEY_LIGHT[axis] for axis in range(3))
+        edge_samples.append((first, second, light_alignment))
+
+    grid_index_groups = {}
+    for first, second, light_alignment in edge_samples:
+        if grid_specular_context is not None:
+            matrix = grid_specular_context["matrix"]
+            first_position = transform_point(matrix, vertices[first])
+            second_position = transform_point(matrix, vertices[second])
+            world_position = tuple((first_position[axis] + second_position[axis]) * 0.5
+                                   for axis in range(3))
+            average_normal = unit_normal(tuple(
+                normals[first * 3 + axis] + normals[second * 3 + axis] for axis in range(3)
+            ))
+            world_normal = transform_direction(matrix, average_normal)
+            light_direction = unit_normal(tuple(
+                grid_specular_context["light_position"][axis] - world_position[axis]
+                for axis in range(3)
+            ))
+            view_direction = unit_normal(tuple(
+                grid_specular_context["camera_position"][axis] - world_position[axis]
+                for axis in range(3)
+            ))
+            half_vector = unit_normal(tuple(light_direction[axis] + view_direction[axis]
+                                             for axis in range(3)))
+            specular = (max(sum(world_normal[axis] * half_vector[axis] for axis in range(3)), 0.0) **
+                        grid_specular_context["power"] *
+                        max(sum(world_normal[axis] * light_direction[axis] for axis in range(3)), 0.0))
+            log_specular = math.log10(max(specular, 1.0e-6))
+            visibility = 1.0 - max(0.0, min(1.0, (log_specular -
+                grid_specular_context["log_minimum"]) /
+                (grid_specular_context["log_maximum"] - grid_specular_context["log_minimum"])))
+            level = int(round(visibility * (GRID_OPACITY_STEPS - 1)))
+        elif grid_opacity_thresholds is None:
+            fade = max(0.0, min(1.0, (light_alignment - GRID_FADE_START) /
+                                 (GRID_FADE_END - GRID_FADE_START)))
+            level = int(round((1.0 - fade) * (GRID_OPACITY_STEPS - 1)))
+        else:
+            # Low light alignment is opaque; high alignment is transparent.
+            level = sum(light_alignment < threshold for threshold in grid_opacity_thresholds)
+        first_value = values[first // row_width][first % row_width]
+        second_value = values[second // row_width][second % row_width]
+        tone = "dark" if first_value + second_value < 0.0 else "soft"
+        grid_index_groups.setdefault((tone, level), []).extend((first, second))
     positions = [component for vertex in vertices for component in vertex]
     grid_positions = [position + grid_offset * normal for position, normal in zip(positions, normals)]
-    return (positions, normals, grid_positions, positive_indices, negative_indices,
-            soft_grid_indices, dark_grid_indices)
+    result = (positions, normals, grid_positions, positive_indices, negative_indices, grid_index_groups)
+    return result + ([alignment for _, _, alignment in edge_samples],) if return_grid_alignments else result
 
 
 def main():

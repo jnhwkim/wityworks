@@ -24,6 +24,8 @@
     .tool.active { background: #17638a; border-color: #55c8ef; color: #fff; }
     #position { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
     #position label { display: grid; gap: 3px; }
+    #grid-fade { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 6px 0 2px; }
+    #grid-fade label { display: grid; gap: 3px; }
     input[type=number] { background: #111820; border: 1px solid #41505f; border-radius: 4px; color: #fff; min-width: 0; padding: 6px; }
     #status { min-height: 32px; color: #81d4fa; font-size: 12px; }
     main { position: relative; min-width: 0; background: #11151a; }
@@ -43,7 +45,8 @@
         <label class="file-label" for="file-input">다른 GLB 열기</label>
         <input id="file-input" type="file" accept=".glb,model/gltf-binary">
         <button id="reset-view-button" type="button">초기 카메라 위치</button>
-        <button id="save-button" type="button">이동한 GLB 저장</button>
+        <button id="delete-selected-button" type="button" disabled>선택 오브젝트 삭제</button>
+        <button id="save-button" type="button">현재 상태 GLB 저장</button>
         <button id="reload-saved-button" type="button" disabled>방금 저장한 GLB 다시 열기</button>
         <button id="render-png-button" type="button">렌더 이미지 저장 (PNG)</button>
       </div>
@@ -58,6 +61,12 @@
         <button id="color-style" class="tool" type="button">잉크 + 그리드</button>
         <button id="outline-style" class="tool active" type="button">잉크 + 얇은 윤곽선</button>
       </div>
+      <label>Grid specular fade (log10)</label>
+      <div id="grid-fade">
+        <label>최소<input id="grid-fade-min" type="number" min="-100" max="0" step="0.05" value="-10"></label>
+        <label>최대<input id="grid-fade-max" type="number" min="-6" max="0" step="0.05" value="0"></label>
+      </div>
+      <p>log10 specular 값입니다. 최소: grid 완전 표시 · 최대: grid 완전 투명. 두 값 사이에서 선형으로 fade됩니다.</p>
       <label>오브젝트</label>
       <div id="object-list"></div>
       <label>선택한 오브젝트의 위치</label>
@@ -96,6 +105,7 @@
     const status = document.querySelector('#status');
     const list = document.querySelector('#object-list');
     const resetViewButton = document.querySelector('#reset-view-button');
+    const deleteSelectedButton = document.querySelector('#delete-selected-button');
     const saveButton = document.querySelector('#save-button');
     const reloadSavedButton = document.querySelector('#reload-saved-button');
     const translateTool = document.querySelector('#translate-tool');
@@ -104,6 +114,8 @@
     const outlineStyle = document.querySelector('#outline-style');
     const inputs = ['x', 'y', 'z'].map(axis => document.querySelector('#position-' + axis));
     const keyboardStep = document.querySelector('#keyboard-step');
+    const gridFadeMin = document.querySelector('#grid-fade-min');
+    const gridFadeMax = document.querySelector('#grid-fade-max');
     const renderFrame = document.querySelector('#render-frame');
     const RENDER_WIDTH = 1440;
     const RENDER_HEIGHT = 810;
@@ -124,7 +136,8 @@
     transform.addEventListener('dragging-changed', event => { orbit.enabled = !event.value; });
     transform.addEventListener('objectChange', updateInputs);
     scene.add(transform);
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x24313b, 2.4));
+    const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x24313b, 2.4);
+    scene.add(hemisphereLight);
     const keyLight = new THREE.DirectionalLight(0xffffff, 2.1);
     keyLight.position.set(-4, 7, 12);
     scene.add(keyLight);
@@ -145,7 +158,11 @@
     const initialCameraPosition = new THREE.Vector3();
     const initialCameraTarget = new THREE.Vector3();
     const originalMaterials = new WeakMap();
+    const originalGridMaterials = new WeakMap();
     const outlineMaterials = new Set();
+    const specularGridMaterials = new Set();
+    const cameraWorldPosition = new THREE.Vector3();
+    const RENDER_SETTINGS_KEY = 'sphericalHarmonicsEditor';
 
     function setStatus(message) { status.textContent = message; }
     function setTool(mode) {
@@ -187,6 +204,132 @@
     function removeCartoonOutline(mesh) {
       mesh.children.filter(child => child.userData.cartoonOutline === true).forEach(child => mesh.remove(child));
     }
+    function createSpecularGridMaterial(color) {
+      const material = new THREE.ShaderMaterial({
+        uniforms: {
+          inkColor: { value: color },
+          lightWorldPosition: { value: keyLight.position.clone() },
+          cameraWorldPosition: { value: new THREE.Vector3() },
+          specularPower: { value: 28.0 },
+          logFadeMinimum: { value: Number(gridFadeMin.value) },
+          logFadeMaximum: { value: Number(gridFadeMax.value) }
+        },
+        vertexShader: `
+          uniform vec3 lightWorldPosition;
+          uniform vec3 cameraWorldPosition;
+          uniform float specularPower;
+          varying float specularHighlight;
+          void main() {
+            vec3 worldPosition = (modelMatrix * vec4(position, 1.0)).xyz;
+            vec3 worldNormal = normalize(mat3(modelMatrix) * normal);
+            vec3 lightDirection = normalize(lightWorldPosition - worldPosition);
+            vec3 viewDirection = normalize(cameraWorldPosition - worldPosition);
+            vec3 halfVector = normalize(lightDirection + viewDirection);
+            specularHighlight = pow(max(dot(worldNormal, halfVector), 0.0), specularPower) *
+              max(dot(worldNormal, lightDirection), 0.0);
+            gl_Position = projectionMatrix * viewMatrix * vec4(worldPosition, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform vec3 inkColor;
+          uniform float logFadeMinimum;
+          uniform float logFadeMaximum;
+          varying float specularHighlight;
+          void main() {
+            float logHighlight = log(max(specularHighlight, 0.000001)) / log(10.0);
+            float opacity = 1.0 - clamp((logHighlight - logFadeMinimum) /
+              max(logFadeMaximum - logFadeMinimum, 0.0001), 0.0, 1.0);
+            if (opacity < 0.01) discard;
+            gl_FragColor = vec4(inkColor, opacity);
+          }
+        `,
+        transparent: true,
+        depthTest: true,
+        depthWrite: false
+      });
+      specularGridMaterials.add(material);
+      return material;
+    }
+    function installSpecularGridFade() {
+      gallery.traverse(object => {
+        if (!object.isLineSegments || !object.geometry.getAttribute('normal')) return;
+        if (!originalGridMaterials.has(object)) originalGridMaterials.set(object, object.material);
+        const original = originalGridMaterials.get(object);
+        const source = Array.isArray(original) ? original[0] : original;
+        // GLTFExporter currently omits a material for line primitives. Keep the
+        // intended ink in node extras, then rebuild the editor shader on load.
+        const savedColor = object.userData.gridInkColor;
+        const color = typeof savedColor === 'string' ? new THREE.Color(savedColor) :
+          (source.color && source.color.getHex() !== 0xffffff ? source.color.clone() :
+           new THREE.Color(0x55503f));
+        object.userData.gridInkColor = '#' + color.getHexString();
+        object.material = createSpecularGridMaterial(color);
+      });
+    }
+    function restoreGridMaterials() {
+      gallery.traverse(object => {
+        if (object.isLineSegments && originalGridMaterials.has(object)) {
+          object.material = originalGridMaterials.get(object);
+        }
+      });
+    }
+    function updateGridFade() {
+      let minimum = Math.max(-100, Math.min(0, Number(gridFadeMin.value)));
+      let maximum = Math.max(-6, Math.min(0, Number(gridFadeMax.value)));
+      if (!Number.isFinite(minimum)) minimum = -10;
+      if (!Number.isFinite(maximum)) maximum = 0;
+      if (minimum >= maximum) {
+        if (document.activeElement === gridFadeMin) minimum = Math.max(-100, maximum - 0.05);
+        else maximum = Math.min(0, minimum + 0.05);
+      }
+      gridFadeMin.value = minimum.toFixed(2);
+      gridFadeMax.value = maximum.toFixed(2);
+      specularGridMaterials.forEach(material => {
+        material.uniforms.logFadeMinimum.value = minimum;
+        material.uniforms.logFadeMaximum.value = maximum;
+      });
+    }
+    function renderSettings() {
+      return {
+        version: 1,
+        renderStyle: activeRenderStyle,
+        gridFade: { minimum: Number(gridFadeMin.value), maximum: Number(gridFadeMax.value) },
+        keyLight: {
+          color: '#' + keyLight.color.getHexString(), intensity: keyLight.intensity,
+          position: keyLight.position.toArray()
+        },
+        hemisphereLight: {
+          skyColor: '#' + hemisphereLight.color.getHexString(),
+          groundColor: '#' + hemisphereLight.groundColor.getHexString(),
+          intensity: hemisphereLight.intensity
+        }
+      };
+    }
+    function saveRenderSettings() {
+      gallery.userData[RENDER_SETTINGS_KEY] = renderSettings();
+    }
+    function restoreRenderSettings(root) {
+      const settings = root.userData[RENDER_SETTINGS_KEY];
+      if (!settings || typeof settings !== 'object') return;
+      if (settings.gridFade) {
+        gridFadeMin.value = Number(settings.gridFade.minimum).toString();
+        gridFadeMax.value = Number(settings.gridFade.maximum).toString();
+        updateGridFade();
+      }
+      if (settings.keyLight) {
+        if (typeof settings.keyLight.color === 'string') keyLight.color.set(settings.keyLight.color);
+        if (Number.isFinite(settings.keyLight.intensity)) keyLight.intensity = settings.keyLight.intensity;
+        if (Array.isArray(settings.keyLight.position) && settings.keyLight.position.length === 3) {
+          keyLight.position.fromArray(settings.keyLight.position);
+        }
+      }
+      if (settings.hemisphereLight) {
+        if (typeof settings.hemisphereLight.skyColor === 'string') hemisphereLight.color.set(settings.hemisphereLight.skyColor);
+        if (typeof settings.hemisphereLight.groundColor === 'string') hemisphereLight.groundColor.set(settings.hemisphereLight.groundColor);
+        if (Number.isFinite(settings.hemisphereLight.intensity)) hemisphereLight.intensity = settings.hemisphereLight.intensity;
+      }
+      if (settings.renderStyle === 'color' || settings.renderStyle === 'outline') activeRenderStyle = settings.renderStyle;
+    }
     function applyRenderStyle(style, announce) {
       activeRenderStyle = style;
       colorStyle.classList.toggle('active', style === 'color');
@@ -213,7 +356,7 @@
         object.renderOrder = 1;
         object.material.depthWrite = false;
       });
-      if (announce) setStatus(style === 'outline' ? '1.1px 카툰 윤곽선을 적용했습니다.' : '두 잉크 톤과 mesh-edge 그리드를 적용했습니다.');
+      if (announce) setStatus(style === 'outline' ? '1.0px 카툰 윤곽선을 적용했습니다.' : '두 잉크 톤과 mesh-edge 그리드를 적용했습니다.');
     }
     function setCameraAspect(aspect) {
       camera.aspect = aspect;
@@ -339,6 +482,7 @@
     function select(object) {
       selected = object;
       transform.attach(object);
+      deleteSelectedButton.disabled = false;
       [...list.children].forEach(button => button.classList.toggle('active', button.object === object));
       updateInputs();
       setStatus('선택됨: ' + object.userData.editorLabel);
@@ -360,18 +504,29 @@
         list.append(button);
       });
       if (selectable.length) select(selectable[0]);
+      else deleteSelectedButton.disabled = true;
     }
     function clearGallery() {
       transform.detach();
       selected = null;
+      deleteSelectedButton.disabled = true;
       while (gallery.children.length) gallery.remove(gallery.children[0]);
       updateInputs();
+    }
+    function deletionTarget(object) {
+      // GLTFLoader creates one child per primitive; remove their shared node so
+      // both signed surfaces and every grid-line primitive disappear together.
+      let target = object;
+      while (target.parent && target.parent.parent !== gallery) target = target.parent;
+      return target;
     }
     function loadGltf(url, title) {
       setStatus(title + ' 불러오는 중…');
       loader.load(url, gltf => {
         clearGallery();
         gallery.add(gltf.scene);
+        restoreRenderSettings(gltf.scene);
+        installSpecularGridFade();
         const cameraRestored = restoreSavedCamera();
         if (!cameraRestored) frameLoadedGallery();
         applyRenderStyle(activeRenderStyle, false);
@@ -404,6 +559,11 @@
     function render() {
       resize();
       orbit.update();
+      camera.getWorldPosition(cameraWorldPosition);
+      specularGridMaterials.forEach(material => {
+        material.uniforms.cameraWorldPosition.value.copy(cameraWorldPosition);
+        material.uniforms.lightWorldPosition.value.copy(keyLight.position);
+      });
       renderer.render(scene, camera);
       requestAnimationFrame(render);
     }
@@ -422,6 +582,18 @@
       selected.updateMatrixWorld();
       updateInputs();
     }));
+    deleteSelectedButton.addEventListener('click', () => {
+      if (!selected) return;
+      const deletedLabel = selected.userData.editorLabel || selected.name || '오브젝트';
+      const target = deletionTarget(selected);
+      transform.detach();
+      target.parent.remove(target);
+      selected = null;
+      rebuildList();
+      setStatus('삭제됨: ' + deletedLabel);
+    });
+    gridFadeMin.addEventListener('change', updateGridFade);
+    gridFadeMax.addEventListener('change', updateGridFade);
     document.addEventListener('keydown', event => {
       const editable = event.target.matches('input, textarea, select, [contenteditable=true]');
       if (editable || !selected) return;
@@ -464,7 +636,9 @@
       if (!gallery.children.length) return;
       setStatus('GLB 내보내는 중…');
       const styleBeforeExport = activeRenderStyle;
+      saveRenderSettings();
       applyRenderStyle('color', false);
+      restoreGridMaterials();
       saveCameraPoseToGallery();
       exporter.parse(gallery, result => {
         const blob = new Blob([result], { type: 'model/gltf-binary' });
@@ -472,13 +646,15 @@
         lastSavedGlbUrl = URL.createObjectURL(blob);
         reloadSavedButton.disabled = false;
         downloadBlob(blob, 'spherical-harmonics-cover.glb');
-        setStatus('저장됨: spherical-harmonics-cover.glb (카메라 포즈 포함)');
+        setStatus('저장됨: spherical-harmonics-cover.glb (카메라·배치·렌더 설정 포함)');
+        installSpecularGridFade();
         if (styleBeforeExport === 'outline') applyRenderStyle('outline', false);
       }, error => {
         console.error(error);
+        installSpecularGridFade();
         if (styleBeforeExport === 'outline') applyRenderStyle('outline', false);
         setStatus('GLB 내보내기에 실패했습니다.');
-      }, { binary: true, onlyVisible: true });
+      }, { binary: true, onlyVisible: false });
     });
     document.querySelector('#render-png-button').addEventListener('click', () => {
       if (!gallery.children.length) return;

@@ -25,6 +25,17 @@ surface triangles while preserving occlusion. If a target viewer still hides
 the grid, regenerate with a larger `--grid-offset` value; reduce it if the
 lines look detached from the surface.
 
+To keep specular highlights clean, grid edges fade linearly through
+`GRID_OPACITY_STEPS = 16` opacity levels. The GLB fallback uses a
+`log10(specular)` range of `-10` (fully opaque) to `0` (fully transparent).
+
+In the layout editor, grid lines use a view-dependent half-vector shader
+instead: their opacity follows the current camera, surface normal, and key
+light direction. When `--camera-from` and `--transforms-from` are supplied,
+the 16-level GLB fallback bakes the same half-vector approximation at the
+saved camera pose in `log10(specular)` space. Its default fade range is `-10`
+to `0`.
+
 The script uses only the Python standard library and is compatible with Python
 3.8 or later.
 
@@ -65,15 +76,18 @@ python3 render_spherical_harmonics_gallery.py -o ../../blog/math-stats-notes/sph
 `spherical-harmonics-gallery-editor.html` is a small WebGL layout editor. It
 loads `../../static/glb/spherical-harmonics-cover.glb` by
 default, lets you move only the selected object, and exports a new standalone
-GLB with the adjusted translations. The cyan render frame shows
+GLB with the adjusted object transforms. The cyan render frame shows
 the 1440 × 810 (16:9) PNG output area; **렌더 이미지 저장 (PNG)** saves that rendering
 without the move gizmo. The arrow keys move X/Y, and `Z` / `X` move the Z axis.
 Set the keyboard step from 1 to 100 in the left panel. Serve this directory
 (rather than opening the HTML with `file://`) and visit the editor in a browser:
 
-When saving the GLB, the editor also stores the current 60° perspective camera
-pose and look target. Reopening that saved file restores the same view. Use
-**방금 저장한 GLB 다시 열기** to verify the saved pose without leaving the editor.
+**현재 상태 GLB 저장** stores the current object transforms, 60° camera pose
+and look target, grid fade range, ink colours, render style, and editor light
+settings. On reopening, the editor reconstructs its grid shader from that
+metadata because standard GLB line primitives cannot carry the view-dependent
+grid shader directly. Use **방금 저장한 GLB 다시 열기** to verify the saved state
+without leaving the editor.
 
 The editor starts in **잉크 + 얇은 윤곽선** mode: a WebGL inverted-hull shader
 draws 1.0px `#14130f` outlines around the ink materials. The grid is drawn

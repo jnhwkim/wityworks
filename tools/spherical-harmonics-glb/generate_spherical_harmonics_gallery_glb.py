@@ -13,7 +13,9 @@ import json
 import math
 import struct
 
-from generate_spherical_harmonics_glb import (GRID_NORMAL_OFFSET, INK_FAINT, INK_OUTLINE, INK_SOFT,
+from generate_spherical_harmonics_glb import (GRID_LOG_FADE_MAXIMUM, GRID_LOG_FADE_MINIMUM,
+                                              GRID_NORMAL_OFFSET, GRID_OPACITY_STEPS,
+                                              GRID_SPECULAR_POWER, INK_FAINT, INK_OUTLINE, INK_SOFT,
                                               build_surface, grid_material, ink_material, padded)
 
 
@@ -112,17 +114,46 @@ def mesh_transforms_from_glb(source_path):
     return transforms
 
 
+def layout_camera_position_from_glb(source_path):
+    """Return the saved layout-editor camera position from an existing GLB."""
+    for node in glb_document(source_path).get("nodes", []):
+        if node.get("extras", {}).get("layoutEditorCamera") is not True:
+            continue
+        if "matrix" in node:
+            return tuple(node["matrix"][12:15])
+        if "translation" in node:
+            return tuple(node["translation"])
+    raise ValueError("camera source contains no saved layout-editor camera")
+
+
 def write_gallery_glb(output_path, theta_steps, phi_steps, grid_offset=GRID_NORMAL_OFFSET,
-                      camera_from=None, transforms_from=None):
+                      camera_from=None, transforms_from=None, modes=None):
     """Build and write a GLB containing all gallery objects and mesh-edge grids."""
+    modes = list(GALLERY_MODES if modes is None else modes)
     binary = b""
     buffer_views, accessors, meshes, materials, images, textures, nodes = [], [], [], [], [], [], []
+    grid_specular_contexts = None
+    if camera_from and transforms_from:
+        camera_position = layout_camera_position_from_glb(camera_from)
+        transforms = mesh_transforms_from_glb(transforms_from)
+        if len(transforms) != len(modes) or any("matrix" not in transform for transform in transforms):
+            raise ValueError("specular grid baking requires a matrix for every mesh node")
+        grid_specular_contexts = [{
+            "matrix": transform["matrix"],
+            "camera_position": camera_position,
+            "light_position": (-4.0, 7.0, 12.0),
+            "power": GRID_SPECULAR_POWER,
+            "log_minimum": GRID_LOG_FADE_MINIMUM,
+            "log_maximum": GRID_LOG_FADE_MAXIMUM,
+        } for transform in transforms]
 
-    for number, (degree, order, translation, scale, rotation) in enumerate(GALLERY_MODES):
+    for number, (degree, order, translation, scale, rotation) in enumerate(modes):
         (positions, normals, grid_positions, positive_indices, negative_indices,
-         soft_grid_indices, dark_grid_indices) = build_surface(
-            degree, order, theta_steps, phi_steps, grid_offset=grid_offset
+         grid_index_groups) = build_surface(
+            degree, order, theta_steps, phi_steps, grid_offset=grid_offset,
+            grid_specular_context=(grid_specular_contexts[number] if grid_specular_contexts else None)
         )
+        grid_items = sorted(grid_index_groups.items())
         vertex_count = len(positions) // 3
         chunks = [
             (struct.pack("<%sf" % len(positions), *positions), 34962),
@@ -130,9 +161,8 @@ def write_gallery_glb(output_path, theta_steps, phi_steps, grid_offset=GRID_NORM
             (struct.pack("<%sf" % len(grid_positions), *grid_positions), 34962),
             (struct.pack("<%sI" % len(positive_indices), *positive_indices), 34963),
             (struct.pack("<%sI" % len(negative_indices), *negative_indices), 34963),
-            (struct.pack("<%sI" % len(soft_grid_indices), *soft_grid_indices), 34963),
-            (struct.pack("<%sI" % len(dark_grid_indices), *dark_grid_indices), 34963),
-        ]
+        ] + [(struct.pack("<%sI" % len(indices), *indices), 34963)
+             for _, indices in grid_items]
         view_indices = []
         for chunk, target in chunks:
             binary, offset = add_buffer_part(binary, chunk)
@@ -152,15 +182,15 @@ def write_gallery_glb(output_path, theta_steps, phi_steps, grid_offset=GRID_NORM
             {"bufferView": view_indices[2], "componentType": 5126, "count": vertex_count, "type": "VEC3"},
             {"bufferView": view_indices[3], "componentType": 5125, "count": len(positive_indices), "type": "SCALAR"},
             {"bufferView": view_indices[4], "componentType": 5125, "count": len(negative_indices), "type": "SCALAR"},
-            {"bufferView": view_indices[5], "componentType": 5125, "count": len(soft_grid_indices), "type": "SCALAR"},
-            {"bufferView": view_indices[6], "componentType": 5125, "count": len(dark_grid_indices), "type": "SCALAR"},
+        ] + [
+            {"bufferView": view_indices[5 + index], "componentType": 5125,
+             "count": len(indices), "type": "SCALAR"}
+            for index, (_, indices) in enumerate(grid_items)
         ])
         material_index = len(materials)
         materials.extend([
             ink_material("Y_{0}^{1}: positive faint ink".format(degree, order), INK_FAINT),
             ink_material("Y_{0}^{1}: negative soft ink".format(degree, order), INK_SOFT),
-            grid_material("Y_{0}^{1}: soft ink mesh grid".format(degree, order), INK_SOFT),
-            grid_material("Y_{0}^{1}: dark-lobe outline ink mesh grid".format(degree, order), INK_OUTLINE),
         ])
         mesh_index = len(meshes)
         label = "Real spherical harmonic l={0}, m={1}".format(degree, order)
@@ -169,11 +199,19 @@ def write_gallery_glb(output_path, theta_steps, phi_steps, grid_offset=GRID_NORM
              "indices": accessor_base + 3, "material": material_index},
             {"attributes": {"POSITION": accessor_base, "NORMAL": accessor_base + 1},
              "indices": accessor_base + 4, "material": material_index + 1},
-            {"attributes": {"POSITION": accessor_base + 2}, "indices": accessor_base + 5,
-             "material": material_index + 2, "mode": 1},
-            {"attributes": {"POSITION": accessor_base + 2}, "indices": accessor_base + 6,
-             "material": material_index + 3, "mode": 1},
         ]})
+        for index, ((tone, level), _) in enumerate(grid_items):
+            opacity = level / float(GRID_OPACITY_STEPS - 1)
+            color = INK_OUTLINE if tone == "dark" else INK_SOFT
+            materials.append(grid_material(
+                "Y_{0}^{1}: {2} mesh grid opacity {3:.2f}".format(
+                    degree, order, tone, opacity), color, opacity
+            ))
+            meshes[-1]["primitives"].append({
+                "attributes": {"POSITION": accessor_base + 2, "NORMAL": accessor_base + 1},
+                "indices": accessor_base + 5 + index,
+                "material": len(materials) - 1, "mode": 1,
+            })
         nodes.append({"name": label, "mesh": mesh_index, "translation": list(translation),
                       "rotation": list(euler_quaternion(rotation)), "scale": [scale, scale, scale]})
 
@@ -236,15 +274,20 @@ def main():
                         help="normal offset for mesh-edge grid vertices (default: %(default)s)")
     parser.add_argument("--camera-from", help="copy camera definitions and poses from an existing GLB")
     parser.add_argument("--transforms-from", help="copy mesh-node transforms from an existing GLB")
+    parser.add_argument("--mode-index", type=int, action="append", dest="mode_indices",
+                        help="include one zero-based gallery mode; repeat to keep a selected subset")
     args = parser.parse_args()
     if args.theta_steps < 2 or args.phi_steps < 3:
         parser.error("--theta-steps must be >= 2 and --phi-steps must be >= 3")
     if args.grid_offset < 0.0:
         parser.error("--grid-offset must be non-negative")
+    if args.mode_indices and any(index < 0 or index >= len(GALLERY_MODES) for index in args.mode_indices):
+        parser.error("--mode-index must be between 0 and {0}".format(len(GALLERY_MODES) - 1))
+    modes = [GALLERY_MODES[index] for index in args.mode_indices] if args.mode_indices else GALLERY_MODES
     write_gallery_glb(args.output, args.theta_steps, args.phi_steps, args.grid_offset,
-                      args.camera_from, args.transforms_from)
+                      args.camera_from, args.transforms_from, modes)
     print("Wrote {0} with {1} ink-rendered spherical-harmonic objects.".format(
-        args.output, len(GALLERY_MODES)))
+        args.output, len(modes)))
 
 
 if __name__ == "__main__":
