@@ -309,10 +309,21 @@ def generate_rss(output_path: pathlib.Path = RSS_PATH, limit: int = RSS_LIMIT) -
     cdata_values: list[str] = []
     for post in posts:
         post_url = f"{base_url}/blog/?post={post['category']}/{post['slug']}"
+        cover = post.get("cover") or post.get("coverImage")
         try:
             content_html = markdown_to_html(post["body"], base_url, post_url)
         except Exception as exc:
             raise ValueError(f"{post['path']}: could not render RSS content: {exc}") from exc
+        if cover:
+            cover_url = absolute_url(cover, base_url, post_url)
+            cover_html = (
+                '<figure><img src="'
+                + html.escape(cover_url, quote=True)
+                + '" alt="'
+                + html.escape(post["title"], quote=True)
+                + '"></figure>'
+            )
+            content_html = cover_html + content_html
         item = ET.SubElement(channel, "item")
         ET.SubElement(item, "title").text = post["title"]
         ET.SubElement(item, "link").text = post_url
@@ -327,9 +338,8 @@ def generate_rss(output_path: pathlib.Path = RSS_PATH, limit: int = RSS_LIMIT) -
         marker = f"__RSS_CDATA_{len(cdata_values)}__"
         cdata_values.append(content_html)
         content.text = marker
-        cover = post.get("cover") or post.get("coverImage")
         if cover:
-            ET.SubElement(item, f"{{{MEDIA_NS}}}content", {"url": absolute_url(cover, base_url, post_url), "medium": "image"})
+            ET.SubElement(item, f"{{{MEDIA_NS}}}content", {"url": cover_url, "medium": "image"})
     serialized = ET.tostring(rss, encoding="unicode", xml_declaration=True)
     for index, content_html in enumerate(cdata_values):
         serialized = serialized.replace(f"__RSS_CDATA_{index}__", "<![CDATA[" + content_html.replace("]]>", "]]><![CDATA[>") + "]]>")

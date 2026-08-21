@@ -46,6 +46,8 @@ class RssGenerationTests(unittest.TestCase):
         self.assertIsNotNone(cover)
         self.assertEqual(cover.attrib["medium"], "image")
         self.assertEqual(cover.attrib["url"], "https://wityworks.com/static/img/blog/spherical-harmonics-cover.png")
+        content = spherical_harmonics.findtext("content:encoded", namespaces=CONTENT)
+        self.assertTrue(content.startswith('<figure><img src="https://wityworks.com/static/img/blog/spherical-harmonics-cover.png"'))
 
     def test_portable_html_absolutizes_urls_and_removes_active_content(self):
         rendered = generate_rss.markdown_to_html(
