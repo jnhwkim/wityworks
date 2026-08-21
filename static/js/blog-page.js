@@ -499,7 +499,10 @@
             tocCard.appendChild(tocList);
             tocCard.querySelectorAll("a").forEach(function (link) {
               var match = link.textContent.match(/^(\d+(?:\.\d+)*\.?)\s+(.+)$/);
-              if (!match) return;
+              if (!match) {
+                link.classList.add("toc-link--unnumbered");
+                return;
+              }
               var number = document.createElement("span");
               number.className = "toc-number";
               number.textContent = match[1];

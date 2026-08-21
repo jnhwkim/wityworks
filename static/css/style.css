@@ -722,6 +722,7 @@
   .toc-card ul ul, .toc-card ol ol { margin: 4px 0 0; padding-left: calc(1.45em + 7px); }
   .toc-card a { display: grid; grid-template-columns: 1.45em minmax(0, 1fr); column-gap: 7px; color: var(--ink); text-decoration: none; }
   .toc-card .toc-number { text-align: right; }
+  .toc-card a.toc-link--unnumbered { padding-left: calc(1.45em + 7px); }
   .toc-card a:hover { color: var(--blue); text-decoration: underline; text-underline-offset: 2px; }
 
   /* ---- About / Academic Services / Collaborators / Wity Works ---- */
