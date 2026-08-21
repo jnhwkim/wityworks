@@ -177,13 +177,6 @@
       cover.loading = "lazy";
       coverLink.appendChild(cover);
       article.appendChild(coverLink);
-      var syncCoverSize = function () {
-        coverLink.style.width = cardContent.offsetHeight + "px";
-      };
-      requestAnimationFrame(syncCoverSize);
-      if (window.ResizeObserver) {
-        new ResizeObserver(syncCoverSize).observe(cardContent);
-      }
     }
     article.appendChild(cardContent);
     postList.appendChild(article);

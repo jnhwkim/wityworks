@@ -581,9 +581,9 @@
   .post-card.has-cover { display: flex; gap: 14px; }
   .post-card-content { flex: 1 1 0; min-width: 0; }
   .post-card-cover {
-    align-self: stretch;
-    flex: 0 0 auto;
-    width: 0;
+    align-self: flex-start;
+    flex: 0 0 clamp(112px, 18vw, 180px);
+    aspect-ratio: 1;
     padding: 4px;
     background: var(--ground-raised);
     border: 1px solid var(--line-soft);
