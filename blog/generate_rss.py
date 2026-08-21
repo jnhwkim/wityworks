@@ -12,7 +12,7 @@ import html
 import os
 import pathlib
 import re
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from email.utils import format_datetime
 from html.parser import HTMLParser
 from urllib.parse import urljoin
@@ -25,6 +25,7 @@ RSS_PATH = BLOG_DIR / "rss.xml"
 RSS_LIMIT = 30
 CONTENT_NS = "http://purl.org/rss/1.0/modules/content/"
 MEDIA_NS = "http://search.yahoo.com/mrss/"
+KST = timezone(timedelta(hours=9), name="KST")
 FRONTMATTER_RE = re.compile(r"^---\r?\n(.*?)\r?\n---\r?\n", re.DOTALL)
 FENCE_RE = re.compile(r"^```([^`]*)$")
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
@@ -276,7 +277,7 @@ def rfc822_date(iso_date: str) -> str:
         published = date.fromisoformat(iso_date)
     except ValueError as exc:
         raise ValueError(f"invalid date '{iso_date}' (expected YYYY-MM-DD)") from exc
-    return format_datetime(datetime.combine(published, datetime.min.time(), tzinfo=timezone.utc), usegmt=True)
+    return format_datetime(datetime.combine(published, datetime.min.time(), tzinfo=KST))
 
 
 def discover_posts() -> list[dict[str, str]]:
@@ -304,7 +305,7 @@ def generate_rss(output_path: pathlib.Path = RSS_PATH, limit: int = RSS_LIMIT) -
     ET.SubElement(channel, "link").text = base_url + "/blog/"
     ET.SubElement(channel, "description").text = "Research notes, paper reviews, and essays on AI, math, and life."
     ET.SubElement(channel, "language").text = "en"
-    ET.SubElement(channel, "lastBuildDate").text = format_datetime(datetime.now(timezone.utc), usegmt=True)
+    ET.SubElement(channel, "lastBuildDate").text = format_datetime(datetime.now(KST))
     cdata_values: list[str] = []
     for post in posts:
         post_url = f"{base_url}/blog/?post={post['category']}/{post['slug']}"

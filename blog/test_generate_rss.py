@@ -27,6 +27,7 @@ class RssGenerationTests(unittest.TestCase):
         first_items = first.findall("./channel/item")
         second_items = second.findall("./channel/item")
         self.assertTrue(first_items)
+        self.assertTrue(first.findtext("./channel/lastBuildDate").endswith("+0900"))
         self.assertEqual(
             [item.findtext("guid") for item in first_items],
             [item.findtext("guid") for item in second_items],
@@ -34,6 +35,7 @@ class RssGenerationTests(unittest.TestCase):
         for item in first_items:
             self.assertEqual(item.findtext("guid"), item.findtext("link"))
             self.assertIsNotNone(parsedate_to_datetime(item.findtext("pubDate")))
+            self.assertTrue(item.findtext("pubDate").endswith("+0900"))
             self.assertTrue(item.findtext("description"))
             self.assertIn("<p>", item.findtext("content:encoded", namespaces=CONTENT))
 
