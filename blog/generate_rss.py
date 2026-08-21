@@ -301,7 +301,7 @@ def generate_rss(output_path: pathlib.Path = RSS_PATH, limit: int = RSS_LIMIT) -
     ET.register_namespace("media", MEDIA_NS)
     rss = ET.Element("rss", {"version": "2.0"})
     channel = ET.SubElement(rss, "channel")
-    ET.SubElement(channel, "title").text = "Jin-Hwa Kim Blog"
+    ET.SubElement(channel, "title").text = "Wityworks"
     ET.SubElement(channel, "link").text = base_url + "/blog/"
     ET.SubElement(channel, "description").text = "Research notes, paper reviews, and essays on AI, math, and life."
     ET.SubElement(channel, "language").text = "en"
