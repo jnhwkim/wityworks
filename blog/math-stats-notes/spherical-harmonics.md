@@ -4,10 +4,12 @@ category: math-stats-notes
 categoryLabel: Math & Stats Notes
 date: 2026-08-17
 readTime: 20 min read
-summary: History, mathematical definition, and applications of spherical harmonics from quantum mechanics to neural 3D.
+summary: Spherical harmonics are the natural language for directional variation on a sphere. Rooted in Laplace's study of gravitational potentials and later central to atomic orbitals, they play the role that sine and cosine Fourier modes play on a line or circle, representing color that changes with viewing direction in 3D Gaussian Splatting.
 cover: /static/img/blog/spherical-harmonics-cover.png
 visibility: public
 ---
+
+Spherical harmonics are the natural language for directional variation on a sphere. Rooted in Laplace's study of gravitational potentials and later central to atomic orbitals, they play the role that sine and cosine Fourier modes play on a line or circle, representing color that changes with viewing direction in 3D Gaussian Splatting.
 
 ## Table of contents
 - [1. Prologue: Why spherical harmonics today?](#1-prologue-why-spherical-harmonics-today)
