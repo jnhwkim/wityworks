@@ -164,7 +164,7 @@ In a hydrogen atom, a negatively charged electron is attracted to a positively c
 
 <figure class="post-illustration post-illustration--compact">
   <img src="../static/img/blog/spherical-harmonics-bohr.png" alt="Illustration of the Bohr atomic model with electrons on discrete circular orbits around a central nucleus" loading="lazy">
-  <figcaption>Bohr’s historical model represents electrons in discrete circular orbits around a nucleus. The atom is deliberately shown excited—an apt prelude to leaving Bohr’s fixed orbits for the richer angular structure of wave mechanics ;-)</figcaption>
+  <figcaption>Bohr’s historical model represents electrons in discrete circular orbits around a nucleus. The atom is deliberately shown excited—an apt prelude to leaving Bohr’s fixed orbits for the richer angular structure of wave mechanics in the following section. ;-)</figcaption>
 </figure>
 
 ### 5.2 Schrödinger equation, orbital structure, and spherical harmonics
