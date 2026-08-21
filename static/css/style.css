@@ -657,6 +657,9 @@
     margin: 0 auto;
     mix-blend-mode: multiply;
   }
+  /* Compact, near-square figures keep a small image footprint while their
+     captions retain the regular post-illustration reading width. */
+  .post-body .post-illustration--compact img { max-width: 300px; }
   .post-body .post-illustration figcaption {
     margin-top: 0.6rem;
     font-size: 0.85rem;

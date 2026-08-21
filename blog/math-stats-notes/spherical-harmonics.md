@@ -20,8 +20,8 @@ visibility: public
   - [4.1 View-dependent color and radiance in 3D Gaussian Splatting (3DGS)](#41-view-dependent-color-and-radiance-in-3d-gaussian-splatting-3dgs)
   - [4.2 Ref-NeRF and Integrated Directional Encoding (IDE)](#42-ref-nerf-and-integrated-directional-encoding-ide)
 - [5. Quantum mechanical correlation: Bohr model & wave mechanics](#5-quantum-mechanical-correlation-bohr-model-amp-wave-mechanics)
-  - [5.1 From Bohr's model to Schrödinger's wave function](#51-from-bohr39s-model-to-schrdinger39s-wave-function)
-  - [5.2 Hydrogen atom solution & quantum numbers](#52-hydrogen-atom-solution-amp-quantum-numbers)
+  - [5.1 Why spherical harmonics appear in the hydrogen atom](#51-why-spherical-harmonics-appear-in-the-hydrogen-atom)
+  - [5.2 Schrödinger equation, orbital structure, and spherical harmonics](#52-schrdinger-equation-orbital-structure-and-spherical-harmonics)
 - [6. Epilogue & conclusion](#6-epilogue-amp-conclusion)
 - [References](#references)
 
@@ -63,8 +63,8 @@ $$\nabla^2 f = \frac{1}{r^2} \frac{\partial}{\partial r}\left(r^2 \frac{\partial
 
 Equation (1) naturally decomposes the spatial field into a radial variation scale ($r$) and an angular surface geometry $(\theta, \phi)$ defined on the unit sphere $S^2$.
 
-<figure class="post-illustration">
-  <img src="../static/img/blog/spherical-harmonics-spherical-coordinates.png" alt="Spherical coordinate system showing the radial distance r, polar angle theta, and azimuthal angle phi on a unit sphere" loading="lazy" style="max-width: 280px;">
+<figure class="post-illustration post-illustration--compact">
+  <img src="../static/img/blog/spherical-harmonics-spherical-coordinates.png" alt="Spherical coordinate system showing the radial distance r, polar angle theta, and azimuthal angle phi on a unit sphere" loading="lazy">
   <figcaption>Spherical coordinates separate radial distance $r$ from the angular coordinates $(\theta, \phi)$ on the unit sphere.</figcaption>
 </figure>
 
@@ -157,19 +157,28 @@ Thus, no coefficient is transferred to a different degree or order: each coeffic
 
 ## 5. Quantum mechanical correlation: Bohr model & wave mechanics
 
-### 5.1 From Bohr's model to Schrödinger's wave function
-* **Bohr model limitations**: Niels Bohr's classical model constrained electrons to flat, 2D circular orbits with quantized orbital angular momentum ($L = n\hbar$). However, it failed to account for intrinsic electron spin, multi-electron interactions, spectral line Zeeman splitting, and non-planar 3D probability distributions.
-* **Schrödinger paradigm shift**: Quantum mechanics replaced discrete planar orbits with 3D spatial wavefunctions $\psi(r, \theta, \phi)$, representing probability density clouds over 3D space.
+### 5.1 Why spherical harmonics appear in the hydrogen atom
+In a hydrogen atom, a negatively charged electron is attracted to a positively charged nucleus. In the simplest model, the strength of this attraction depends only on the distance from the nucleus, not on the direction. Physicists call this distance-dependent energy the Coulomb potential. Because rotating the atom does not change that energy, the quantum description of the electron separates naturally into a radial part, which describes distance, and an angular part, which describes direction. The angular part must be an eigenfunction of the spherical Laplacian, and those eigenfunctions are precisely the spherical harmonics $Y_l^m$. Thus, the degree $l$ and order $m$ of a spherical harmonic label an electron orbital's angular structure and orientation; the next section makes this separation explicit.
 
-### 5.2 Hydrogen atom solution & quantum numbers
-For a hydrogenic atom subject to a spherically symmetric Coulomb potential $V(r)$, the 3D Schrödinger equation simplifies via separation of variables:
+<figure class="post-illustration post-illustration--compact">
+  <img src="../static/img/blog/spherical-harmonics-bohr.png" alt="Illustration of the Bohr atomic model with electrons on discrete circular orbits around a central nucleus" loading="lazy">
+  <figcaption>Bohr’s historical model represents electrons in discrete circular orbits around a nucleus. The atom is deliberately shown excited—an apt prelude to leaving Bohr’s fixed orbits for the richer angular structure of wave mechanics ;-)</figcaption>
+</figure>
 
-$$\psi(r, \theta, \phi) = R\_{n, l}(r) Y\_l^m(\theta, \phi) \tag{13}$$
+### 5.2 Schrödinger equation, orbital structure, and spherical harmonics
+The Schrödinger equation is the basic equation of quantum mechanics: it determines a quantum wavefunction from the energy landscape of a physical system. For hydrogen, this energy landscape is written as $V(r)$, where $r$ is the distance from the nucleus; as Section 5.1 explained, it has no preferred direction. This symmetry lets the three-dimensional spatial-curvature operator, called the Laplacian and written as $\nabla^2$, split into a distance-dependent part and a direction-dependent part:
 
-where $\psi(r, \theta, \phi)$ denotes the full spatial wavefunction, $R\_{n, l}(r)$ is the radial wavefunction governed by the principal quantum number $n$ ($n \in \mathbb{N}^+$) and azimuthal quantum number $l$, and $Y\_l^m(\theta, \phi)$ represents the Spherical Harmonics capturing the angular dependence.
+$$\nabla^2 = \frac{1}{r^2}\frac{\partial}{\partial r}\left(r^2\frac{\partial}{\partial r}\right) + \frac{1}{r^2}\Delta\_{S^2}. \tag{14}$$
 
-* **Azimuthal quantum number ($l$)**: Determines total orbital angular momentum and the angular shape of subshells ($s, p, d, f$ orbitals corresponding to $l = 0, 1, 2, 3$, restricted by $0 \le l \le n-1$).
-* **Magnetic quantum number ($m$)**: Determines the spatial orientation of the orbital in 3D space, taking integer values $-l \le m \le l$.
+The first term describes how the wavefunction changes with distance. The second contains the spherical Laplacian $\Delta\_{S^2}$ from Equation (9), which describes how it changes with direction on a sphere. A spherical harmonic $Y_l^m$ is an eigenfunction of this angular operator: applying the operator changes only its scale, not its angular pattern. This lets the three-dimensional Schrödinger equation separate into one radial equation for each angular mode. A wavefunction with a definite energy can consequently be written as
+
+$$\psi(r, \theta, \phi) = R\_{n,l}(r)Y\_l^m(\theta, \phi). \tag{15}$$
+
+Here, $\psi$ is the spatial wavefunction; $R\_{n,l}$ is its radial part; and $Y\_l^m$ is its angular part. The principal quantum number $n$ is a positive integer that labels the radial energy level, while the nonnegative integer $l$ and integer $m$ label the spherical harmonic, with $0 \le l \le n-1$ and $-l \le m \le l$.
+
+This factorization gives spherical harmonics their physical meaning. The degree $l$ controls the angular complexity and the orbital angular momentum: $l=0,1,2,3$ correspond to the familiar $s,p,d,f$ orbital families. The order $m$ distinguishes the $2l+1$ orientation states within one family. In a perfectly spherically symmetric atom, these states have the same energy; a magnetic field can distinguish them, which is why $m$ is called the magnetic quantum number.
+
+More broadly, this is a useful change of viewpoint: spherical harmonics are not merely convenient functions for drawing orbitals. They are the natural coordinates for any phenomenon with rotational symmetry. The same decomposition that separates a quantum wavefunction into angular modes also organizes lighting on a sphere, directional signals, and neural rendering features into angular frequencies.
 
 
 ## 6. Epilogue & conclusion
