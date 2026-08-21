@@ -101,11 +101,11 @@ For negative order $-l \le m < 0$, $P_l^m(x)$ is defined via $P_l^{-m}(x) = (-1)
 
 * **Orthonormal basis**: Spherical Harmonics form a complete orthonormal basis over the unit sphere $S^2$, where superscript $*$ denotes the complex conjugate required for complex-valued functions:
 
-$$\int_{0}^{2\pi} \int_{0}^{\pi} Y\_l^m(\theta, \phi) \left( Y\_{l'}^{m'}(\theta, \phi) \right)^* \sin\theta \, d\theta \, d\phi = \delta\_{ll'} \delta\_{mm'} \tag{7}$$
+$$\int_{0}^{2\pi} \int_{0}^{\pi} Y\_l^m(\theta, \phi) \left( Y\_{l'}^{m'}(\theta, \phi) \right)^* \sin\theta ~ d\theta ~ d\phi = \delta\_{ll'} \delta\_{mm'} \tag{7}$$
 
 * **Rotation equivariance**: Under a 3D rotation $\mathbf{R}$, the original SH coefficients $\mathbf{c}\_{l, m}$ transform linearly within degree $l$ into new coefficients $\mathbf{c}'\_{l, m'}$ using Wigner D-matrices $\mathbf{D}\_{m', m}^{(l)}(\mathbf{R})$:
 
-$$\mathbf{c}'\_{l, m'} = \sum\_{m=-l}^{l} \mathbf{D}^{(l)}\_{m', m}(\mathbf{R}) \, \mathbf{c}\_{l, m} \tag{8}$$
+$$\mathbf{c}'\_{l, m'} = \sum\_{m=-l}^{l} \mathbf{D}^{(l)}\_{m', m}(\mathbf{R}) ~ \mathbf{c}\_{l, m} \tag{8}$$
 
 * **Laplacian eigenvalue & frequency**: Spherical Harmonics are eigenfunctions of the Laplace–Beltrami operator $\Delta\_{S^2}$ on the unit sphere:
 
