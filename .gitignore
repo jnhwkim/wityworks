@@ -2,3 +2,4 @@
 
 # local dev tools (thumbnail crop tool etc.) — never publish to GitHub Pages
 /tools/
+*.pyc

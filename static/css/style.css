@@ -581,9 +581,9 @@
   .post-card.has-cover { display: flex; gap: 14px; }
   .post-card-content { flex: 1 1 0; min-width: 0; }
   .post-card-cover {
-    align-self: stretch;
-    flex: 0 0 auto;
-    width: 0;
+    align-self: flex-start;
+    flex: 0 0 clamp(112px, 18vw, 180px);
+    aspect-ratio: 1;
     padding: 4px;
     background: var(--ground-raised);
     border: 1px solid var(--line-soft);
@@ -753,6 +753,7 @@
   .toc-card ul ul, .toc-card ol ol { margin: 4px 0 0; padding-left: calc(1.45em + 7px); }
   .toc-card a { display: grid; grid-template-columns: 1.45em minmax(0, 1fr); column-gap: 7px; color: var(--ink); text-decoration: none; }
   .toc-card .toc-number { text-align: right; }
+  .toc-card a.toc-link--unnumbered { padding-left: calc(1.45em + 7px); }
   .toc-card a:hover { color: var(--blue); text-decoration: underline; text-underline-offset: 2px; }
 
   /* ---- About / Academic Services / Collaborators / Wity Works ---- */

@@ -2,12 +2,14 @@
 title: Waves on a Sphere, Spherical Harmonics
 category: math-stats-notes
 categoryLabel: Math & Stats Notes
-date: 2026-08-17
+date: 2026-08-21
 readTime: 20 min read
-summary: History, mathematical definition, and applications of spherical harmonics from quantum mechanics to neural 3D.
+summary: Spherical harmonics are the natural language for directional variation on a sphere. Rooted in Laplace's study of gravitational potentials and central to atomic orbitals, they are like sine and cosine Fourier modes on a line or circle, representing view-dependent color in 3D Gaussian Splatting.
 cover: /static/img/blog/spherical-harmonics-cover.png
 visibility: public
 ---
+
+Spherical harmonics are the natural language for directional variation on a sphere. Rooted in Laplace's study of gravitational potentials and central to atomic orbitals, they are like sine and cosine Fourier modes on a line or circle, representing view-dependent color in 3D Gaussian Splatting.
 
 ## Table of contents
 - [1. Prologue: Why spherical harmonics today?](#1-prologue-why-spherical-harmonics-today)
@@ -99,11 +101,11 @@ For negative order $-l \le m < 0$, $P_l^m(x)$ is defined via $P_l^{-m}(x) = (-1)
 
 * **Orthonormal basis**: Spherical Harmonics form a complete orthonormal basis over the unit sphere $S^2$, where superscript $*$ denotes the complex conjugate required for complex-valued functions:
 
-$$\int_{0}^{2\pi} \int_{0}^{\pi} Y\_l^m(\theta, \phi) \left( Y\_{l'}^{m'}(\theta, \phi) \right)^* \sin\theta \, d\theta \, d\phi = \delta\_{ll'} \delta\_{mm'} \tag{7}$$
+$$\int_{0}^{2\pi} \int_{0}^{\pi} Y\_l^m(\theta, \phi) \left( Y\_{l'}^{m'}(\theta, \phi) \right)^* \sin\theta ~ d\theta ~ d\phi = \delta\_{ll'} \delta\_{mm'} \tag{7}$$
 
 * **Rotation equivariance**: Under a 3D rotation $\mathbf{R}$, the original SH coefficients $\mathbf{c}\_{l, m}$ transform linearly within degree $l$ into new coefficients $\mathbf{c}'\_{l, m'}$ using Wigner D-matrices $\mathbf{D}\_{m', m}^{(l)}(\mathbf{R})$:
 
-$$\mathbf{c}'\_{l, m'} = \sum\_{m=-l}^{l} \mathbf{D}^{(l)}\_{m', m}(\mathbf{R}) \, \mathbf{c}\_{l, m} \tag{8}$$
+$$\mathbf{c}'\_{l, m'} = \sum\_{m=-l}^{l} \mathbf{D}^{(l)}\_{m', m}(\mathbf{R}) ~ \mathbf{c}\_{l, m} \tag{8}$$
 
 * **Laplacian eigenvalue & frequency**: Spherical Harmonics are eigenfunctions of the Laplace–Beltrami operator $\Delta\_{S^2}$ on the unit sphere:
 
@@ -162,7 +164,7 @@ In a hydrogen atom, a negatively charged electron is attracted to a positively c
 
 <figure class="post-illustration post-illustration--compact">
   <img src="../static/img/blog/spherical-harmonics-bohr.png" alt="Illustration of the Bohr atomic model with electrons on discrete circular orbits around a central nucleus" loading="lazy">
-  <figcaption>Bohr’s historical model represents electrons in discrete circular orbits around a nucleus. The atom is deliberately shown excited—an apt prelude to leaving Bohr’s fixed orbits for the richer angular structure of wave mechanics ;-)</figcaption>
+  <figcaption>Bohr’s historical model represents electrons in discrete circular orbits around a nucleus. The atom is deliberately shown excited—an apt prelude to leaving Bohr’s fixed orbits for the richer angular structure of wave mechanics in the following section. ;-)</figcaption>
 </figure>
 
 ### 5.2 Schrödinger equation, orbital structure, and spherical harmonics
