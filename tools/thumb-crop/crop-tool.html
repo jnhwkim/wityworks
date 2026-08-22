@@ -85,12 +85,8 @@
       </div>
       <div id="sidePanel">
         <div>
-          <div class="preview-label">Mobile preview (344×194)</div>
+          <div class="preview-label">Thumbnail preview (344×194)</div>
           <canvas class="preview-box" id="previewMobile" width="344" height="194" style="width:230px;height:129.6px;"></canvas>
-        </div>
-        <div>
-          <div class="preview-label">Desktop preview (160×90)</div>
-          <canvas class="preview-box" id="previewDesktop" width="160" height="90" style="width:160px;height:90px;"></canvas>
         </div>
         <div>
           <div class="preview-label">Zoom</div>
@@ -98,7 +94,7 @@
         </div>
         <div class="row">
           <button class="action secondary" id="resetBtn">Reset</button>
-          <button class="action" id="downloadBtn">Download PNGs</button>
+          <button class="action" id="downloadBtn">Download 344px PNG</button>
         </div>
         <div class="row">
           <button class="action secondary" id="eraserBtn">🩹 지우개</button>
@@ -108,10 +104,10 @@
           <input type="range" id="eraserSizeSlider" min="4" max="120" step="1" value="24">
         </div>
         <div class="hint">
-          드래그/화살표키: 이미지 이동&nbsp;·&nbsp;슬라이더/휠/Z,X: 확대·축소<br>
-          크롭 창(파란 테두리)에 보이는 부분만 저장됨. 이미지보다 창이 크면 빈 부분은 흰색으로 채워짐.<br>
-          지우개 켜고 드래그하면 그 부분이 흰색으로 지워짐 (원본 자체가 지워짐, 되돌리려면 후보 이미지를 다시 클릭).<br>
-          다운로드하면 final_XX_desktop_160x90.png / final_XX_mobile_344x194.png 두 개가 저장됨 — Downloads 폴더에서 thumbs 폴더로 옮겨줘.
+          Drag or use the arrow keys to move the image. Use the slider, mouse wheel, or Z/X to zoom.<br>
+          Only the area inside the blue crop frame is saved. Empty areas are filled with white.<br>
+          Enable the eraser and drag to paint white. This changes the working image; reselect a candidate image to undo it.<br>
+          Download saves <code>final_XX_344x194.png</code>. Move it from Downloads to the thumbs folder.
         </div>
       </div>
     </div>
@@ -120,7 +116,7 @@
   <div id="status"></div>
 
 <script>
-const CROP_W = 480, CROP_H = 270; // 16:9 display crop window (scaled export to 344x194 / 160x90)
+const CROP_W = 480, CROP_H = 270; // 16:9 display crop window (scaled export to 344x194)
 
 const PAPERS = [
   { num: '01', label: 'Seoul World Model', images: ['01_frame.png'], videos: ['01_seoulworldmodel.mp4'] },
@@ -136,6 +132,20 @@ const PAPERS = [
   { num: '12', label: 'HyperCLOVA X 8B Omni', images: ['12_hyperclovax_8b_omni.png'], videos: [] },
   { num: '13', label: 'HyperCLOVA X 32B Think', images: ['13_hyperclovax_32b_think.png'], videos: [] },
   { num: '14', label: 'Kinematics-Driven Gaussian Shape Deformation', images: ['14_kinematics.png'], videos: [] },
+  { num: '15', label: 'Pygmalion Effect in Vision (2025)', images: ['15_pygmalion_teaser.png','15_pygmalion_method.png'], videos: [] },
+  { num: '16', label: 'Safe Text Embedding Guidance (2025)', images: ['16_stg_overview.png','16_stg_method.png'], videos: [] },
+  { num: '17', label: 'OCK: Object-Centric Kinematics (2025)', images: ['17_ock_teaser.png','17_ock_generation.png','17_ock_kinematics.png'], videos: [] },
+  { num: '18', label: 'Background-aware Moment Detection (2025)', images: ['18_bmdetr_observation.png','18_bmdetr_model.png'], videos: [] },
+  { num: '19', label: 'Self-Influence Dataset Bias (2024)', images: ['19_self_influence_main.png'], videos: [] },
+  { num: '20', label: 'Direct Unlearning Optimization (2024)', images: ['20_duo_teaser.png','20_duo_occlusion.png'], videos: [] },
+  { num: '21', label: 'Text2Chart31 (2024)', images: ['21_text2chart_main.png','21_text2chart_examples.png'], videos: [] },
+  { num: '22', label: 'Factorized HashGrid (2024)', images: ['22_facthash_pipeline.png','22_facthash_results.png'], videos: [] },
+  { num: '23', label: 'TimeChara (2024)', images: ['23_timechara_hallucination.png','23_timechara_pipeline.png'], videos: [] },
+  { num: '24', label: 'Coordinate Network + Tensorial Feature (2024)', images: ['24_tensorrefine_method.png','24_tensorrefine_results.png'], videos: [] },
+  { num: '25', label: 'PruNeRF (2024)', images: ['25_prunerf_main.png','25_prunerf_statue.png'], videos: [] },
+  { num: '26', label: 'View-Specific Chest X-ray Generation (2024)', images: ['26_cxr_overview.png','26_cxr_results.png'], videos: [] },
+  { num: '27', label: 'HyperCLOVA X Technical Report (2024)', images: ['27_hcx_main.png','27_hcx_safety.png'], videos: [] },
+  { num: '28', label: 'Surface-Based Visibility-Guided Uncertainty (2026)', images: ['28_surface_overview.png','28_surface_results.png'], videos: [] },
 ];
 
 let currentPaper = null;
@@ -289,7 +299,7 @@ function clampPan() {
 // works even when the image is smaller than the crop window.
 // Downscale in successive halving steps rather than one big jump: a single
 // drawImage() call covering a large reduction (our source images are often
-// 2000-3000px wide, shrunk to a 160-344px thumbnail) only gets a single pass
+// 2000-3000px wide, shrunk to a 344px thumbnail) only gets a single pass
 // of bilinear filtering, which under-samples and looks aliased/moiré no
 // matter how high imageSmoothingQuality is set. Each intermediate step here
 // is at most a 2x reduction, so every step is a proper local average.
@@ -347,10 +357,8 @@ function draw() {
 }
 
 function updatePreviews() {
-  [['previewMobile', 344, 194], ['previewDesktop', 160, 90]].forEach(([id, w, h]) => {
-    const c = document.getElementById(id);
-    drawCropInto(c.getContext('2d'), w, h);
-  });
+  const c = document.getElementById('previewMobile');
+  drawCropInto(c.getContext('2d'), 344, 194);
 }
 
 // --- eraser: paints white directly onto the working image canvas ---
@@ -468,19 +476,17 @@ window.addEventListener('keydown', e => {
 document.getElementById('downloadBtn').onclick = () => {
   if (!img || !currentPaper) return;
   const num = currentPaper.num;
-  [[`final_${num}_mobile_344x194.png`, 344, 194], [`final_${num}_desktop_160x90.png`, 160, 90]].forEach(([name, w, h]) => {
-    const c = document.createElement('canvas');
-    c.width = w; c.height = h;
-    drawCropInto(c.getContext('2d'), w, h);
-    c.toBlob(blob => {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = name;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    }, 'image/png');
-  });
+  const c = document.createElement('canvas');
+  c.width = 344; c.height = 194;
+  drawCropInto(c.getContext('2d'), 344, 194);
+  c.toBlob(blob => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `final_${num}_344x194.png`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }, 'image/png');
   doneSet.add(num);
   renderSidebar();
   document.getElementById('status').textContent = `${num} 저장됨 (Downloads 폴더 확인)`;

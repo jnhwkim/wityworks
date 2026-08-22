@@ -2,7 +2,7 @@ import os
 import cv2
 from PIL import Image
 
-def extract_and_resize_frames(video_path, output_dir, end_sec=2, target_size=(880, 880)):
+def extract_and_resize_frames(video_path, output_dir, end_sec=2, target_size=(440, 440)):
     # Create the output directory.
     os.makedirs(output_dir, exist_ok=True)
     
@@ -30,15 +30,15 @@ def extract_and_resize_frames(video_path, output_dir, end_sec=2, target_size=(88
         # Resize to the target dimensions with high-quality resampling.
         img_resized = img.resize(target_size, Image.Resampling.LANCZOS)
 
-        # Save as PNG (for example, frame_0000.png, frame_0001.png).
-        output_path = os.path.join(output_dir, f"frame_{saved_count:04d}.png")
-        img_resized.save(output_path, "PNG")
+        # Save as WebP (for example, frame_0000.webp, frame_0001.webp).
+        output_path = os.path.join(output_dir, f"frame_{saved_count:04d}.webp")
+        img_resized.save(output_path, "WEBP", quality=90, method=6)
         
         saved_count += 1
         frame_count += 1
 
     cap.release()
-    print(f"Done: saved {saved_count} frames as 880x880 PNG files to '{output_dir}'.")
+    print(f"Done: saved {saved_count} frames as 440x440 WebP files to '{output_dir}'.")
 
 # --- Script entry point ---
 video_file = "092e130d-30b5-48a1-85eb-13273f0441b2.mp4" # Video file path.
