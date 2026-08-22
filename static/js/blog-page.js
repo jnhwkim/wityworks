@@ -382,13 +382,8 @@
     var postId = getXPostId(postUrl);
     if (!postId) return null;
 
-    var section = document.createElement("section");
+    var section = document.createElement("div");
     section.className = "x-conversation";
-    section.setAttribute("aria-labelledby", "x-conversation-title");
-
-    var heading = document.createElement("h2");
-    heading.id = "x-conversation-title";
-    heading.textContent = "Discuss this article on X";
 
     var reply = document.createElement("a");
     reply.className = "x-conversation-reply";
@@ -397,7 +392,6 @@
     reply.rel = "noopener noreferrer";
     reply.innerHTML = '<span aria-hidden="true">𝕏</span> Join the conversation';
 
-    section.appendChild(heading);
     section.appendChild(reply);
     return section;
   }

@@ -710,17 +710,9 @@
 
   /* ---- Blog discussion on X ---- */
   .x-conversation {
-    margin: 32px 0 26px;
-    padding: 14px 16px;
-    border: 1px solid var(--line-soft);
-    border-top: 3px solid var(--gold);
-    background: var(--ground-raised);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
+    margin: 26px 0;
+    text-align: center;
   }
-  .x-conversation h2 { margin: 0; font-size: 18px; }
   .x-conversation-reply {
     display: inline-flex;
     align-items: center;
@@ -736,9 +728,6 @@
     text-decoration: none;
   }
   .x-conversation-reply:hover { background: var(--gold); border-color: var(--gold); text-decoration: none !important; }
-  @media (max-width: 560px) {
-    .x-conversation { margin-top: 28px; padding: 14px; align-items: flex-start; flex-direction: column; }
-  }
 
   /* ---- Blog table of contents ---- */
   .toc-card {
