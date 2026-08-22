@@ -126,28 +126,28 @@ Degree $l$ relates directly to spatial angular frequency, with an approximate wa
 ### 4.1 View-dependent color and radiance in 3D Gaussian Splatting (3DGS)
 In 3D Gaussian Splatting (3DGS) [<a id="ref-kerbl2023-41" href="#ref-kerbl2023">Kerbl et al., 2023</a>], each 3D Gaussian primitive stores SH coefficients to model view-dependent RGB radiance:
 
-$$\mathbf{c}(\mathbf{v}) = \sum_{l=0}^{l_{\max}} \sum_{m=-l}^{l} \mathbf{c}_{l, m} Y_l^m(\mathbf{v}) \tag{9}$$
+$$\mathbf{c}(\mathbf{v}) = \sum_{l=0}^{l_{\max}} \sum_{m=-l}^{l} \mathbf{c}_{l, m} Y_l^m(\mathbf{v}) \tag{10}$$
 
 For standard real-time rendering, degree $l_{\max} = 3$ is used, corresponding to $(3+1)^2 = 16$ coefficients per color channel (48 parameters per primitive).
 
 ### 4.2 Ref-NeRF and Integrated Directional Encoding (IDE)
 To account for specular reflections and surface roughness without aliasing artifacts, Ref-NeRF models a distribution of reflected directions with a von Mises–Fisher (vMF) distribution [<a id="ref-verbin2022-42" href="#ref-verbin2022">Verbin et al., 2022</a>]. Here, $\mathbf{\mu}_r \in S^2$ is the unit reflection direction and the mean direction of the distribution, $\mathbf{x} \in S^2$ is a unit direction sampled on the sphere, and $\kappa \ge 0$ is the concentration parameter: lower $\kappa$ represents a broader lobe and thus a rougher surface. The factor $C_3(\kappa)$ normalizes the density over the 3D unit sphere; the subscript $3$ is the ambient dimension because $S^2$ consists of unit vectors in $\mathbb{R}^3$, as specified by the <a href="https://en.wikipedia.org/wiki/Von_Mises%E2%80%93Fisher_distribution#Definition" target="_blank" rel="noopener noreferrer">general vMF definition</a>.
 
-$$f(\mathbf{x}; \mathbf{\mu}_r, \kappa) = C_3(\kappa) \exp(\kappa \mathbf{\mu}_r^T \mathbf{x}) \tag{10}$$
+$$f(\mathbf{x}; \mathbf{\mu}_r, \kappa) = C_3(\kappa) \exp(\kappa \mathbf{\mu}_r^T \mathbf{x}) \tag{11}$$
 
 Taking the expectation of SH basis functions over the vMF distribution yields Integrated Directional Encoding (IDE), which closed-form attenuates higher frequencies:
 
-$$\mathbb{E}_{\boldsymbol{\omega} \sim \textnormal{vMF}(\mathbf{\mu}_r, \kappa)} \left[ Y_l^m(\boldsymbol{\omega}) \right] = A_l(\kappa) Y_l^m(\mathbf{\mu}_r) \tag{11}$$
+$$\mathbb{E}_{\boldsymbol{\omega} \sim \textnormal{vMF}(\mathbf{\mu}_r, \kappa)} \left[ Y_l^m(\boldsymbol{\omega}) \right] = A_l(\kappa) Y_l^m(\mathbf{\mu}_r) \tag{12}$$
 
-$$A_l(\kappa) \approx \exp\left( -\frac{l(l+1)}{2\kappa} \right) \tag{12}$$
+$$A_l(\kappa) \approx \exp\left( -\frac{l(l+1)}{2\kappa} \right) \tag{13}$$
 
-Here, $\boldsymbol{\omega} \in S^2$ is the random unit direction drawn from the vMF distribution, and $A_l(\kappa)$ is the roughness-dependent attenuation factor for SH degree $l$.
+Here, $\boldsymbol{\omega} \in S^2$ is the random unit direction drawn from the vMF distribution, and $A_l(\kappa)$ is the roughness-dependent attenuation factor for SH degree $l$. Equation (13) is a high-concentration approximation, so it is most accurate for large $\kappa$.
 
-**Why does Equation (11) hold? (Proof sketch.)** First rotate the coordinates so that the mean direction $\mathbf{\mu}_r$ becomes the north pole. Write a direction on the sphere using its polar angle $\theta \in [0, \pi]$ and azimuthal angle $\phi \in [0, 2\pi)$. In these coordinates, the vMF density in Equation (10) depends on $\theta$ but not on $\phi$. A spherical harmonic of degree $l$ and order $m$ has azimuthal dependence proportional to $e^{i m \phi}$. Consequently, its integral over $\phi$ is zero whenever $m \ne 0$, because $\int_0^{2\pi} e^{i m \phi}\,d\phi = 0$. This is consistent with the fact that $Y_l^m$ evaluated at the north pole is zero for $m \ne 0$.
+**Why does Equation (12) hold? (Proof sketch.)** First rotate the coordinates so that the mean direction $\mathbf{\mu}_r$ becomes the north pole. Write a direction on the sphere using its polar angle $\theta \in [0, \pi]$ and azimuthal angle $\phi \in [0, 2\pi)$. In these coordinates, the vMF density in Equation (11) depends on $\theta$ but not on $\phi$. A spherical harmonic of degree $l$ and order $m$ has azimuthal dependence proportional to $e^{i m \phi}$. Consequently, its integral over $\phi$ is zero whenever $m \ne 0$, because $\int_0^{2\pi} e^{i m \phi}\,d\phi = 0$. This is consistent with the fact that $Y_l^m$ evaluated at the north pole is zero for $m \ne 0$.
 
 For an arbitrary mean direction $\mathbf{\mu}\_r$, rotate the north-pole result back to $\mathbf{\mu}\_r$. Since the density depends only on the angle between $\boldsymbol{\omega}$ and $\mathbf{\mu}\_r$, this averaging operation commutes with every 3D rotation. It therefore preserves each SH degree and applies the same scalar factor $A_l(\kappa)$ to every order $m$ within that degree. More generally, for a directional function $g$ that can be expanded in spherical harmonics as $g(\boldsymbol{\omega}) = \sum\_{l=0}^{\infty}\sum\_{m=-l}^{l} c\_{l,m}Y\_l^m(\boldsymbol{\omega})$, where $c\_{l,m}$ are its SH coefficients, vMF averaging gives
 
-$$\mathbb{E}\_{\boldsymbol{\omega} \sim \textnormal{vMF}(\mathbf{\mu}\_r, \kappa)}[g(\boldsymbol{\omega})] = \sum\_{l=0}^{\infty}\sum_{m=-l}^{l} A\_l(\kappa)c\_{l,m}Y\_l^m(\mathbf{\mu}_r). \tag{13}$$
+$$\mathbb{E}\_{\boldsymbol{\omega} \sim \textnormal{vMF}(\mathbf{\mu}\_r, \kappa)}[g(\boldsymbol{\omega})] = \sum\_{l=0}^{\infty}\sum_{m=-l}^{l} A\_l(\kappa)c\_{l,m}Y\_l^m(\mathbf{\mu}_r). \tag{14}$$
 
 Thus, no coefficient is transferred to a different degree or order: each coefficient is only attenuated according to its degree. This derivation is an application of the Funk–Hecke theorem; Ref-NeRF gives the full derivation, including the Legendre-polynomial integral for $A_l(\kappa)$, in <a href="https://dorverbin.github.io/refnerf/refnerf.pdf" target="_blank" rel="noopener noreferrer">Appendix A, “Integrated Directional Encoding Proofs”</a>.
 
@@ -171,11 +171,11 @@ In a hydrogen atom, a negatively charged electron is attracted to a positively c
 ### 5.2 Schrödinger equation, orbital structure, and spherical harmonics
 The Schrödinger equation is the basic equation of quantum mechanics: it determines a quantum wavefunction from the energy landscape of a physical system. For hydrogen, this energy landscape is written as $V(r)$, where $r$ is the distance from the nucleus; as Section 5.1 explained, it has no preferred direction. This symmetry lets the three-dimensional spatial-curvature operator, called the Laplacian and written as $\nabla^2$, split into a distance-dependent part and a direction-dependent part:
 
-$$\nabla^2 = \frac{1}{r^2}\frac{\partial}{\partial r}\left(r^2\frac{\partial}{\partial r}\right) + \frac{1}{r^2}\Delta\_{S^2}. \tag{14}$$
+$$\nabla^2 = \frac{1}{r^2}\frac{\partial}{\partial r}\left(r^2\frac{\partial}{\partial r}\right) + \frac{1}{r^2}\Delta\_{S^2}. \tag{15}$$
 
 The first term describes how the wavefunction changes with distance. The second contains the spherical Laplacian $\Delta\_{S^2}$ from Equation (9), which describes how it changes with direction on a sphere. A spherical harmonic $Y_l^m$ is an eigenfunction of this angular operator: applying the operator changes only its scale, not its angular pattern. This lets the three-dimensional Schrödinger equation separate into one radial equation for each angular mode. A wavefunction with a definite energy can consequently be written as
 
-$$\psi(r, \theta, \phi) = R\_{n,l}(r)Y\_l^m(\theta, \phi). \tag{15}$$
+$$\psi(r, \theta, \phi) = R\_{n,l}(r)Y\_l^m(\theta, \phi). \tag{16}$$
 
 Here, $\psi$ is the spatial wavefunction; $R\_{n,l}$ is its radial part; and $Y\_l^m$ is its angular part. The principal quantum number $n$ is a positive integer that labels the radial energy level, while the nonnegative integer $l$ and integer $m$ label the spherical harmonic, with $0 \le l \le n-1$ and $-l \le m \le l$.
 
