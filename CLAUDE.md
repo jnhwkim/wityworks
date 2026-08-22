@@ -27,14 +27,12 @@ entry, then drop the source image(s)/video(s) into `tools/thumb-crop/` next
 to the script with matching filenames — these sources and any cropped
 output PNGs stay out of git (heavy, per-run, not durable assets).
 
-"Download PNGs" saves both `final_NN_desktop_160x90.png` and
-`final_NN_mobile_344x194.png`. **Always keep the 344x194 (mobile) one** and
-move/rename it into `static/img/pubs/<slug>.png` — every existing image in
-that folder is already 344x194. The single file covers both breakpoints:
+"Download 344px PNG" saves `final_NN_344x194.png`. Convert it to WebP and
+place it at `static/img/pubs/<slug>.webp` — every thumbnail in that folder is
+344x194. The single file covers both breakpoints:
 `.pub-thumb img` is `object-fit: cover` at 160x90 on desktop and 344x194 on
 mobile (style.css:475,493), so the browser just downscales the same image
-for desktop — discard the 160x90 export, it'd only be needed if we stored
-per-breakpoint files, which we don't.
+for desktop.
 
 ## Adding a publication entry
 
