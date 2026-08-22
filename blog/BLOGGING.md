@@ -32,20 +32,38 @@ summary: A short description of the article.
 visibility: public
 ---
 
+### Optional X discussion
+
+To place an X conversation at the bottom of a public article, publish a post
+linking to that article, then add its canonical post URL to the frontmatter:
+
+```text
+xPostUrl: https://x.com/your-handle/status/1234567890123456789
+```
+
+The site renders a compact **Join the conversation** button that opens X's
+reply composer for the same post. Omit `xPostUrl` until the post has been
+published; no empty discussion panel is rendered.
+
 ### Step 2: Write Content
 * Use standard Markdown headers (`##`, `###`).
 * Keep inline math inside single `$ ... $` and display math inside double `$$ ... $$`.
 * Follow the LaTeX formatting rule (avoid spacing primitives like `\!` or `\,`).
+* Reference blog images with root-relative paths such as `/static/img/blog/example.png`;
+  do not use paths relative to the Markdown file.
 
-### Step 3: Update Blog Features, Post Counts, and RSS (`manifest.js`, `rss.xml`)
+### Step 3: Update Blog Features, Post Counts, RSS, and Static Pages
 Since this site uses static file hosting without dynamic directory indexing, post listing counts and metadata rely on `root/blog/manifest.js`.
 
 **Option A — Automated (via Terminal):**
-Run the sync script to auto-generate `manifest.js` from all `.md` frontmatter and
-the full-content RSS feed at `root/blog/rss.xml`:
+Run the sync script to auto-generate `manifest.js`, a crawler-ready static page
+at `root/blog/<category>/<slug>/index.html`, and the full-content RSS feed at
+`root/blog/rss.xml`:
 python3 blog/sync_manifest.py
 
-The feed uses `https://wityworks.com` from `CNAME` for canonical URLs. Set
+The generated article page includes the canonical URL and Open Graph/X Card
+metadata, so use its clean `/blog/<category>/<slug>/` URL when sharing. The
+feed uses `https://wityworks.com` from `CNAME` for canonical URLs. Set
 `SITE_URL` when building for another canonical domain (for example,
 `SITE_URL=https://example.com python3 blog/sync_manifest.py`). Post GUIDs are
 their canonical category-and-slug URLs, so edits to the title or body do not

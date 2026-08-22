@@ -8,12 +8,32 @@ from xml.etree import ElementTree as ET
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import generate_rss
+import sync_manifest
 
 
-CONTENT = {"content": generate_rss.CONTENT_NS}
+CONTENT = {"content": generate_rss.CONTENT_NS, "media": generate_rss.MEDIA_NS}
 
 
 class RssGenerationTests(unittest.TestCase):
+    def test_static_article_page_has_share_metadata(self):
+        template = "<html><head><title>Blog · Jin-Hwa Kim</title></head><body></body></html>"
+        page = sync_manifest.render_article_page(
+            template,
+            "https://example.test",
+            {
+                "category": "notes",
+                "slug": "example",
+                "title": "An Example",
+                "summary": "A concise description.",
+                "cover": "/static/example.png",
+            },
+        )
+        self.assertIn('<link rel="canonical" href="https://example.test/blog/notes/example/">', page)
+        self.assertIn('<meta property="og:title" content="An Example">', page)
+        self.assertIn('<meta name="twitter:card" content="summary_large_image">', page)
+        self.assertIn('<meta property="og:image" content="https://example.test/static/example.png">', page)
+        self.assertIn('<body data-blog-post="notes/example">', page)
+
     def test_generated_feed_has_full_content_and_stable_post_identity(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             output = pathlib.Path(tmpdir) / "rss.xml"
@@ -27,6 +47,7 @@ class RssGenerationTests(unittest.TestCase):
         first_items = first.findall("./channel/item")
         second_items = second.findall("./channel/item")
         self.assertTrue(first_items)
+        self.assertTrue(first.findtext("./channel/lastBuildDate").endswith("+0900"))
         self.assertEqual(
             [item.findtext("guid") for item in first_items],
             [item.findtext("guid") for item in second_items],
@@ -34,8 +55,19 @@ class RssGenerationTests(unittest.TestCase):
         for item in first_items:
             self.assertEqual(item.findtext("guid"), item.findtext("link"))
             self.assertIsNotNone(parsedate_to_datetime(item.findtext("pubDate")))
+            self.assertTrue(item.findtext("pubDate").endswith("+0900"))
             self.assertTrue(item.findtext("description"))
             self.assertIn("<p>", item.findtext("content:encoded", namespaces=CONTENT))
+
+        spherical_harmonics = next(
+            item for item in first_items if item.findtext("title") == "Waves on a Sphere, Spherical Harmonics"
+        )
+        cover = spherical_harmonics.find("media:content", namespaces=CONTENT)
+        self.assertIsNotNone(cover)
+        self.assertEqual(cover.attrib["medium"], "image")
+        self.assertEqual(cover.attrib["url"], "https://wityworks.com/static/img/blog/spherical-harmonics-cover.png")
+        content = spherical_harmonics.findtext("content:encoded", namespaces=CONTENT)
+        self.assertTrue(content.startswith('<figure><img src="https://wityworks.com/static/img/blog/spherical-harmonics-cover.png"'))
 
     def test_portable_html_absolutizes_urls_and_removes_active_content(self):
         rendered = generate_rss.markdown_to_html(

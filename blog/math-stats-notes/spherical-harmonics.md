@@ -2,11 +2,15 @@
 title: Waves on a Sphere, Spherical Harmonics
 category: math-stats-notes
 categoryLabel: Math & Stats Notes
-date: 2026-08-17
+date: 2026-08-21
 readTime: 20 min read
-summary: History, mathematical definition, and applications of spherical harmonics from quantum mechanics to neural 3D.
+summary: Spherical harmonics are the natural language for directional variation on a sphere. Rooted in Laplace's study of gravitational potentials and central to atomic orbitals, they are like sine and cosine Fourier modes on a line or circle, representing view-dependent color in 3D Gaussian Splatting.
+cover: /static/img/blog/spherical-harmonics-cover.png
+xPostUrl: https://x.com/jnhwkim/status/2090978203657806232
 visibility: public
 ---
+
+Spherical harmonics are the natural language for directional variation on a sphere. Rooted in Laplace's study of gravitational potentials and central to atomic orbitals, they are like sine and cosine Fourier modes on a line or circle, representing view-dependent color in 3D Gaussian Splatting.
 
 ## Table of contents
 - [1. Prologue: Why spherical harmonics today?](#1-prologue-why-spherical-harmonics-today)
@@ -19,8 +23,8 @@ visibility: public
   - [4.1 View-dependent color and radiance in 3D Gaussian Splatting (3DGS)](#41-view-dependent-color-and-radiance-in-3d-gaussian-splatting-3dgs)
   - [4.2 Ref-NeRF and Integrated Directional Encoding (IDE)](#42-ref-nerf-and-integrated-directional-encoding-ide)
 - [5. Quantum mechanical correlation: Bohr model & wave mechanics](#5-quantum-mechanical-correlation-bohr-model-amp-wave-mechanics)
-  - [5.1 From Bohr's model to Schrödinger's wave function](#51-from-bohr39s-model-to-schrdinger39s-wave-function)
-  - [5.2 Hydrogen atom solution & quantum numbers](#52-hydrogen-atom-solution-amp-quantum-numbers)
+  - [5.1 Why spherical harmonics appear in the hydrogen atom](#51-why-spherical-harmonics-appear-in-the-hydrogen-atom)
+  - [5.2 Schrödinger equation, orbital structure, and spherical harmonics](#52-schrdinger-equation-orbital-structure-and-spherical-harmonics)
 - [6. Epilogue & conclusion](#6-epilogue-amp-conclusion)
 - [References](#references)
 
@@ -37,7 +41,7 @@ In recent years, Spherical Harmonics have experienced a resurgence in neural 3D,
 ## 2. Historical background of spherical harmonics
 
 <figure class="post-illustration">
-  <img src="../static/img/blog/spherical-harmonics-pioneers.png" alt="Line art illustration of Laplace, Legendre, Thomson, and Tait" loading="lazy">
+  <img src="/static/img/blog/spherical-harmonics-pioneers.png" alt="Line art illustration of Laplace, Legendre, Thomson, and Tait" loading="lazy">
   <figcaption>Historical figures of Spherical Harmonics: Laplace, Legendre, Kelvin, and Tait.</figcaption>
 </figure>
 
@@ -62,8 +66,8 @@ $$\nabla^2 f = \frac{1}{r^2} \frac{\partial}{\partial r}\left(r^2 \frac{\partial
 
 Equation (1) naturally decomposes the spatial field into a radial variation scale ($r$) and an angular surface geometry $(\theta, \phi)$ defined on the unit sphere $S^2$.
 
-<figure class="post-illustration">
-  <img src="../static/img/blog/spherical-harmonics-spherical-coordinates.png" alt="Spherical coordinate system showing the radial distance r, polar angle theta, and azimuthal angle phi on a unit sphere" loading="lazy" style="max-width: 280px;">
+<figure class="post-illustration post-illustration--compact">
+  <img src="/static/img/blog/spherical-harmonics-spherical-coordinates.png" alt="Spherical coordinate system showing the radial distance r, polar angle theta, and azimuthal angle phi on a unit sphere" loading="lazy">
   <figcaption>Spherical coordinates separate radial distance $r$ from the angular coordinates $(\theta, \phi)$ on the unit sphere.</figcaption>
 </figure>
 
@@ -98,11 +102,11 @@ For negative order $-l \le m < 0$, $P_l^m(x)$ is defined via $P_l^{-m}(x) = (-1)
 
 * **Orthonormal basis**: Spherical Harmonics form a complete orthonormal basis over the unit sphere $S^2$, where superscript $*$ denotes the complex conjugate required for complex-valued functions:
 
-$$\int_{0}^{2\pi} \int_{0}^{\pi} Y\_l^m(\theta, \phi) \left( Y\_{l'}^{m'}(\theta, \phi) \right)^* \sin\theta \, d\theta \, d\phi = \delta\_{ll'} \delta\_{mm'} \tag{7}$$
+$$\int_{0}^{2\pi} \int_{0}^{\pi} Y\_l^m(\theta, \phi) \left( Y\_{l'}^{m'}(\theta, \phi) \right)^* \sin\theta ~ d\theta ~ d\phi = \delta\_{ll'} \delta\_{mm'} \tag{7}$$
 
 * **Rotation equivariance**: Under a 3D rotation $\mathbf{R}$, the original SH coefficients $\mathbf{c}\_{l, m}$ transform linearly within degree $l$ into new coefficients $\mathbf{c}'\_{l, m'}$ using Wigner D-matrices $\mathbf{D}\_{m', m}^{(l)}(\mathbf{R})$:
 
-$$\mathbf{c}'\_{l, m'} = \sum\_{m=-l}^{l} \mathbf{D}^{(l)}\_{m', m}(\mathbf{R}) \, \mathbf{c}\_{l, m} \tag{8}$$
+$$\mathbf{c}'\_{l, m'} = \sum\_{m=-l}^{l} \mathbf{D}^{(l)}\_{m', m}(\mathbf{R}) ~ \mathbf{c}\_{l, m} \tag{8}$$
 
 * **Laplacian eigenvalue & frequency**: Spherical Harmonics are eigenfunctions of the Laplace–Beltrami operator $\Delta\_{S^2}$ on the unit sphere:
 
@@ -111,8 +115,8 @@ $$\Delta\_{S^2} Y\_l^m = -l(l+1) Y\_l^m \tag{9}$$
 Degree $l$ relates directly to spatial angular frequency, with an approximate wavelength $\approx \frac{180^\circ}{l}$.
 
 <figure class="post-illustration">
-  <img src="../static/img/blog/spherical-harmonics-low-order-modes.png" alt="Comparison of low-order spherical harmonic modes, progressing from a uniform sphere to increasingly structured angular patterns" loading="lazy">
-  <figcaption>Low-order spherical harmonic modes: increasing degree $l$ produces increasingly fine angular structure.</figcaption>
+  <img src="/static/img/blog/spherical-harmonics-low-order-modes.png" alt="Comparison of low-order spherical harmonic modes, progressing from a uniform sphere to increasingly structured angular patterns" loading="lazy">
+  <figcaption>Visual representations of the first few real spherical harmonics. Light regions represent positive values and dark regions negative values. For each angular direction $(\theta, \phi)$, the surface's radial distance from the origin encodes the magnitude $|Y_l^m(\theta, \phi)|$. Increasing degree $l$ produces increasingly fine angular structure.</figcaption>
 </figure>
 
 ---
@@ -122,43 +126,62 @@ Degree $l$ relates directly to spatial angular frequency, with an approximate wa
 ### 4.1 View-dependent color and radiance in 3D Gaussian Splatting (3DGS)
 In 3D Gaussian Splatting (3DGS) [<a id="ref-kerbl2023-41" href="#ref-kerbl2023">Kerbl et al., 2023</a>], each 3D Gaussian primitive stores SH coefficients to model view-dependent RGB radiance:
 
-$$\mathbf{c}(\mathbf{v}) = \sum_{l=0}^{l_{\max}} \sum_{m=-l}^{l} \mathbf{c}_{l, m} Y_l^m(\mathbf{v}) \tag{9}$$
+$$\mathbf{c}(\mathbf{v}) = \sum_{l=0}^{l_{\max}} \sum_{m=-l}^{l} \mathbf{c}_{l, m} Y_l^m(\mathbf{v}) \tag{10}$$
 
 For standard real-time rendering, degree $l_{\max} = 3$ is used, corresponding to $(3+1)^2 = 16$ coefficients per color channel (48 parameters per primitive).
 
 ### 4.2 Ref-NeRF and Integrated Directional Encoding (IDE)
-To account for specular reflections and surface roughness without aliasing artifacts, viewing distributions can be modeled as a von Mises–Fisher (vMF) distribution with concentration parameter $\kappa$ (where $\kappa \propto \frac{1}{\textnormal{roughness}}$) in Ref-NeRF [<a id="ref-verbin2022-42" href="#ref-verbin2022">Verbin et al., 2022</a>]:
+To account for specular reflections and surface roughness without aliasing artifacts, Ref-NeRF models a distribution of reflected directions with a von Mises–Fisher (vMF) distribution [<a id="ref-verbin2022-42" href="#ref-verbin2022">Verbin et al., 2022</a>]. Here, $\mathbf{\mu}_r \in S^2$ is the unit reflection direction and the mean direction of the distribution, $\mathbf{x} \in S^2$ is a unit direction sampled on the sphere, and $\kappa \ge 0$ is the concentration parameter: lower $\kappa$ represents a broader lobe and thus a rougher surface. The factor $C_3(\kappa)$ normalizes the density over the 3D unit sphere; the subscript $3$ is the ambient dimension because $S^2$ consists of unit vectors in $\mathbb{R}^3$, as specified by the <a href="https://en.wikipedia.org/wiki/Von_Mises%E2%80%93Fisher_distribution#Definition" target="_blank" rel="noopener noreferrer">general vMF definition</a>.
 
-$$f(\mathbf{x}; \mathbf{\mu}_r, \kappa) = C_d(\kappa) \exp(\kappa \mathbf{\mu}_r^T \mathbf{x}) \tag{10}$$
+$$f(\mathbf{x}; \mathbf{\mu}_r, \kappa) = C_3(\kappa) \exp(\kappa \mathbf{\mu}_r^T \mathbf{x}) \tag{11}$$
 
 Taking the expectation of SH basis functions over the vMF distribution yields Integrated Directional Encoding (IDE), which closed-form attenuates higher frequencies:
 
-$$\mathbb{E}_{\mathbf{\mu} \sim \textnormal{vMF}(\mathbf{\mu}_r, \kappa)} \left[ Y_l^m(\mathbf{\mu}) \right] = A_l(\kappa) Y_l^m(\mathbf{\mu}_r) \tag{11}$$
+$$\mathbb{E}_{\boldsymbol{\omega} \sim \textnormal{vMF}(\mathbf{\mu}_r, \kappa)} \left[ Y_l^m(\boldsymbol{\omega}) \right] = A_l(\kappa) Y_l^m(\mathbf{\mu}_r) \tag{12}$$
 
-$$A_l(\kappa) \approx \exp\left( -\frac{l(l+1)}{2\kappa} \right) \tag{12}$$
+$$A_l(\kappa) \approx \exp\left( -\frac{l(l+1)}{2\kappa} \right) \tag{13}$$
+
+Here, $\boldsymbol{\omega} \in S^2$ is the random unit direction drawn from the vMF distribution, and $A_l(\kappa)$ is the roughness-dependent attenuation factor for SH degree $l$. Equation (13) is a high-concentration approximation, so it is most accurate for large $\kappa$.
+
+**Why does Equation (12) hold? (Proof sketch.)** First rotate the coordinates so that the mean direction $\mathbf{\mu}_r$ becomes the north pole. Write a direction on the sphere using its polar angle $\theta \in [0, \pi]$ and azimuthal angle $\phi \in [0, 2\pi)$. In these coordinates, the vMF density in Equation (11) depends on $\theta$ but not on $\phi$. A spherical harmonic of degree $l$ and order $m$ has azimuthal dependence proportional to $e^{i m \phi}$. Consequently, its integral over $\phi$ is zero whenever $m \ne 0$, because $\int_0^{2\pi} e^{i m \phi}\,d\phi = 0$. This is consistent with the fact that $Y_l^m$ evaluated at the north pole is zero for $m \ne 0$.
+
+For an arbitrary mean direction $\mathbf{\mu}\_r$, rotate the north-pole result back to $\mathbf{\mu}\_r$. Since the density depends only on the angle between $\boldsymbol{\omega}$ and $\mathbf{\mu}\_r$, this averaging operation commutes with every 3D rotation. It therefore preserves each SH degree and applies the same scalar factor $A_l(\kappa)$ to every order $m$ within that degree. More generally, for a directional function $g$ that can be expanded in spherical harmonics as $g(\boldsymbol{\omega}) = \sum\_{l=0}^{\infty}\sum\_{m=-l}^{l} c\_{l,m}Y\_l^m(\boldsymbol{\omega})$, where $c\_{l,m}$ are its SH coefficients, vMF averaging gives
+
+$$\mathbb{E}\_{\boldsymbol{\omega} \sim \textnormal{vMF}(\mathbf{\mu}\_r, \kappa)}[g(\boldsymbol{\omega})] = \sum\_{l=0}^{\infty}\sum_{m=-l}^{l} A\_l(\kappa)c\_{l,m}Y\_l^m(\mathbf{\mu}_r). \tag{14}$$
+
+Thus, no coefficient is transferred to a different degree or order: each coefficient is only attenuated according to its degree. This derivation is an application of the Funk–Hecke theorem; Ref-NeRF gives the full derivation, including the Legendre-polynomial integral for $A_l(\kappa)$, in <a href="https://dorverbin.github.io/refnerf/refnerf.pdf" target="_blank" rel="noopener noreferrer">Appendix A, “Integrated Directional Encoding Proofs”</a>.
 
 <figure class="post-illustration">
-  <img src="../static/img/blog/spherical-harmonics-ide-frequency-attenuation.png" alt="Integrated Directional Encoding comparison showing that a broad low-kappa von Mises-Fisher distribution attenuates high-degree spherical harmonic frequencies more strongly" loading="lazy">
-  <figcaption>IDE applies a roughness-dependent angular low-pass filter: lower $\kappa$ preserves low-degree modes while attenuating higher-degree spherical harmonic frequencies.</figcaption>
+  <img src="/static/img/blog/spherical-harmonics-ide-frequency-attenuation.png" alt="Integrated Directional Encoding comparison showing that a broad low-kappa von Mises-Fisher distribution attenuates high-degree spherical harmonic frequencies more strongly" loading="lazy">
+  <figcaption>IDE applies a roughness-dependent angular low-pass filter: lower $\kappa$ (rougher surfaces) attenuates higher-degree spherical harmonic frequencies more strongly.</figcaption>
 </figure>
 
 ---
 
 ## 5. Quantum mechanical correlation: Bohr model & wave mechanics
 
-### 5.1 From Bohr's model to Schrödinger's wave function
-* **Bohr model limitations**: Niels Bohr's classical model constrained electrons to flat, 2D circular orbits with quantized orbital angular momentum ($L = n\hbar$). However, it failed to account for intrinsic electron spin, multi-electron interactions, spectral line Zeeman splitting, and non-planar 3D probability distributions.
-* **Schrödinger paradigm shift**: Quantum mechanics replaced discrete planar orbits with 3D spatial wavefunctions $\psi(r, \theta, \phi)$, representing probability density clouds over 3D space.
+### 5.1 Why spherical harmonics appear in the hydrogen atom
+In a hydrogen atom, a negatively charged electron is attracted to a positively charged nucleus. In the simplest model, the strength of this attraction depends only on the distance from the nucleus, not on the direction. Physicists call this distance-dependent energy the Coulomb potential. Because rotating the atom does not change that energy, the quantum description of the electron separates naturally into a radial part, which describes distance, and an angular part, which describes direction. The angular part must be an eigenfunction of the spherical Laplacian, and those eigenfunctions are precisely the spherical harmonics $Y_l^m$. Thus, the degree $l$ and order $m$ of a spherical harmonic label an electron orbital's angular structure and orientation; the next section makes this separation explicit.
 
-### 5.2 Hydrogen atom solution & quantum numbers
-For a hydrogenic atom subject to a spherically symmetric Coulomb potential $V(r)$, the 3D Schrödinger equation simplifies via separation of variables:
+<figure class="post-illustration post-illustration--compact">
+  <img src="/static/img/blog/spherical-harmonics-bohr.png" alt="Illustration of the Bohr atomic model with electrons on discrete circular orbits around a central nucleus" loading="lazy">
+  <figcaption>Bohr’s historical model represents electrons in discrete circular orbits around a nucleus. The atom is deliberately shown excited—an apt prelude to leaving Bohr’s fixed orbits for the richer angular structure of wave mechanics in the following section. ;-)</figcaption>
+</figure>
 
-$$\psi(r, \theta, \phi) = R\_{n, l}(r) Y\_l^m(\theta, \phi) \tag{13}$$
+### 5.2 Schrödinger equation, orbital structure, and spherical harmonics
+The Schrödinger equation is the basic equation of quantum mechanics: it determines a quantum wavefunction from the energy landscape of a physical system. For hydrogen, this energy landscape is written as $V(r)$, where $r$ is the distance from the nucleus; as Section 5.1 explained, it has no preferred direction. This symmetry lets the three-dimensional spatial-curvature operator, called the Laplacian and written as $\nabla^2$, split into a distance-dependent part and a direction-dependent part:
 
-where $\psi(r, \theta, \phi)$ denotes the full spatial wavefunction, $R\_{n, l}(r)$ is the radial wavefunction governed by the principal quantum number $n$ ($n \in \mathbb{N}^+$) and azimuthal quantum number $l$, and $Y\_l^m(\theta, \phi)$ represents the Spherical Harmonics capturing the angular dependence.
+$$\nabla^2 = \frac{1}{r^2}\frac{\partial}{\partial r}\left(r^2\frac{\partial}{\partial r}\right) + \frac{1}{r^2}\Delta\_{S^2}. \tag{15}$$
 
-* **Azimuthal quantum number ($l$)**: Determines total orbital angular momentum and the angular shape of subshells ($s, p, d, f$ orbitals corresponding to $l = 0, 1, 2, 3$, restricted by $0 \le l \le n-1$).
-* **Magnetic quantum number ($m$)**: Determines the spatial orientation of the orbital in 3D space, taking integer values $-l \le m \le l$.
+The first term describes how the wavefunction changes with distance. The second contains the spherical Laplacian $\Delta\_{S^2}$ from Equation (9), which describes how it changes with direction on a sphere. A spherical harmonic $Y_l^m$ is an eigenfunction of this angular operator: applying the operator changes only its scale, not its angular pattern. This lets the three-dimensional Schrödinger equation separate into one radial equation for each angular mode. A wavefunction with a definite energy can consequently be written as
+
+$$\psi(r, \theta, \phi) = R\_{n,l}(r)Y\_l^m(\theta, \phi). \tag{16}$$
+
+Here, $\psi$ is the spatial wavefunction; $R\_{n,l}$ is its radial part; and $Y\_l^m$ is its angular part. The principal quantum number $n$ is a positive integer that labels the radial energy level, while the nonnegative integer $l$ and integer $m$ label the spherical harmonic, with $0 \le l \le n-1$ and $-l \le m \le l$.
+
+This factorization gives spherical harmonics their physical meaning. The degree $l$ controls the angular complexity and the orbital angular momentum: $l=0,1,2,3$ correspond to the familiar $s,p,d,f$ orbital families. The order $m$ distinguishes the $2l+1$ orientation states within one family. In a perfectly spherically symmetric atom, these states have the same energy; a magnetic field can distinguish them, which is why $m$ is called the magnetic quantum number.
+
+More broadly, this is a useful change of viewpoint: spherical harmonics are not merely convenient functions for drawing orbitals. They are the natural coordinates for any phenomenon with rotational symmetry. The same decomposition that separates a quantum wavefunction into angular modes also organizes lighting on a sphere, directional signals, and neural rendering features into angular frequencies.
 
 
 ## 6. Epilogue & conclusion
@@ -173,5 +196,5 @@ Spherical Harmonics illustrate the deep interdisciplinary connection across math
 
 * <a id="ref-kerbl2023"></a>Bernhard Kerbl, Georgios Kopanas, Thomas Leimkühler, and George Drettakis. 3D Gaussian Splatting for Real-Time Radiance Field Rendering. *ACM Transactions on Graphics (TOG)*, 42(4):1–14, 2023. [<a href="#ref-kerbl2023-1">1</a>, <a href="#ref-kerbl2023-41">4.1</a>, <a href="#ref-kerbl2023-6">6</a>]
 * <a id="ref-mildenhall2020"></a>Ben Mildenhall, Pratul P. Srinivasan, Matthew Tancik, Jonathan T. Barron, Ravi Ramamoorthi, and Ren Ng. NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis. In *European Conference on Computer Vision (ECCV)*, pages 405–421. Springer, 2020. [<a href="#ref-mildenhall2020-1">1</a>]
-* <a id="ref-verbin2022"></a>Dor Verbin, Peter Hedman, Ben Mildenhall, Todd Zickler, Jonathan T. Barron, and Pratul P. Srinivasan. Ref-NeRF: Structured View-Dependent Appearance for Neural Radiance Fields. In *IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)*, pages 5481–5490, 2022. [<a href="#ref-verbin2022-42">4.2</a>, <a href="#ref-verbin2022-6">6</a>]
+* <a id="ref-verbin2022"></a>Dor Verbin, Peter Hedman, Ben Mildenhall, Todd Zickler, Jonathan T. Barron, and Pratul P. Srinivasan. Ref-NeRF: Structured View-Dependent Appearance for Neural Radiance Fields. In *IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)*, pages 5491–5500, 2022. [<a href="#ref-verbin2022-42">4.2</a>, <a href="#ref-verbin2022-6">6</a>]
 * <a id="ref-kelvin1867"></a>William Thomson (Lord Kelvin) and Peter Guthrie Tait. Treatise on Natural Philosophy, Part I. Clarendon Press, Oxford, 1867. [<a href="#ref-kelvin1867-2">2</a>]

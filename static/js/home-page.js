@@ -143,16 +143,19 @@
   publicPosts.forEach(function (post) {
     var article = document.createElement("article");
     article.className = "post-card";
+    var cardContent = document.createElement("div");
+    cardContent.className = "post-card-content";
     var eyebrow = document.createElement("span");
     eyebrow.className = "label eyebrow";
     eyebrow.innerHTML = post.categoryLabel;
     var h3 = document.createElement("h3");
     var a = document.createElement("a");
     a.href =
-      "/blog/?post=" +
+      "/blog/" +
       encodeURIComponent(post.category) +
       "/" +
-      encodeURIComponent(post.slug);
+      encodeURIComponent(post.slug) +
+      "/";
     a.textContent = post.title;
     h3.appendChild(a);
     var p = document.createElement("p");
@@ -160,10 +163,23 @@
     var meta = document.createElement("span");
     meta.className = "meta";
     meta.textContent = formatDate(post.date) + " · " + post.readTime;
-    article.appendChild(eyebrow);
-    article.appendChild(h3);
-    article.appendChild(p);
-    article.appendChild(meta);
+    cardContent.appendChild(eyebrow);
+    cardContent.appendChild(h3);
+    cardContent.appendChild(p);
+    cardContent.appendChild(meta);
+    if (post.cover) {
+      article.classList.add("has-cover");
+      var coverLink = document.createElement("a");
+      coverLink.className = "post-card-cover";
+      coverLink.href = a.href;
+      var cover = document.createElement("img");
+      cover.src = post.cover;
+      cover.alt = "";
+      cover.loading = "lazy";
+      coverLink.appendChild(cover);
+      article.appendChild(coverLink);
+    }
+    article.appendChild(cardContent);
     postList.appendChild(article);
   });
 })();

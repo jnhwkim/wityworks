@@ -578,6 +578,18 @@
 
   .post-card { padding: 14px 0; border-top: 1px solid var(--line-soft); }
   .post-card:first-child { border-top: none; padding-top: 0; }
+  .post-card.has-cover { display: flex; gap: 14px; }
+  .post-card-content { flex: 1 1 0; min-width: 0; }
+  .post-card-cover {
+    align-self: flex-start;
+    flex: 0 0 clamp(112px, 18vw, 180px);
+    aspect-ratio: 1;
+    padding: 4px;
+    background: var(--ground-raised);
+    border: 1px solid var(--line-soft);
+    overflow: hidden;
+  }
+  .post-card-cover img { display: block; width: 100%; height: 100%; object-fit: cover; }
   .post-card .eyebrow { color: var(--blue); margin-top: 4px; margin-bottom: 5px; display: block; }
   .post-card h3 { margin: 0 0 5px; font-size: 20px; font-weight: 400; }
   .post-card h3 a { color: var(--ink); text-decoration: none; }
@@ -630,6 +642,13 @@
     max-width: 600px;
     text-align: center;
   }
+  .post-body .post-cover {
+    margin: 0 0 28px;
+    padding: 8px;
+    background: var(--ground-raised);
+    border: 1px solid var(--line-soft);
+  }
+  .post-body .post-cover img { display: block; width: 100%; height: auto; }
   .post-body .post-illustration img {
     display: block;
     width: 100%;
@@ -638,6 +657,9 @@
     margin: 0 auto;
     mix-blend-mode: multiply;
   }
+  /* Compact, near-square figures keep a small image footprint while their
+     captions retain the regular post-illustration reading width. */
+  .post-body .post-illustration--compact img { max-width: 300px; }
   .post-body .post-illustration figcaption {
     margin-top: 0.6rem;
     font-size: 0.85rem;
@@ -680,11 +702,25 @@
   .post-end-mark { text-align: center; margin: 26px 0 20px; }
   .post-end-mark svg { display: inline-block; }
   .post-back-btn {
-    margin-left: 0 !important;
-    margin-right: auto !important;
-    display: inline-block;
     text-decoration: none;
   }
+
+  /* ---- Blog discussion on X ---- */
+  .post-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 12px 0 26px;
+  }
+  .post-actions .show-all-btn {
+    display: inline-block;
+    margin: 0;
+    text-decoration: none;
+  }
+  .post-actions .show-all-btn:hover { text-decoration: none; }
+  .post-actions .x-conversation-reply { margin-left: auto; }
 
   /* ---- Blog table of contents ---- */
   .toc-card {
@@ -700,6 +736,7 @@
   .toc-card ul ul, .toc-card ol ol { margin: 4px 0 0; padding-left: calc(1.45em + 7px); }
   .toc-card a { display: grid; grid-template-columns: 1.45em minmax(0, 1fr); column-gap: 7px; color: var(--ink); text-decoration: none; }
   .toc-card .toc-number { text-align: right; }
+  .toc-card a.toc-link--unnumbered { padding-left: calc(1.45em + 7px); }
   .toc-card a:hover { color: var(--blue); text-decoration: underline; text-underline-offset: 2px; }
 
   /* ---- About / Academic Services / Collaborators / Wity Works ---- */

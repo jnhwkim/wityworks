@@ -12,7 +12,7 @@ import html
 import os
 import pathlib
 import re
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from email.utils import format_datetime
 from html.parser import HTMLParser
 from urllib.parse import urljoin
@@ -25,6 +25,7 @@ RSS_PATH = BLOG_DIR / "rss.xml"
 RSS_LIMIT = 30
 CONTENT_NS = "http://purl.org/rss/1.0/modules/content/"
 MEDIA_NS = "http://search.yahoo.com/mrss/"
+KST = timezone(timedelta(hours=9), name="KST")
 FRONTMATTER_RE = re.compile(r"^---\r?\n(.*?)\r?\n---\r?\n", re.DOTALL)
 FENCE_RE = re.compile(r"^```([^`]*)$")
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
@@ -276,7 +277,7 @@ def rfc822_date(iso_date: str) -> str:
         published = date.fromisoformat(iso_date)
     except ValueError as exc:
         raise ValueError(f"invalid date '{iso_date}' (expected YYYY-MM-DD)") from exc
-    return format_datetime(datetime.combine(published, datetime.min.time(), tzinfo=timezone.utc), usegmt=True)
+    return format_datetime(datetime.combine(published, datetime.min.time(), tzinfo=KST))
 
 
 def discover_posts() -> list[dict[str, str]]:
@@ -300,18 +301,29 @@ def generate_rss(output_path: pathlib.Path = RSS_PATH, limit: int = RSS_LIMIT) -
     ET.register_namespace("media", MEDIA_NS)
     rss = ET.Element("rss", {"version": "2.0"})
     channel = ET.SubElement(rss, "channel")
-    ET.SubElement(channel, "title").text = "Jin-Hwa Kim Blog"
+    ET.SubElement(channel, "title").text = "Wityworks"
     ET.SubElement(channel, "link").text = base_url + "/blog/"
     ET.SubElement(channel, "description").text = "Research notes, paper reviews, and essays on AI, math, and life."
     ET.SubElement(channel, "language").text = "en"
-    ET.SubElement(channel, "lastBuildDate").text = format_datetime(datetime.now(timezone.utc), usegmt=True)
+    ET.SubElement(channel, "lastBuildDate").text = format_datetime(datetime.now(KST))
     cdata_values: list[str] = []
     for post in posts:
-        post_url = f"{base_url}/blog/?post={post['category']}/{post['slug']}"
+        post_url = f"{base_url}/blog/{post['category']}/{post['slug']}/"
+        cover = post.get("cover") or post.get("coverImage")
         try:
             content_html = markdown_to_html(post["body"], base_url, post_url)
         except Exception as exc:
             raise ValueError(f"{post['path']}: could not render RSS content: {exc}") from exc
+        if cover:
+            cover_url = absolute_url(cover, base_url, post_url)
+            cover_html = (
+                '<figure><img src="'
+                + html.escape(cover_url, quote=True)
+                + '" alt="'
+                + html.escape(post["title"], quote=True)
+                + '"></figure>'
+            )
+            content_html = cover_html + content_html
         item = ET.SubElement(channel, "item")
         ET.SubElement(item, "title").text = post["title"]
         ET.SubElement(item, "link").text = post_url
@@ -326,9 +338,8 @@ def generate_rss(output_path: pathlib.Path = RSS_PATH, limit: int = RSS_LIMIT) -
         marker = f"__RSS_CDATA_{len(cdata_values)}__"
         cdata_values.append(content_html)
         content.text = marker
-        cover = post.get("cover") or post.get("coverImage")
         if cover:
-            ET.SubElement(item, f"{{{MEDIA_NS}}}content", {"url": absolute_url(cover, base_url, post_url), "medium": "image"})
+            ET.SubElement(item, f"{{{MEDIA_NS}}}content", {"url": cover_url, "medium": "image"})
     serialized = ET.tostring(rss, encoding="unicode", xml_declaration=True)
     for index, content_html in enumerate(cdata_values):
         serialized = serialized.replace(f"__RSS_CDATA_{index}__", "<![CDATA[" + content_html.replace("]]>", "]]><![CDATA[>") + "]]>")
