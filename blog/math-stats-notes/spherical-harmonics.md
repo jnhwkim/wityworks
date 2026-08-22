@@ -41,7 +41,7 @@ In recent years, Spherical Harmonics have experienced a resurgence in neural 3D,
 ## 2. Historical background of spherical harmonics
 
 <figure class="post-illustration">
-  <img src="../static/img/blog/spherical-harmonics-pioneers.png" alt="Line art illustration of Laplace, Legendre, Thomson, and Tait" loading="lazy">
+  <img src="/static/img/blog/spherical-harmonics-pioneers.png" alt="Line art illustration of Laplace, Legendre, Thomson, and Tait" loading="lazy">
   <figcaption>Historical figures of Spherical Harmonics: Laplace, Legendre, Kelvin, and Tait.</figcaption>
 </figure>
 
@@ -67,7 +67,7 @@ $$\nabla^2 f = \frac{1}{r^2} \frac{\partial}{\partial r}\left(r^2 \frac{\partial
 Equation (1) naturally decomposes the spatial field into a radial variation scale ($r$) and an angular surface geometry $(\theta, \phi)$ defined on the unit sphere $S^2$.
 
 <figure class="post-illustration post-illustration--compact">
-  <img src="../static/img/blog/spherical-harmonics-spherical-coordinates.png" alt="Spherical coordinate system showing the radial distance r, polar angle theta, and azimuthal angle phi on a unit sphere" loading="lazy">
+  <img src="/static/img/blog/spherical-harmonics-spherical-coordinates.png" alt="Spherical coordinate system showing the radial distance r, polar angle theta, and azimuthal angle phi on a unit sphere" loading="lazy">
   <figcaption>Spherical coordinates separate radial distance $r$ from the angular coordinates $(\theta, \phi)$ on the unit sphere.</figcaption>
 </figure>
 
@@ -115,7 +115,7 @@ $$\Delta\_{S^2} Y\_l^m = -l(l+1) Y\_l^m \tag{9}$$
 Degree $l$ relates directly to spatial angular frequency, with an approximate wavelength $\approx \frac{180^\circ}{l}$.
 
 <figure class="post-illustration">
-  <img src="../static/img/blog/spherical-harmonics-low-order-modes.png" alt="Comparison of low-order spherical harmonic modes, progressing from a uniform sphere to increasingly structured angular patterns" loading="lazy">
+  <img src="/static/img/blog/spherical-harmonics-low-order-modes.png" alt="Comparison of low-order spherical harmonic modes, progressing from a uniform sphere to increasingly structured angular patterns" loading="lazy">
   <figcaption>Visual representations of the first few real spherical harmonics. Light regions represent positive values and dark regions negative values. For each angular direction $(\theta, \phi)$, the surface's radial distance from the origin encodes the magnitude $|Y_l^m(\theta, \phi)|$. Increasing degree $l$ produces increasingly fine angular structure.</figcaption>
 </figure>
 
@@ -152,7 +152,7 @@ $$\mathbb{E}\_{\boldsymbol{\omega} \sim \textnormal{vMF}(\mathbf{\mu}\_r, \kappa
 Thus, no coefficient is transferred to a different degree or order: each coefficient is only attenuated according to its degree. This derivation is an application of the Funk–Hecke theorem; Ref-NeRF gives the full derivation, including the Legendre-polynomial integral for $A_l(\kappa)$, in <a href="https://dorverbin.github.io/refnerf/refnerf.pdf" target="_blank" rel="noopener noreferrer">Appendix A, “Integrated Directional Encoding Proofs”</a>.
 
 <figure class="post-illustration">
-  <img src="../static/img/blog/spherical-harmonics-ide-frequency-attenuation.png" alt="Integrated Directional Encoding comparison showing that a broad low-kappa von Mises-Fisher distribution attenuates high-degree spherical harmonic frequencies more strongly" loading="lazy">
+  <img src="/static/img/blog/spherical-harmonics-ide-frequency-attenuation.png" alt="Integrated Directional Encoding comparison showing that a broad low-kappa von Mises-Fisher distribution attenuates high-degree spherical harmonic frequencies more strongly" loading="lazy">
   <figcaption>IDE applies a roughness-dependent angular low-pass filter: lower $\kappa$ (rougher surfaces) attenuates higher-degree spherical harmonic frequencies more strongly.</figcaption>
 </figure>
 
@@ -164,7 +164,7 @@ Thus, no coefficient is transferred to a different degree or order: each coeffic
 In a hydrogen atom, a negatively charged electron is attracted to a positively charged nucleus. In the simplest model, the strength of this attraction depends only on the distance from the nucleus, not on the direction. Physicists call this distance-dependent energy the Coulomb potential. Because rotating the atom does not change that energy, the quantum description of the electron separates naturally into a radial part, which describes distance, and an angular part, which describes direction. The angular part must be an eigenfunction of the spherical Laplacian, and those eigenfunctions are precisely the spherical harmonics $Y_l^m$. Thus, the degree $l$ and order $m$ of a spherical harmonic label an electron orbital's angular structure and orientation; the next section makes this separation explicit.
 
 <figure class="post-illustration post-illustration--compact">
-  <img src="../static/img/blog/spherical-harmonics-bohr.png" alt="Illustration of the Bohr atomic model with electrons on discrete circular orbits around a central nucleus" loading="lazy">
+  <img src="/static/img/blog/spherical-harmonics-bohr.png" alt="Illustration of the Bohr atomic model with electrons on discrete circular orbits around a central nucleus" loading="lazy">
   <figcaption>Bohr’s historical model represents electrons in discrete circular orbits around a nucleus. The atom is deliberately shown excited—an apt prelude to leaving Bohr’s fixed orbits for the richer angular structure of wave mechanics in the following section. ;-)</figcaption>
 </figure>
 

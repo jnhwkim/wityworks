@@ -49,6 +49,8 @@ published; no empty discussion panel is rendered.
 * Use standard Markdown headers (`##`, `###`).
 * Keep inline math inside single `$ ... $` and display math inside double `$$ ... $$`.
 * Follow the LaTeX formatting rule (avoid spacing primitives like `\!` or `\,`).
+* Reference blog images with root-relative paths such as `/static/img/blog/example.png`;
+  do not use paths relative to the Markdown file.
 
 ### Step 3: Update Blog Features, Post Counts, RSS, and Static Pages
 Since this site uses static file hosting without dynamic directory indexing, post listing counts and metadata rely on `root/blog/manifest.js`.
