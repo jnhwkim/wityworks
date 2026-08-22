@@ -716,7 +716,9 @@
   .post-actions .show-all-btn {
     display: inline-block;
     margin: 0;
+    text-decoration: none;
   }
+  .post-actions .show-all-btn:hover { text-decoration: none; }
   @media (max-width: 460px) {
     .post-actions { align-items: flex-start; flex-direction: column; }
     .post-actions .x-conversation-reply { align-self: flex-end; }
