@@ -456,7 +456,7 @@
           (parsed.data.readTime || entry.readTime);
         var rssLink = document.createElement("a");
         rssLink.className = "rss-link post-rss-link";
-        rssLink.href = "rss.xml";
+        rssLink.href = "/blog/rss.xml";
         rssLink.type = "application/rss+xml";
         rssLink.title = "Subscribe to the Blog RSS Feed";
         rssLink.innerHTML =
