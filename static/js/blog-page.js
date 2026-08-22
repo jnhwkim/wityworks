@@ -221,6 +221,17 @@
     }
   }
 
+  function resolvePostImagePaths(root) {
+    var images = root.querySelectorAll("img[src]");
+    for (var i = 0; i < images.length; i++) {
+      var source = images[i].getAttribute("src");
+      if (!source || /^(?:[a-z][a-z0-9+.-]*:|\/\/|\/)/i.test(source)) {
+        continue;
+      }
+      images[i].src = new URL(source, location.origin + "/blog/").href;
+    }
+  }
+
   function categoryList(activeSlug) {
     var ul = document.createElement("ul");
     ul.className = "cat-list";
@@ -493,6 +504,8 @@
         body.innerHTML = window.marked
           ? marked.parse(parsed.body)
           : escapeHtml(parsed.body);
+
+        resolvePostImagePaths(body);
 
         var coverSource = parsed.data.cover || entry.cover;
         if (coverSource) {
