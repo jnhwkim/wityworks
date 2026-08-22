@@ -572,7 +572,26 @@
       });
   }
 
-  var postParam = document.body.getAttribute("data-blog-post") || params.get("post");
+  var staticPostParam = document.body.getAttribute("data-blog-post");
+  var queryPostParam = params.get("post");
+  if (!staticPostParam && queryPostParam) {
+    var legacyEntry = BLOG_POSTS.filter(function (p) {
+      return queryPostParam === p.category + "/" + p.slug;
+    })[0];
+    if (legacyEntry) {
+      location.replace(
+        "/blog/" +
+          encodeURIComponent(legacyEntry.category) +
+          "/" +
+          encodeURIComponent(legacyEntry.slug) +
+          "/" +
+          location.hash,
+      );
+      return;
+    }
+  }
+
+  var postParam = staticPostParam || queryPostParam;
   var categoryParam = params.get("category");
 
   if (postParam) {
