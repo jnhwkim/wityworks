@@ -6,6 +6,7 @@ date: 2026-08-21
 readTime: 20 min read
 summary: Spherical harmonics are the natural language for directional variation on a sphere. Rooted in Laplace's study of gravitational potentials and central to atomic orbitals, they are like sine and cosine Fourier modes on a line or circle, representing view-dependent color in 3D Gaussian Splatting.
 cover: /static/img/blog/spherical-harmonics-cover.png
+xPostUrl: https://x.com/jnhwkim/status/2090968457794011379
 visibility: public
 ---
 
