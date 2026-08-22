@@ -711,15 +711,16 @@
   /* ---- Blog discussion on X ---- */
   .x-conversation {
     margin: 32px 0 26px;
-    padding: 18px 20px 20px;
+    padding: 14px 16px;
     border: 1px solid var(--line-soft);
     border-top: 3px solid var(--gold);
     background: var(--ground-raised);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
   }
-  .x-conversation h2 { margin: 0 0 4px; font-size: 20px; }
-  .x-conversation-intro { margin: 0 0 14px; color: var(--ink-soft); font-size: 14px; }
-  .x-conversation-embed { min-height: 36px; overflow: hidden; }
-  .x-conversation-embed .twitter-tweet { margin: 0 auto 14px !important; }
+  .x-conversation h2 { margin: 0; font-size: 18px; }
   .x-conversation-reply {
     display: inline-flex;
     align-items: center;
@@ -736,7 +737,7 @@
   }
   .x-conversation-reply:hover { background: var(--gold); border-color: var(--gold); text-decoration: none !important; }
   @media (max-width: 560px) {
-    .x-conversation { margin-top: 28px; padding: 16px 14px; }
+    .x-conversation { margin-top: 28px; padding: 14px; align-items: flex-start; flex-direction: column; }
   }
 
   /* ---- Blog table of contents ---- */

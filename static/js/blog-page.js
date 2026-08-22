@@ -378,32 +378,6 @@
     }
   }
 
-  function loadXWidgets(container) {
-    function render() {
-      if (window.twttr && window.twttr.widgets) {
-        window.twttr.widgets.load(container);
-      }
-    }
-
-    if (window.twttr && window.twttr.widgets) {
-      render();
-      return;
-    }
-
-    var script = document.getElementById("x-widgets-script");
-    if (script) {
-      script.addEventListener("load", render, { once: true });
-      return;
-    }
-
-    script = document.createElement("script");
-    script.id = "x-widgets-script";
-    script.async = true;
-    script.src = "https://platform.x.com/widgets.js";
-    script.addEventListener("load", render, { once: true });
-    document.head.appendChild(script);
-  }
-
   function xConversation(postUrl) {
     var postId = getXPostId(postUrl);
     if (!postId) return null;
@@ -414,22 +388,7 @@
 
     var heading = document.createElement("h2");
     heading.id = "x-conversation-title";
-    heading.textContent = "Discuss on X";
-
-    var intro = document.createElement("p");
-    intro.className = "x-conversation-intro";
-    intro.textContent = "Join the conversation or leave a reply on X.";
-
-    var embed = document.createElement("div");
-    embed.className = "x-conversation-embed";
-    var quote = document.createElement("blockquote");
-    quote.className = "twitter-tweet";
-    quote.setAttribute("data-dnt", "true");
-    var source = document.createElement("a");
-    source.href = postUrl;
-    source.textContent = "View this post on X";
-    quote.appendChild(source);
-    embed.appendChild(quote);
+    heading.textContent = "Discuss this article on X";
 
     var reply = document.createElement("a");
     reply.className = "x-conversation-reply";
@@ -439,8 +398,6 @@
     reply.innerHTML = '<span aria-hidden="true">𝕏</span> Join the conversation';
 
     section.appendChild(heading);
-    section.appendChild(intro);
-    section.appendChild(embed);
     section.appendChild(reply);
     return section;
   }
@@ -609,7 +566,6 @@
         var conversation = xConversation(parsed.data.xPostUrl || "");
         if (conversation) {
           content.appendChild(conversation);
-          loadXWidgets(conversation);
         }
 
         var back = document.createElement("p");

@@ -41,9 +41,9 @@ linking to that article, then add its canonical post URL to the frontmatter:
 xPostUrl: https://x.com/your-handle/status/1234567890123456789
 ```
 
-The site embeds that post and renders a **Join the conversation** button that
-opens X's reply composer for the same post. Omit `xPostUrl` until the post has
-been published; no empty discussion panel is rendered.
+The site renders a compact **Join the conversation** button that opens X's
+reply composer for the same post. Omit `xPostUrl` until the post has been
+published; no empty discussion panel is rendered.
 
 ### Step 2: Write Content
 * Use standard Markdown headers (`##`, `###`).
