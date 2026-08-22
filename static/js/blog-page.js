@@ -373,6 +373,85 @@
       .replace(/^-+|-+$/g, "");
   }
 
+  function getXPostId(url) {
+    try {
+      var parsed = new URL(url);
+      var host = parsed.hostname.toLowerCase().replace(/^www\./, "");
+      if (host !== "x.com" && host !== "twitter.com") return null;
+      var match = parsed.pathname.match(/\/status\/(\d+)/);
+      return match ? match[1] : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function loadXWidgets(container) {
+    function render() {
+      if (window.twttr && window.twttr.widgets) {
+        window.twttr.widgets.load(container);
+      }
+    }
+
+    if (window.twttr && window.twttr.widgets) {
+      render();
+      return;
+    }
+
+    var script = document.getElementById("x-widgets-script");
+    if (script) {
+      script.addEventListener("load", render, { once: true });
+      return;
+    }
+
+    script = document.createElement("script");
+    script.id = "x-widgets-script";
+    script.async = true;
+    script.src = "https://platform.x.com/widgets.js";
+    script.addEventListener("load", render, { once: true });
+    document.head.appendChild(script);
+  }
+
+  function xConversation(postUrl) {
+    var postId = getXPostId(postUrl);
+    if (!postId) return null;
+
+    var section = document.createElement("section");
+    section.className = "x-conversation";
+    section.setAttribute("aria-labelledby", "x-conversation-title");
+
+    var heading = document.createElement("h2");
+    heading.id = "x-conversation-title";
+    heading.textContent = "Discuss on X";
+
+    var intro = document.createElement("p");
+    intro.className = "x-conversation-intro";
+    intro.textContent = "Join the conversation or leave a reply on X.";
+
+    var embed = document.createElement("div");
+    embed.className = "x-conversation-embed";
+    var quote = document.createElement("blockquote");
+    quote.className = "twitter-tweet";
+    quote.setAttribute("data-dnt", "true");
+    var source = document.createElement("a");
+    source.href = postUrl;
+    source.textContent = "View this post on X";
+    quote.appendChild(source);
+    embed.appendChild(quote);
+
+    var reply = document.createElement("a");
+    reply.className = "x-conversation-reply";
+    reply.href = "https://x.com/intent/tweet?in_reply_to=" + postId;
+    reply.target = "_blank";
+    reply.rel = "noopener noreferrer";
+    reply.innerHTML = '<span aria-hidden="true">𝕏</span> Join the conversation';
+
+    section.appendChild(heading);
+    section.appendChild(intro);
+    section.appendChild(embed);
+    section.appendChild(reply);
+    return section;
+  }
+
   function renderPost(pathParam) {
     var parts = pathParam.split("/");
     var category = parts[0];
@@ -530,6 +609,12 @@
           '<rect x="1" y="4.4" width="10" height="1.6" fill="var(--gold)"/>' +
           "</svg>";
         content.appendChild(endMark);
+
+        var conversation = xConversation(parsed.data.xPostUrl || "");
+        if (conversation) {
+          content.appendChild(conversation);
+          loadXWidgets(conversation);
+        }
 
         var back = document.createElement("p");
         var a = document.createElement("a");
