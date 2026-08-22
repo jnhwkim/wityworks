@@ -710,7 +710,7 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    justify-content: space-between;
     gap: 12px;
     margin: 12px 0 26px;
   }
@@ -720,6 +720,7 @@
     text-decoration: none;
   }
   .post-actions .show-all-btn:hover { text-decoration: none; }
+  .post-actions .x-conversation-reply { margin-left: auto; }
 
   /* ---- Blog table of contents ---- */
   .toc-card {
