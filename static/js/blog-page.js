@@ -382,18 +382,13 @@
     var postId = getXPostId(postUrl);
     if (!postId) return null;
 
-    var section = document.createElement("div");
-    section.className = "x-conversation";
-
     var reply = document.createElement("a");
-    reply.className = "x-conversation-reply";
+    reply.className = "show-all-btn show-all-btn--sm x-conversation-reply";
     reply.href = "https://x.com/intent/tweet?in_reply_to=" + postId;
     reply.target = "_blank";
     reply.rel = "noopener noreferrer";
-    reply.innerHTML = '<span aria-hidden="true">𝕏</span> Join the conversation';
-
-    section.appendChild(reply);
-    return section;
+    reply.textContent = "𝕏 Join the conversation";
+    return reply;
   }
 
   function renderPost(pathParam) {
@@ -557,12 +552,8 @@
           "</svg>";
         content.appendChild(endMark);
 
-        var conversation = xConversation(parsed.data.xPostUrl || "");
-        if (conversation) {
-          content.appendChild(conversation);
-        }
-
-        var back = document.createElement("p");
+        var actions = document.createElement("div");
+        actions.className = "post-actions";
         var a = document.createElement("a");
         a.className = "show-all-btn show-all-btn--sm post-back-btn";
         a.href = "./?category=" + encodeURIComponent(category);
@@ -572,8 +563,11 @@
             /&amp;/g,
             "&",
           );
-        back.appendChild(a);
-        content.appendChild(back);
+        actions.appendChild(a);
+
+        var conversation = xConversation(parsed.data.xPostUrl || "");
+        if (conversation) actions.appendChild(conversation);
+        content.appendChild(actions);
 
         renderMath(body);
       })

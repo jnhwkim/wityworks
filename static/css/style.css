@@ -702,32 +702,25 @@
   .post-end-mark { text-align: center; margin: 26px 0 20px; }
   .post-end-mark svg { display: inline-block; }
   .post-back-btn {
-    margin-left: 0 !important;
-    margin-right: auto !important;
-    display: inline-block;
     text-decoration: none;
   }
 
   /* ---- Blog discussion on X ---- */
-  .x-conversation {
-    margin: 26px 0;
-    text-align: center;
-  }
-  .x-conversation-reply {
-    display: inline-flex;
+  .post-actions {
+    display: flex;
     align-items: center;
-    gap: 7px;
-    padding: 8px 11px;
-    border: 1.5px solid var(--ink);
-    background: var(--ink);
-    color: var(--ground) !important;
-    font-family: "Century Gothic", "Avenir Next", ui-sans-serif, system-ui, sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-decoration: none;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 12px 0 26px;
   }
-  .x-conversation-reply:hover { background: var(--gold); border-color: var(--gold); text-decoration: none !important; }
+  .post-actions .show-all-btn {
+    display: inline-block;
+    margin: 0;
+  }
+  @media (max-width: 460px) {
+    .post-actions { align-items: flex-start; flex-direction: column; }
+    .post-actions .x-conversation-reply { align-self: flex-end; }
+  }
 
   /* ---- Blog table of contents ---- */
   .toc-card {
