@@ -701,7 +701,7 @@
     for (var i = 0; i < FRAME_COUNT; i++) {
       var img = new Image();
       var frameNum = String(i).padStart(4, "0");
-      img.src = FRAME_PATH + frameNum + ".png";
+      img.src = FRAME_PATH + frameNum + ".webp";
 
       img.onload = img.onerror = function () {
         loadedCount++;
