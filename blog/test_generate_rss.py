@@ -8,12 +8,32 @@ from xml.etree import ElementTree as ET
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import generate_rss
+import sync_manifest
 
 
 CONTENT = {"content": generate_rss.CONTENT_NS, "media": generate_rss.MEDIA_NS}
 
 
 class RssGenerationTests(unittest.TestCase):
+    def test_static_article_page_has_share_metadata(self):
+        template = "<html><head><title>Blog · Jin-Hwa Kim</title></head><body></body></html>"
+        page = sync_manifest.render_article_page(
+            template,
+            "https://example.test",
+            {
+                "category": "notes",
+                "slug": "example",
+                "title": "An Example",
+                "summary": "A concise description.",
+                "cover": "/static/example.png",
+            },
+        )
+        self.assertIn('<link rel="canonical" href="https://example.test/blog/notes/example/">', page)
+        self.assertIn('<meta property="og:title" content="An Example">', page)
+        self.assertIn('<meta name="twitter:card" content="summary_large_image">', page)
+        self.assertIn('<meta property="og:image" content="https://example.test/static/example.png">', page)
+        self.assertIn('<body data-blog-post="notes/example">', page)
+
     def test_generated_feed_has_full_content_and_stable_post_identity(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             output = pathlib.Path(tmpdir) / "rss.xml"

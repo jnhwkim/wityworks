@@ -151,10 +151,11 @@
     var h3 = document.createElement("h3");
     var a = document.createElement("a");
     a.href =
-      "/blog/?post=" +
+      "/blog/" +
       encodeURIComponent(post.category) +
       "/" +
-      encodeURIComponent(post.slug);
+      encodeURIComponent(post.slug) +
+      "/";
     a.textContent = post.title;
     h3.appendChild(a);
     var p = document.createElement("p");

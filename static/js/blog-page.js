@@ -226,7 +226,7 @@
     ul.className = "cat-list";
     var all = document.createElement("li");
     var allLink = document.createElement("a");
-    allLink.href = "./";
+    allLink.href = "/blog/";
     allLink.textContent = "All";
     if (!activeSlug) allLink.className = "active";
     var allCount = BLOG_POSTS.filter(function (p) {
@@ -241,7 +241,7 @@
     BLOG_CATEGORIES.forEach(function (cat) {
       var li = document.createElement("li");
       var a = document.createElement("a");
-      a.href = "./?category=" + encodeURIComponent(cat.slug);
+      a.href = "/blog/?category=" + encodeURIComponent(cat.slug);
       a.innerHTML = cat.label;
       if (cat.slug === activeSlug) a.className += " active";
       var count = BLOG_POSTS.filter(function (p) {
@@ -273,11 +273,7 @@
     cardEyebrow.innerHTML = post.categoryLabel;
     var h3 = document.createElement("h3");
     var a = document.createElement("a");
-    a.href =
-      "./?post=" +
-      encodeURIComponent(post.category) +
-      "/" +
-      encodeURIComponent(post.slug);
+    a.href = "/blog/" + encodeURIComponent(post.category) + "/" + encodeURIComponent(post.slug) + "/";
     a.textContent = post.title;
     h3.appendChild(a);
     var p = document.createElement("p");
@@ -309,7 +305,7 @@
     if (eyebrow) eyebrow.textContent = "Writing";
     heading.textContent = "Blog";
     note.innerHTML =
-      'Research notes, paper reviews, and essays on AI, math, and life.<a class="rss-link blog-rss-link" href="rss.xml" type="application/rss+xml" title="Subscribe to the Blog RSS Feed"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="3.1" cy="12.9" r="1.35" fill="currentColor"/><path d="M2 7.1a6.9 6.9 0 0 1 6.9 6.9M2 2a12 12 0 0 1 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>RSS</span></a>';
+      'Research notes, paper reviews, and essays on AI, math, and life.<a class="rss-link blog-rss-link" href="/blog/rss.xml" type="application/rss+xml" title="Subscribe to the Blog RSS Feed"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="3.1" cy="12.9" r="1.35" fill="currentColor"/><path d="M2 7.1a6.9 6.9 0 0 1 6.9 6.9M2 2a12 12 0 0 1 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>RSS</span></a>';
     content.innerHTML = "";
 
     renderCategories(activeSlug);
@@ -412,7 +408,7 @@
 
     renderCategories(entry.category);
 
-    fetch(category + "/" + slug + ".md")
+    fetch("/blog/" + category + "/" + slug + ".md")
       .then(function (res) {
         if (!res.ok) throw new Error("fetch failed");
         return res.text();
@@ -426,7 +422,7 @@
         if (eyebrow) {
           var categoryLink = document.createElement("a");
           categoryLink.href =
-            "./?category=" + encodeURIComponent(entry.category);
+            "/blog/?category=" + encodeURIComponent(entry.category);
           categoryLink.textContent =
             parsed.data.categoryLabel || entry.categoryLabel;
           eyebrow.innerHTML = "";
@@ -556,7 +552,7 @@
         actions.className = "post-actions";
         var a = document.createElement("a");
         a.className = "show-all-btn show-all-btn--sm post-back-btn";
-        a.href = "./?category=" + encodeURIComponent(category);
+        a.href = "/blog/?category=" + encodeURIComponent(category);
         a.textContent =
           "← Back to " +
           (parsed.data.categoryLabel || entry.categoryLabel).replace(
@@ -576,7 +572,7 @@
       });
   }
 
-  var postParam = params.get("post");
+  var postParam = document.body.getAttribute("data-blog-post") || params.get("post");
   var categoryParam = params.get("category");
 
   if (postParam) {

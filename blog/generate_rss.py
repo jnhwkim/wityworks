@@ -308,7 +308,7 @@ def generate_rss(output_path: pathlib.Path = RSS_PATH, limit: int = RSS_LIMIT) -
     ET.SubElement(channel, "lastBuildDate").text = format_datetime(datetime.now(KST))
     cdata_values: list[str] = []
     for post in posts:
-        post_url = f"{base_url}/blog/?post={post['category']}/{post['slug']}"
+        post_url = f"{base_url}/blog/{post['category']}/{post['slug']}/"
         cover = post.get("cover") or post.get("coverImage")
         try:
             content_html = markdown_to_html(post["body"], base_url, post_url)
