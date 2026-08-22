@@ -6,6 +6,15 @@
 <script src="/static/js/analytics.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+  (function () {
+    if (location.pathname !== "/blog/" && location.pathname !== "/blog/index.html") return;
+    var post = new URLSearchParams(location.search).get("post");
+    var match = post && post.match(/^(ml-concepts|math-stats-notes|paper-reviews|essays)\/([a-z0-9-]+)$/);
+    if (!match) return;
+    location.replace("/blog/" + match[1] + "/" + match[2] + "/" + location.hash);
+  })();
+</script>
 <title>Why Attention Is Normalized with Softmax · Jin-Hwa Kim</title>
 <link rel="icon" href="/static/img/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg">
