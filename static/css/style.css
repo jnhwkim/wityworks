@@ -709,7 +709,8 @@
   .post-actions {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    justify-content: flex-start;
     gap: 12px;
     margin: 12px 0 26px;
   }
@@ -719,10 +720,6 @@
     text-decoration: none;
   }
   .post-actions .show-all-btn:hover { text-decoration: none; }
-  @media (max-width: 460px) {
-    .post-actions { align-items: flex-start; flex-direction: column; }
-    .post-actions .x-conversation-reply { align-self: flex-end; }
-  }
 
   /* ---- Blog table of contents ---- */
   .toc-card {
